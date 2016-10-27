@@ -26,7 +26,7 @@ class Bolas(discord.Client):
         self.admins = []
 
     def get_admins(self):
-        ''' A generator that yields all the administrators.'''
+        """ A generator that yields all the administrators."""
         admin_permissions = ["administrator"]
         for server in self.servers:
             for member in server.members:
@@ -38,7 +38,7 @@ class Bolas(discord.Client):
                             yield member
 
     def is_admin(self, user):
-        ''' Checks if a user is an admin '''
+        """ Checks if a user is an admin """
         return user in self.admins or user in self.get_admins()
 
     async def say(self, message, channel):
@@ -47,7 +47,7 @@ class Bolas(discord.Client):
         await self.send_message(channel, message)
 
     async def on_message(self, message):
-        '''Overloaded Method'''
+        """Overloaded Method"""
         if message.author != self.user:
             # Get the message itself.
             text = message.content
@@ -76,5 +76,5 @@ class Bolas(discord.Client):
                     await self.say(result, message.channel)
 
     async def on_ready(self):
-        '''Overloaded Method'''
+        """Overloaded Method"""
         print("Logged in as {0}".format(self.user.name))
