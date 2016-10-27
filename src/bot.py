@@ -19,6 +19,7 @@ class Bolas(discord.Client):
         self.token = token
         self.commands = {}
         for command in CommandPlugin.plugins:
+            # command.command is a string version of it, for example !ping
             self.commands[command.command] = command
 
         self.chat_hook = HookPlugin.plugins
@@ -70,9 +71,9 @@ class Bolas(discord.Client):
                     # Don't run the chat hook if we found a command
                     return
 
-                for plugin in self.chat_hook:
-                    for result in plugin.func(text):
-                        await self.say(result, message.channel)
+            for plugin in self.chat_hook:
+                for result in plugin.func(text):
+                    await self.say(result, message.channel)
 
     async def on_ready(self):
         '''Overloaded Method'''
