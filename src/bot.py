@@ -39,7 +39,7 @@ class Bolas(discord.Client):
 
     def is_admin(self, user):
         """ Checks if a user is an admin """
-        return user in self.admins or user in self.get_admins()
+        return user in self.admins or user.id in self.get_admins()
 
     async def say(self, message, channel):
         """ Wrapper for send_typing and send_message """
@@ -66,7 +66,7 @@ class Bolas(discord.Client):
 
             for name, cmd in self.commands.items():
                 if (command == name):
-                    await self.say(cmd.func(self, args, user),
+                    await self.say(cmd.func(user, args),
                                    message.channel)
                     # Don't run the chat hook if we found a command
                     return
