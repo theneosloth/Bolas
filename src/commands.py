@@ -91,3 +91,25 @@ class CommandChoice(CommandPlugin):
     def func(self, user, args):
         return "I choose: {0}".format(
             choice([x for x in args if x != "or"]))
+
+
+class CommandGit(CommandPlugin):
+    """Repo link"""
+
+    def __init__(self):
+        self.command = "!git"
+
+    def func(self, user, args):
+        return "https://gitlab.com/neosloth/Bolas/"
+
+
+class CommandHelp(CommandPlugin):
+    """Card bot help"""
+
+    def __init__(self):
+        self.command = "!help"
+
+    def func(self, user, args):
+        return "Try '!card flavor_text', '!card legalities' and " \
+            "'!card reserved'. Most of the attributes are listed here" \
+            "https://scryfall.com/docs/api-overview"
