@@ -2,7 +2,7 @@ import re
 
 from .plugin_mount import PluginMount
 
-from mtgjson import CardDb
+from .scryfall import ScryFall
 
 
 class HookPlugin(metaclass=PluginMount):
@@ -20,17 +20,40 @@ class CardFetcher(HookPlugin):
 
     def __init__(self):
         self.pattern = re.compile("\[\[(.*)\]\]")
-        self.db = CardDb.from_url()
+        self.sc = ScryFall()
+        self._current_card = None
+        self.MAX_CARDS = 5
+        self.DETAILS_COMMAND = "!card"
 
-    def _img_from_gatherer(self, url):
-        return url.replace("Pages/Card/Details.aspx",
-                           "Handlers/Image.ashx") + "&type=card"
+    def get_details(self, msg):
+        if self._current_card is None:
+            return "Please find a card first"
+        else:
+            msg = msg.split(" ")
+            if len(msg) > 1:
+                return self._current_card.__getattr__(msg[1])
+
+            else:
+                return "**{0}(Details): **"\
+                    "\nArtist:{1},\nPrintings:{2}\n".format(
+                        self._current_card.name,
+                        self._current_card.artist,
+                        self._current_card.set_name)
 
     def func(self, msg):
-        results = []
-        for match in re.findall(self.pattern, msg):
-            card = self.db.cards_by_name[match]
-            results.append("{0}\n{1}\n\n".format(
-                card.name, self._img_from_gatherer(card.gatherer_url)))
+        if msg.startswith(self.DETAILS_COMMAND):
+            return self.get_details(msg)
 
-        return results
+        result = []
+        for match in re.findall(self.pattern, msg):
+            cards = self.sc.searchCard(match)
+            if len(cards) < self.MAX_CARDS:
+                result += [card for card in cards]
+            else:
+                return [
+                    "The incantations are too long. Try being more specific"]
+
+        if (len(result)) > 0:
+            self._current_card = result[0]
+
+        return "".join(str(x) for x in result)

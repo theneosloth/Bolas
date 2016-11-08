@@ -66,13 +66,14 @@ class Bolas(discord.Client):
 
             for name, cmd in self.commands.items():
                 if (command == name):
-                    await self.say(cmd.func(user, args),
+                    await self.say(str(cmd.func(user, args)),
                                    message.channel)
                     # Don't run the chat hook if we found a command
                     return
 
             for plugin in self.chat_hook:
-                for result in plugin.func(text):
+                result = plugin.func(text)
+                if result:
                     await self.say(result, message.channel)
 
     async def on_ready(self):
