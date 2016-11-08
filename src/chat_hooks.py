@@ -35,7 +35,7 @@ class CardFetcher(HookPlugin):
 
             else:
                 return "**{0}(Details): **"\
-                    "\nArtist:{1},\nPrintings:{2}\n".format(
+                    "\nArtist:{1},\nPrinting:{2}\n".format(
                         self._current_card.name,
                         self._current_card.artist,
                         self._current_card.set_name)
@@ -50,8 +50,7 @@ class CardFetcher(HookPlugin):
             if len(cards) < self.MAX_CARDS:
                 result += [card for card in cards]
             else:
-                return [
-                    "The incantations are too long. Try being more specific"]
+                return "The incantations are too long. Try being more specific"
 
         if (len(result)) > 0:
             self._current_card = result[0]
