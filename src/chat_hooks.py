@@ -21,28 +21,28 @@ class CardFetcher(HookPlugin):
     def __init__(self):
         self.pattern = re.compile("\[\[(.*)\]\]")
         self.sc = ScryFall()
-        self._last_card = None
+        self._last_cards = {}
         self.MAX_CARDS = 5
         self.DETAILS_COMMAND = "!card"
 
-    def get_details(self, msg):
-        if self._last_card is None:
+    def get_details(self, msg, server_id):
+        if self._last_cards is None:
             return "Please find a card first"
         else:
             msg = msg.split(" ")
             if len(msg) > 1:
-                return self._last_card.__getattr__(msg[1])
+                return self._last_cards[server_id].__getattr__(msg[1])
 
             else:
                 return "**{0}(Details): **"\
                     "\nArtist:{1},\nPrinting:{2}\n".format(
-                        self._last_card.name,
-                        self._last_card.artist,
-                        self._last_card.set_name)
+                        self._last_cards[server_id].name,
+                        self._last_cards[server_id].artist,
+                        self._last_cards[server_id].set_name)
 
-    def func(self, msg):
+    def func(self, msg, server_id):
         if msg.startswith(self.DETAILS_COMMAND):
-            return self.get_details(msg)
+            return self.get_details(msg, server_id)
 
         result = []
         for match in re.findall(self.pattern, msg):
@@ -53,6 +53,6 @@ class CardFetcher(HookPlugin):
                 return "The incantations are too long. Try being more specific"
 
         if (len(result)) > 0:
-            self._last_card = result[0]
+            self._last_cards[server_id] = result[0]
 
         return "".join(str(x) for x in result)
