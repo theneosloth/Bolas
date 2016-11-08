@@ -1,7 +1,5 @@
 run.py
 secret_token.txt
-src/card.py
-src/scryfall.py
 
 # Vim Swap files
 *.swp
