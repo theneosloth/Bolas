@@ -28,7 +28,11 @@ class ScryFall:
         Search for a card by name.
         """
         url = self.API_URL + "/cards/search?q=" + parse.quote(query)
-        return self.get_cards_from_url(url)
+        result = self.get_cards_from_url(url)
+        for card in result:
+            if card.name == query:
+                return card
+        return result
 
     def get_cards_from_url(self, url):
         """

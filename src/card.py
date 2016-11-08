@@ -29,7 +29,8 @@ class Card:
         if "power" in self._data:
             pt = "{0}/{1}".format(self.power, self.toughness)
 
-        return "**{0}** {1}\n{2} {3}\n{4}\n".format(self.name, self.mana_cost,
-                                                    self.type_line,
-                                                    pt,
-                                                    self.oracle_text)
+        return "**{0}** {1}\n{2} {3}\n{4}\n\n".format(self.name,
+                                                      self.mana_cost,
+                                                      self.type_line,
+                                                      pt,
+                                                      self.oracle_text)
