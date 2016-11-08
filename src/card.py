@@ -12,7 +12,11 @@ class Card:
         and instead returns the stored json values
         """
         if attr in self._data and isinstance(self._data[attr], str):
-            return self._data[attr].encode("UTF-8").decode("UTF-8")
+            return self._data[attr]
+        elif attr in self._data and isinstance(self._data[attr], list):
+            return "\n".join(x for x in self._data[attr])
+        elif attr in self._data and isinstance(self._data[attr], bool):
+            return str(self._data[attr])
         else:
             return "Attribute not found."
 
