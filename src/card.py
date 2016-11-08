@@ -13,8 +13,6 @@ class Card:
         """
         if attr in self._data and isinstance(self._data[attr], str):
             return self._data[attr]
-        elif attr in self._data and isinstance(self._data[attr], list):
-            return "\n".join(x for x in self._data[attr])
         elif attr in self._data and isinstance(self._data[attr], bool):
             return str(self._data[attr])
         else:
