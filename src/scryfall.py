@@ -5,7 +5,7 @@ import json
 import urllib.request as request
 import urllib.parse as parse
 
-from card import Card
+from .card import Card
 
 
 class ScryFall:
