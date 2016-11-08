@@ -107,7 +107,7 @@ class CommandHelp(CommandPlugin):
     """Card bot help"""
 
     def __init__(self):
-        self.command = "!help"
+        self.command = "!commands"
 
     def func(self, user, args):
         return "Try !pingme, !choice, !git and !coin"

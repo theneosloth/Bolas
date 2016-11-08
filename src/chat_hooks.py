@@ -24,7 +24,6 @@ class CardFetcher(HookPlugin):
         self._current_card = None
         self.MAX_CARDS = 5
         self.DETAILS_COMMAND = "!card"
-        self.HELP_COMMAND = "!cardhelp"
 
     def get_details(self, msg):
         if self._current_card is None:
@@ -32,7 +31,7 @@ class CardFetcher(HookPlugin):
         else:
             msg = msg.split(" ")
             if len(msg) > 1:
-                return self._current_card.msg[1]
+                return self._current_card.__getattr__(msg[1])
 
             else:
                 return "**{0}(Details): **"\
@@ -44,10 +43,6 @@ class CardFetcher(HookPlugin):
     def func(self, msg):
         if msg.startswith(self.DETAILS_COMMAND):
             return self.get_details(msg)
-        elif msg.startswith(self.HELP_COMMAND):
-            return "Try '!card flavor_text', '!card usd' and " \
-                "'!card image_uri'. Most of the attributes are listed here" \
-                "https://scryfall.com/docs/api-overview"
 
         result = []
         for match in re.findall(self.pattern, msg):
