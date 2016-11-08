@@ -110,6 +110,4 @@ class CommandHelp(CommandPlugin):
         self.command = "!help"
 
     def func(self, user, args):
-        return "Try '!card flavor_text', '!card usd' and " \
-            "'!card image_uri'. Most of the attributes are listed here" \
-            "https://scryfall.com/docs/api-overview"
+        return "Try !pingme, !choice, !git and !coin"
