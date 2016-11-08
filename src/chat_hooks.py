@@ -46,7 +46,7 @@ class CardFetcher(HookPlugin):
 
         result = []
         for match in re.findall(self.pattern, msg):
-            cards = self.sc.searchCard(match)
+            cards = self.sc.search_card(match)
             if len(cards) < self.MAX_CARDS:
                 result += [card for card in cards]
             else:
