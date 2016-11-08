@@ -62,14 +62,23 @@ class CommandPing(CommandPlugin):
         return user.mention
 
 
-class CommandBlush(CommandPlugin):
-    """Tsundere"""
+class CommandSheep(CommandPlugin):
+    """Sheep"""
 
     def __init__(self):
-        self.command = "!sheep"
+        self.command = "!baa"
 
     def func(self, user, args):
         return ":sheep:"
+
+
+class CommandAddMe(CommandPlugin):
+
+    def __init__(self):
+        self.command = "!addme"
+
+    def func(self, user, args):
+        return "https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0"
 
 
 class CommandCoin(CommandPlugin):
