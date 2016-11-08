@@ -26,7 +26,7 @@ class CardFetcher(HookPlugin):
         self.DETAILS_COMMAND = "!card"
 
     def get_details(self, msg, server_id):
-        if self._last_cards is None:
+        if server_id not in self._last_cards:
             return "Please find a card first"
         else:
             msg = msg.split(" ")
