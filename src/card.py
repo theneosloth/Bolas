@@ -16,6 +16,9 @@ class Card:
         else:
             return "Attribute not found."
 
+    def __contains__(self, arg):
+        return arg in self._data
+
     def __str__(self):
         """
         Returns the string representation of a magic card.

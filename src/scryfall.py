@@ -5,7 +5,7 @@ import json
 import urllib.request as request
 import urllib.parse as parse
 
-from .card import Card
+from card import Card
 
 
 class ScryFall:
@@ -16,30 +16,36 @@ class ScryFall:
     def __init__(self):
         self.API_URL = "https://api.scryfall.com"
 
-    def _loadUrlAsJson(self, url):
+    def _load_url_as_json(self, url):
         """
         Load a given url into a json object.
         """
         url = request.urlopen(url)
         return json.loads(url.read().decode("utf-8", "replace"))
 
-    def searchCard(self, query):
+    def search_card(self, query):
         """
         Search for a card by name.
         """
         url = self.API_URL + "/cards/search?q=" + parse.quote(query)
-        return self.getCardsFromUrl(url)
+        return self.get_cards_from_url(url)
 
-    def getCardsFromUrl(self, url):
+    def get_cards_from_url(self, url):
         """
         Return all cards from a given url.
         """
         cards = []
         try:
             while True:
-                j = self._loadUrlAsJson(url)
+                j = self._load_url_as_json(url)
                 data = j["data"]
-                cards += [Card(x) for x in data]
+                for x in data:
+                    if "all_parts" in x:
+                        cards += [Card(self._load_url_as_json(part["uri"]))
+                                  for part in x["all_parts"]]
+                    else:
+                        cards.append(Card(x))
+
                 if j["has_more"]:
                     url = j["next_page"]
                 else:
