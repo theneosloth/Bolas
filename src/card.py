@@ -13,7 +13,7 @@ class Card:
         """
         if attr in self._data and (isinstance(self._data[attr], str) or
                                    isinstance(self._data[attr], bool)):
-            return self._data[attr]
+            return str(self._data[attr])
         else:
             return "{N/A}"
 
