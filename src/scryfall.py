@@ -30,7 +30,7 @@ class ScryFall:
         url = self.API_URL + "/cards/search?q=" + parse.quote(query)
         result = self.get_cards_from_url(url)
         for card in result:
-            if card.name == query:
+            if card.name.lower() == query.lower():
                 return [card]
         return result
 
@@ -45,6 +45,8 @@ class ScryFall:
                 data = j["data"]
                 for x in data:
                     if "all_parts" in x:
+                        # If the card has additional parts add them to the
+                        # response
                         cards += [Card(self._load_url_as_json(part["uri"]))
                                   for part in x["all_parts"]]
                     else:

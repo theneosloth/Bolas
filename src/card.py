@@ -11,7 +11,8 @@ class Card:
         A hack that makes all attributes inaccessible,
         and instead returns the stored json values
         """
-        if attr in self._data and isinstance(self._data[attr], str):
+        if attr in self._data and (isinstance(self._data[attr], str) or
+                                   isinstance(self._data[attr], bool)):
             return self._data[attr]
         else:
             return "{N/A}"
