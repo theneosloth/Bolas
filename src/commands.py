@@ -66,7 +66,7 @@ class CommandSheep(CommandPlugin):
     """Sheep"""
 
     def __init__(self):
-        self.command = "!baa"
+        self.command = "!sheep"
 
     def func(self, user, args):
         return ":sheep:"
@@ -110,13 +110,3 @@ class CommandGit(CommandPlugin):
 
     def func(self, user, args):
         return "https://gitlab.com/neosloth/Bolas/"
-
-
-class CommandHelp(CommandPlugin):
-    """Card bot help"""
-
-    def __init__(self):
-        self.command = "!commands"
-
-    def func(self, user, args):
-        return "Try !pingme, !choice, !git and !coin"

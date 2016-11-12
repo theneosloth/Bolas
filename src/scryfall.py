@@ -30,9 +30,11 @@ class ScryFall:
         url = self.API_URL + "/cards/search?q=" + parse.quote(query)
         result = self.get_cards_from_url(url)
         for card in result:
-            if card.name.lower() == query.lower():
+            # If we have an exact match and it's not a DFC, return just one
+            # card
+            if card.name.lower() == query.lower() and "all_parts" not in card:
                 return [card]
-        return result
+            return result
 
     def get_cards_from_url(self, url):
         """
