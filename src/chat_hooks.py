@@ -24,6 +24,7 @@ class CardFetcher(HookPlugin):
         self._last_cards = {}
         self.MAX_CARDS = 5
         self.DETAILS_COMMAND = "!card"
+        self.IMAGE_COMMAND = "!image"
 
     def get_details(self, msg, server_id):
         if server_id not in self._last_cards:
@@ -35,14 +36,18 @@ class CardFetcher(HookPlugin):
 
             else:
                 return "**{0}(Details): **"\
-                    "\nArtist:{1},\nPrinting:{2}\n".format(
+                    "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
                         self._last_cards[server_id].name,
                         self._last_cards[server_id].artist,
-                        self._last_cards[server_id].set_name)
+                        self._last_cards[server_id].set_name,
+                        self._last_cards[server_id].rarity)
 
     def func(self, msg, server_id):
         if msg.startswith(self.DETAILS_COMMAND):
             return self.get_details(msg, server_id)
+        # Alias for "!card image_uri"
+        elif msg.startswith(self.IMAGE_COMAND):
+            return self.get_details(" image_uri", server_id)
 
         result = []
         for match in re.findall(self.pattern, msg):
