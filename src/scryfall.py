@@ -34,7 +34,9 @@ class ScryFall:
             # card
             if card.name.lower() == query.lower() and "all_parts" not in card:
                 return [card]
-            return result
+            elif card.name.lower() == query.lower() and "all_parts" in card:
+                return [card for card in result if "all_parts" in card]
+        return result
 
     def get_cards_from_url(self, url):
         """
