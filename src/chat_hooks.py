@@ -46,7 +46,7 @@ class CardFetcher(HookPlugin):
         if msg.startswith(self.DETAILS_COMMAND):
             return self.get_details(msg, server_id)
         # Alias for "!card image_uri"
-        elif msg.startswith(self.IMAGE_COMAND):
+        elif msg.startswith(self.IMAGE_COMMAND):
             return self.get_details(" image_uri", server_id)
 
         result = []
