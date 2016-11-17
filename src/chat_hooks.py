@@ -51,7 +51,9 @@ class CardFetcher(HookPlugin):
         # Aliases
         elif msg.split(" ")[0] in self.COMMAND_SHORCUTS:
             # Temporary hack
-            return self.get_details(msg.split(" ")[0], server_id)
+            return self.get_details(
+                self.COMMAND_SHORTCUTS[msg.split(" ")[0]],
+                server_id)
 
         result = []
         for match in re.findall(self.pattern, msg):
