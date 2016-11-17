@@ -19,12 +19,15 @@ class HookPlugin(metaclass=PluginMount):
 class CardFetcher(HookPlugin):
 
     def __init__(self):
-        self.pattern = re.compile("\[\[(.*)\]\]")
+        self.pattern = re.compile("\[\[([^\]]+)\]\]")
         self.sc = ScryFall()
         self._last_cards = {}
         self.MAX_CARDS = 5
         self.DETAILS_COMMAND = "!card"
-        self.IMAGE_COMMAND = "!image"
+        # Needs a space in front. This is a terrible hack that has to be fixed.
+        self.COMMAND_SHORCUTS = {"!image": " image_uri",
+                                 "!flavor": " flavor_text",
+                                 }
 
     def get_details(self, msg, server_id):
         if server_id not in self._last_cards:
@@ -45,9 +48,10 @@ class CardFetcher(HookPlugin):
     def func(self, msg, server_id):
         if msg.startswith(self.DETAILS_COMMAND):
             return self.get_details(msg, server_id)
-        # Alias for "!card image_uri"
-        elif msg.startswith(self.IMAGE_COMMAND):
-            return self.get_details(" image_uri", server_id)
+        # Aliases
+        elif msg.split(" ")[0] in self.COMMAND_SHORCUTS:
+            # Temporary hack
+            return self.get_details(msg.split(" ")[0], server_id)
 
         result = []
         for match in re.findall(self.pattern, msg):
