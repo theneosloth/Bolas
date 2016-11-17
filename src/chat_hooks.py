@@ -25,9 +25,9 @@ class CardFetcher(HookPlugin):
         self.MAX_CARDS = 5
         self.DETAILS_COMMAND = "!card"
         # Needs a space in front. This is a terrible hack that has to be fixed.
-        self.COMMAND_SHORCUTS = {"!image": " image_uri",
-                                 "!flavor": " flavor_text",
-                                 }
+        self.COMMAND_SHORTCUTS = {"!image": " image_uri",
+                                  "!flavor": " flavor_text",
+                                  }
 
     def get_details(self, msg, server_id):
         if server_id not in self._last_cards:
@@ -49,7 +49,7 @@ class CardFetcher(HookPlugin):
         if msg.startswith(self.DETAILS_COMMAND):
             return self.get_details(msg, server_id)
         # Aliases
-        elif msg.split(" ")[0] in self.COMMAND_SHORCUTS:
+        elif msg.split(" ")[0] in self.COMMAND_SHORTCUTS:
             # Temporary hack
             return self.get_details(
                 self.COMMAND_SHORTCUTS[msg.split(" ")[0]],
