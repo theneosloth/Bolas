@@ -25,6 +25,12 @@ class Bolas(discord.Client):
         self.chat_hook = HookPlugin.plugins
         self.admins = []
 
+        self.HELP_COMMAND = "!help"
+
+        # Get a docstring from each one of the hook plugins and commands
+        self.docstring = "\n".join(
+            x.__doc__ for x in (CommandPlugin.plugins + HookPlugin.plugins))
+
     def get_admins(self):
         """ A generator that yields all the administrators."""
         admin_permissions = ["administrator"]
@@ -62,7 +68,13 @@ class Bolas(discord.Client):
             # The remainder are the arguments.
             args = msg[1:]
 
-            print("{0} sent: {1} {2}".format(user, command, args))
+            print("{0} sent: {1} {2}".format(user, command, args).
+                  encode("ascii", "ignore"))
+
+            if (command == self.HELP_COMMAND):
+                await self.say(self.docstring,
+                               message.channel)
+                return
 
             for name, cmd in self.commands.items():
                 if (command == name):

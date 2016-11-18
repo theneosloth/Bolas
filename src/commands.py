@@ -17,6 +17,9 @@ class CommandPlugin(metaclass=PluginMount):
 
 
 class CommandObey(CommandPlugin):
+    """
+    !obey: This only works if you are one of the chosen ones.
+    """
 
     def __init__(self):
         self.command = "!obey"
@@ -53,7 +56,7 @@ class CommandObey(CommandPlugin):
 
 
 class CommandPing(CommandPlugin):
-    """Pings the user"""
+    """!pingme: Pings the user"""
 
     def __init__(self):
         self.command = "!pingme"
@@ -63,7 +66,7 @@ class CommandPing(CommandPlugin):
 
 
 class CommandSheep(CommandPlugin):
-    """Sheep"""
+    """!sheep: baa"""
 
     def __init__(self):
         self.command = "!sheep"
@@ -73,6 +76,7 @@ class CommandSheep(CommandPlugin):
 
 
 class CommandAddMe(CommandPlugin):
+    """!addme: the link to add Bolas to your Discord room."""
 
     def __init__(self):
         self.command = "!addme"
@@ -82,7 +86,7 @@ class CommandAddMe(CommandPlugin):
 
 
 class CommandCoin(CommandPlugin):
-    """Flips a coin"""
+    """!coin Flips a coin"""
 
     def __init__(self):
         self.command = "!coin"
@@ -92,7 +96,7 @@ class CommandCoin(CommandPlugin):
 
 
 class CommandChoice(CommandPlugin):
-    """Chooses an option"""
+    """!choice: Chooses an option"""
 
     def __init__(self):
         self.command = "!choose"
@@ -103,7 +107,7 @@ class CommandChoice(CommandPlugin):
 
 
 class CommandGit(CommandPlugin):
-    """Repo link"""
+    """!git: Repo link"""
 
     def __init__(self):
         self.command = "!git"

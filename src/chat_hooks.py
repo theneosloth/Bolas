@@ -17,6 +17,14 @@ class HookPlugin(metaclass=PluginMount):
 
 
 class CardFetcher(HookPlugin):
+    """
+    [[Card Name]] to get a card.
+    !image to get it's image
+    !flavor to get it's flavor text
+
+    !card {property} to get a specific property of the card.
+    Some examples: usd, tix, set, rarity. Full list:
+    """
 
     def __init__(self):
         self.pattern = re.compile("\[\[([^\]]+)\]\]")
