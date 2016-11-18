@@ -1,6 +1,7 @@
 import discord
 import asyncio
 
+from inspect import cleandoc
 
 from .commands import CommandPlugin
 from .chat_hooks import HookPlugin
@@ -29,7 +30,8 @@ class Bolas(discord.Client):
 
         # Concatenate the docstrings from each one of the plugins
         self.docstring = "```{0}```".format("\n".join(
-            x.__doc__ for x in (CommandPlugin.plugins + HookPlugin.plugins))
+            cleandoc(x.__doc__) for x in
+            (CommandPlugin.plugins + HookPlugin.plugins))
         )
 
     def get_admins(self):
