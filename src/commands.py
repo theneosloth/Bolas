@@ -94,7 +94,7 @@ class CommandCoin(CommandPlugin):
 
 
 class CommandChoice(CommandPlugin):
-    """!choice: Chooses an option"""
+    """!choose: Chooses an option. Example: !choose apples or oranges"""
 
     def __init__(self):
         self.command = "!choose"
