@@ -17,9 +17,7 @@ class CommandPlugin(metaclass=PluginMount):
 
 
 class CommandObey(CommandPlugin):
-    """
-    !obey: This only works if you are one of the chosen ones.
-    """
+    """!obey: This only works if you are one of the chosen ones."""
 
     def __init__(self):
         self.command = "!obey"

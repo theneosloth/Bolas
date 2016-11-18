@@ -30,7 +30,7 @@ class Bolas(discord.Client):
         # Concatenate the docstrings from each one of the plugins
         self.docstring = "```{0}```".format("\n".join(
             x.__doc__ for x in (CommandPlugin.plugins + HookPlugin.plugins))
-        ).strip()
+        )
 
     def get_admins(self):
         """ A generator that yields all the administrators."""
