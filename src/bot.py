@@ -27,9 +27,9 @@ class Bolas(discord.Client):
 
         self.HELP_COMMAND = "!help"
 
-        # Get a docstring from each one of the hook plugins and commands
-        self.docstring = "\n".join(
-            x.__doc__ for x in (CommandPlugin.plugins + HookPlugin.plugins))
+        # Concatenate the docstrings from each one of the plugins
+        self.docstring = "```{0}```".format("\n".join(
+            x.__doc__ for x in (CommandPlugin.plugins + HookPlugin.plugins)))
 
     def get_admins(self):
         """ A generator that yields all the administrators."""

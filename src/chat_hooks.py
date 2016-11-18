@@ -18,12 +18,16 @@ class HookPlugin(metaclass=PluginMount):
 
 class CardFetcher(HookPlugin):
     """
+
+    Card Fetcher documentation:
     [[Card Name]] to get a card.
     !image to get it's image
     !flavor to get it's flavor text
 
-    !card {property} to get a specific property of the card.
-    Some examples: usd, tix, set, rarity. Full list:
+    !card 'property' (without quotes) to get a specific property of the card.
+    Some examples: usd, tix, set, rarity.
+    Full list: https://scryfall.com/docs/api-overview
+
     """
 
     def __init__(self):
@@ -56,6 +60,7 @@ class CardFetcher(HookPlugin):
     def func(self, msg, server_id):
         if msg.startswith(self.DETAILS_COMMAND):
             return self.get_details(msg, server_id)
+
         # Aliases
         elif msg.split(" ")[0] in self.COMMAND_SHORTCUTS:
             # Temporary hack
