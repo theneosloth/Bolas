@@ -59,7 +59,7 @@ Full list: https://scryfall.com/docs/api-overview
 
     def func(self, msg, server_id):
         if msg.startswith(self.DETAILS_COMMAND):
-            return self.get_details(msg, server_id).capitalize()
+            return self.get_details(msg, server_id)
 
         # Aliases
         elif msg.split(" ")[0] in self.COMMAND_SHORTCUTS:
