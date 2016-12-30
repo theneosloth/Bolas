@@ -55,11 +55,11 @@ Full list: https://scryfall.com/docs/api-overview
                         self._last_cards[server_id].name,
                         self._last_cards[server_id].artist,
                         self._last_cards[server_id].set_name,
-                        self._last_cards[server_id].rarity)
+                        self._last_cards[server_id].rarity.capitalize())
 
     def func(self, msg, server_id):
         if msg.startswith(self.DETAILS_COMMAND):
-            return self.get_details(msg, server_id)
+            return self.get_details(msg, server_id).capitalize()
 
         # Aliases
         elif msg.split(" ")[0] in self.COMMAND_SHORTCUTS:

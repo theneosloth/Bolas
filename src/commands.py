@@ -84,7 +84,7 @@ class CommandAddMe(CommandPlugin):
 
 
 class CommandCoin(CommandPlugin):
-    """!coin Flips a coin"""
+    """!coin: Flips a coin"""
 
     def __init__(self):
         self.command = "!coin"
