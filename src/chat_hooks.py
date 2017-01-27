@@ -19,15 +19,15 @@ class HookPlugin(metaclass=PluginMount):
 class CardFetcher(HookPlugin):
     """
 
-Card Fetcher documentation:
-[[Card Name]] to get a card.
-!image to get its image
-!flavor to get its flavor text
-!oracle to get its oracle text
+    Card Fetcher documentation:
+    [[Card Name]] to get a card.
+    !image to get its image
+    !flavor to get its flavor text
+    !oracle to get its oracle text
 
-!card 'property' (without quotes) to get a specific property of the card.
-Some examples: usd, tix, set, rarity.
-Full list: https://scryfall.com/docs/api-overview
+    !card 'property' (without quotes) to get a specific property of the card.
+    Some examples: usd, tix, set, rarity.
+    Full list: https://scryfall.com/docs/api-overview
 
     """
 
@@ -35,12 +35,12 @@ Full list: https://scryfall.com/docs/api-overview
         self.pattern = re.compile("\[\[([^\]]+)\]\]")
         self.sc = ScryFall()
         self._last_cards = {}
-        self.MAX_CARDS = 5
+        self.MAX_CARDS = 8
         self.DETAILS_COMMAND = "!card"
         # Needs a space in front. This is a terrible hack that has to be fixed.
         self.COMMAND_SHORTCUTS = {"!image": " image_uri",
                                   "!flavor": " flavor_text",
-                                  "!oracle": " oracle_text"
+                                  "!price": " usd"
                                   }
 
     def get_details(self, msg, server_id):

@@ -28,7 +28,8 @@ class Bolas(discord.Client):
 
         # Concatenate the docstrings from each one of the plugins
         self.docstring = "```{0}```".format("\n".join(
-            x.__doc__ for x in (CommandPlugin.plugins + HookPlugin.plugins))
+            x.__doc__.strip() for x in (CommandPlugin.plugins +
+                                        HookPlugin.plugins))
         )
 
     def get_admins(self):
