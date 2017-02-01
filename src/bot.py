@@ -61,7 +61,7 @@ class Bolas(discord.Client):
             user = message.author
 
             # Split it into words.
-            msg = text.split(' ')
+            msg = text.split(" ")
 
             # The first word is the command.
             command = msg[0]
