@@ -24,7 +24,8 @@ class CardFetcher(HookPlugin):
     [[Card Name]] to get a card.
     !image to get its image
     !flavor to get its flavor text
-    !oracle to get its oracle text
+    !price to get its price in usd
+    !tix to get its price in tix
 
     !card 'property' (without quotes) to get a specific property of the card.
     Some examples: usd, tix, set, rarity.
@@ -78,7 +79,7 @@ class CardFetcher(HookPlugin):
             if len(cards) < self.MAX_CARDS:
                 result += [card for card in cards]
             else:
-                return "The incantations are too long. Try being more specific"
+                return "Too many matches. Try being more specific."
 
         if (len(result)) > 0:
             self._last_cards[server_id] = result[0]
