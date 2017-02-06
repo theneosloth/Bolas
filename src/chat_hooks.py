@@ -76,18 +76,19 @@ class CardFetcher(HookPlugin):
         result = []
         for match in re.findall(self.pattern, msg):
 
+            # lil meme
             if ("KANYE" in match.upper()):
                 return str(self.sc.search_card("Teferi, Temporal Archmage")[0])
 
             cards = self.sc.search_card(match)
             if len(cards) < self.MAX_CARDS:
                 result += [card for card in cards]
+            elif len(cards) == 0:
+                return "No cards found."
             else:
                 return "Too many matches. Try being more specific."
 
         if (len(result)) > 0:
             self._last_cards[server_id] = result[0]
-        else:
-            return "No cards found."
 
         return "".join(str(x) for x in result)
