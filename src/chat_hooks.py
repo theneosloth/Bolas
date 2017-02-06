@@ -39,19 +39,18 @@ class CardFetcher(HookPlugin):
         self.MAX_CARDS = 10
         self.DETAILS_COMMAND = "!card"
         # Needs a space in front. This is a terrible hack that has to be fixed.
-        self.COMMAND_SHORTCUTS = {"!image": " image_uri",
-                                  "!flavor": " flavor_text",
-                                  "!price": " usd"
+        self.COMMAND_SHORTCUTS = {"!image": "image_uri",
+                                  "!flavor": "flavor_text",
+                                  "!price": "usd",
+                                  "!tix": "tix"
                                   }
 
-    def get_details(self, msg, server_id):
+    def get_details(self, attr, server_id):
         if server_id not in self._last_cards:
             return "Please find a card first"
         else:
-            msg = msg.split(" ")
-            if len(msg) > 1:
-                return self._last_cards[server_id].__getattr__(msg[1])
-
+            if attr:
+                return self._last_cards[server_id].__getattr__(attr)
             else:
                 return "**{0}(Details): **"\
                     "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
@@ -61,14 +60,16 @@ class CardFetcher(HookPlugin):
                         self._last_cards[server_id].rarity.capitalize())
 
     def func(self, msg, server_id):
+        command = msg.split(" ")[0]
+        attr = msg.split(" ")[1] if len(msg.split(" ")) > 1 else " "
+
         if msg.startswith(self.DETAILS_COMMAND):
-            return self.get_details(msg, server_id)
+            return self.get_details(attr, server_id)
 
         # Aliases
-        elif msg.split(" ")[0] in self.COMMAND_SHORTCUTS:
-            # Temporary hack
+        elif command in self.COMMAND_SHORTCUTS:
             return self.get_details(
-                self.COMMAND_SHORTCUTS[msg.split(" ")[0]],
+                self.COMMAND_SHORTCUTS[command],
                 server_id)
 
         result = []
