@@ -77,7 +77,7 @@ class CardFetcher(HookPlugin):
         for match in re.findall(self.pattern, msg):
 
             if ("KANYE" in match.upper()):
-                return str(self.sc_search_card("Teferi, Temporal Archmage"))
+                return str(self.sc.search_card("Teferi, Temporal Archmage"))
 
             cards = self.sc.search_card(match)
             if len(cards) < self.MAX_CARDS:
