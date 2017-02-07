@@ -43,14 +43,15 @@ class CardFetcher(HookPlugin):
         self.COMMAND_SHORTCUTS = {"!image": "image_uri",
                                   "!flavor": "flavor_text",
                                   "!price": "usd",
-                                  "!tix": "tix"
+                                  "!tix": "tix",
+                                  "!details": ""
                                   }
 
     def get_details(self, attr, server_id):
         if server_id not in self._last_cards:
             return "Please find a card first"
         else:
-            if attr:
+            if attr and attr != " ":
                 return self._last_cards[server_id].__getattr__(attr)
             else:
                 return "**{0}(Details): **"\
