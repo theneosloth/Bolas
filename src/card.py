@@ -15,7 +15,7 @@ class Card:
                                    isinstance(self._data[attr], bool)):
             return str(self._data[attr])
         else:
-            return "{N/A}"
+            return "Attribute not found."
 
     def __contains__(self, arg):
         return arg in self._data
