@@ -26,10 +26,13 @@ class CardFetcher(HookPlugin):
     !flavor to get its flavor text
     !price to get its price in usd
     !tix to get its price in tix
+    !details to get an overview of the card
+    !url to get it's scryfall page
 
     !card 'property' (without quotes) to get a specific property of the card.
     Some examples: usd, tix, set, rarity.
     Full list: https://scryfall.com/docs/api-overview
+
 
     """
 
@@ -39,12 +42,12 @@ class CardFetcher(HookPlugin):
         self._last_cards = {}
         self.MAX_CARDS = 10
         self.DETAILS_COMMAND = "!card"
-        # Needs a space in front. This is a terrible hack that has to be fixed.
         self.COMMAND_SHORTCUTS = {"!image": "image_uri",
                                   "!flavor": "flavor_text",
                                   "!price": "usd",
                                   "!tix": "tix",
-                                  "!details": ""
+                                  "!details": "",
+                                  "!url": "uri"
                                   }
 
     def get_details(self, attr, server_id):
