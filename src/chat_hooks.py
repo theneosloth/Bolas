@@ -81,10 +81,10 @@ class CardFetcher(HookPlugin):
                 return str(self.sc.search_card("Teferi, Temporal Archmage")[0])
 
             cards = self.sc.search_card(match)
-            if len(cards) < self.MAX_CARDS:
-                result += [card for card in cards]
-            elif len(cards) == 0:
+            if len(cards) == 0:
                 return "No cards found."
+            elif len(cards) < self.MAX_CARDS:
+                result += [card for card in cards]
             else:
                 return "Too many matches. Try being more specific."
 
