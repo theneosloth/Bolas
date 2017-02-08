@@ -9,17 +9,14 @@ class Card:
     def __getattr__(self, attr):
         """
         A hack that makes all attributes inaccessible,
-        and instead returns the stored json values
+        and instead returns the stored json values as class fields.
         """
         if attr in self._data and (isinstance(self._data[attr], str) or
                                    isinstance(self._data[attr], bool)):
-            return str(self._data[attr]).title()
+            return str(self._data[attr]).capitalize()
 
         elif (isinstance(self._data[attr], dict)):
-            response = ""
-            for k, v in self._data[attr].items():
-                response += "\n{0}: {1}".format(k.capitalize(), v)
-            return response
+            return self.format_dict(self._data[attr])
 
         else:
             return "Attribute not found."
@@ -42,3 +39,14 @@ class Card:
                                                       self.type_line,
                                                       pt,
                                                       self.oracle_text)
+
+    def format_dict(self, dict):
+        """
+        Converts a dict into a readble, discord compatible string.
+        """
+
+        result = ""
+        for k, v in dict.items():
+            result += "\n{0}: {1}".format(k.capitalize(), v)
+
+        return "```\n{0}\n```".format(result.replace("_", " "))
