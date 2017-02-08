@@ -13,7 +13,7 @@ class Card:
         """
         if attr in self._data and (isinstance(self._data[attr], str) or
                                    isinstance(self._data[attr], bool)):
-            return str(self._data[attr]).capitalize()
+            return str(self._data[attr]).capitalize_first()
 
         elif (isinstance(self._data[attr], dict)):
             return self.format_dict(self._data[attr])
@@ -40,6 +40,9 @@ class Card:
                                                       pt,
                                                       self.oracle_text)
 
+    def capitalize_first(self, str):
+        return str[0].upper() + str[1:]
+
     def format_dict(self, dict):
         """
         Converts a dict into a readble, discord compatible string.
@@ -47,6 +50,6 @@ class Card:
 
         result = ""
         for k, v in dict.items():
-            result += "\n{0}: {1}".format(k.capitalize(), v)
+            result += "\n{0}: {1}".format(k.capitalize_first(), v)
 
         return "```\n{0}\n```".format(result.replace("_", " "))
