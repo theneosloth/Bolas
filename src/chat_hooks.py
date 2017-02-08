@@ -27,7 +27,9 @@ class CardFetcher(HookPlugin):
     !price to get its price in usd
     !tix to get its price in tix
     !details to get an overview of the card
-    !url to get it's scryfall page
+    !scryfall to get it's scryfall page
+    !buy to get the list of places you can buy it from
+    !legality to get the list of format legalities
 
     !card 'property' (without quotes) to get a specific property of the card.
     Some examples: usd, tix, set, rarity.
@@ -47,7 +49,9 @@ class CardFetcher(HookPlugin):
                                   "!price": "usd",
                                   "!tix": "tix",
                                   "!details": "",
-                                  "!url": "uri"
+                                  "!scryfall": "scryfall_uri",
+                                  "!buy": "purchase_uris",
+                                  "!legality": "legalities",
                                   }
 
     def get_details(self, attr, server_id):

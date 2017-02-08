@@ -13,7 +13,14 @@ class Card:
         """
         if attr in self._data and (isinstance(self._data[attr], str) or
                                    isinstance(self._data[attr], bool)):
-            return str(self._data[attr])
+            return str(self._data[attr]).capitalize()
+
+        elif (isinstance(self.data[attr], dict)):
+            response = ""
+            for k, v in self.data[attr].items():
+                response += "\n{0}: {1}".format(k.capitalize(), v)
+            return response
+
         else:
             return "Attribute not found."
 
