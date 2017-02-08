@@ -66,7 +66,7 @@ class CardFetcher(HookPlugin):
                         self._last_cards[server_id].name,
                         self._last_cards[server_id].artist,
                         self._last_cards[server_id].set_name,
-                        self._last_cards[server_id].rarity)
+                        self._last_cards[server_id].rarity.capitalize())
 
     def func(self, msg, server_id):
         command = msg.split(" ")[0]

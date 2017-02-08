@@ -13,7 +13,7 @@ class Card:
         """
         if attr in self._data and (isinstance(self._data[attr], str) or
                                    isinstance(self._data[attr], bool)):
-            return self.capitalize_first(str(self._data[attr]))
+            return str(self._data[attr])
 
         elif (isinstance(self._data[attr], dict)):
             return self.format_dict(self._data[attr])
@@ -39,9 +39,6 @@ class Card:
                                                       self.type_line,
                                                       pt,
                                                       self.oracle_text)
-
-    def capitalize_first(self, str):
-        return str[0].upper() + str[1:]
 
     def format_dict(self, dict):
         """
