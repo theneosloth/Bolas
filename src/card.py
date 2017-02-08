@@ -13,7 +13,7 @@ class Card:
         """
         if attr in self._data and (isinstance(self._data[attr], str) or
                                    isinstance(self._data[attr], bool)):
-            return str(self._data[attr]).capitalize_first()
+            return self.capitalize_first(str(self._data[attr]))
 
         elif (isinstance(self._data[attr], dict)):
             return self.format_dict(self._data[attr])
@@ -45,11 +45,11 @@ class Card:
 
     def format_dict(self, dict):
         """
-        Converts a dict into a readble, discord compatible string.
+        Converts a dict into a readable, discord compatible string.
         """
 
         result = ""
         for k, v in dict.items():
-            result += "\n{0}: {1}".format(k.capitalize_first(), v)
+            result += "\n{0}: {1}".format(k.capitalize(), v)
 
         return "```\n{0}\n```".format(result.replace("_", " "))
