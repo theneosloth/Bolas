@@ -13,11 +13,11 @@ class Card:
         """
         if attr in self._data and (isinstance(self._data[attr], str) or
                                    isinstance(self._data[attr], bool)):
-            return str(self._data[attr]).capitalize()
+            return str(self._data[attr]).title()
 
-        elif (isinstance(self.data[attr], dict)):
+        elif (isinstance(self._data[attr], dict)):
             response = ""
-            for k, v in self.data[attr].items():
+            for k, v in self._data[attr].items():
                 response += "\n{0}: {1}".format(k.capitalize(), v)
             return response
 
