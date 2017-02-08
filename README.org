@@ -3,6 +3,6 @@ Bolas is a mtg card-fetcher discord bot that is heavily inspired by [[https://gi
 * Structure
 The core of the bot is located in bot.py, all simple commands such as !pingme should go in =commands.py=. More advanced functionality such as the card fetcher should be developed in =card_hooks.py=. Those files contain the base class that the plugins should be derived from.
 
-The plugins are loaded through a metaclass called pluginmount. Every class derived from PluginMount will be automatically loaded and added to either the =self.chat_hook= or self.commands variables.
+The plugins are loaded through a metaclass called pluginmount. Every class derived from PluginMount will be automatically loaded and added to either the =self.chat_hook= or =self.commands= variables.
 
 The docstring of each one of the plugins are concatenated and displayed with the hardcoded "!help" command.
