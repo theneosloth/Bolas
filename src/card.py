@@ -49,4 +49,4 @@ class Card:
         for k, v in dict.items():
             result += "\n{0}: {1}".format(k.capitalize(), v)
 
-        return "```\n{0}\n```".format(result.replace("_", " "))
+        return "```\n{0}\n```".format(result)
