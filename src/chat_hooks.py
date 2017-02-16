@@ -60,7 +60,10 @@ class CardFetcher(HookPlugin):
         else:
             try:
                 if attr and attr != " ":
-                    return self._last_cards[server_id].__getattr__(attr)
+                    return "{0} -- {1}".format(
+                        self._last_cards[server_id].__getattr__(attr),
+                        self._last_cards[server_id].name
+                    )
                 else:
                     return "**{0}(Details): **"\
                         "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
@@ -70,21 +73,10 @@ class CardFetcher(HookPlugin):
                             self._last_cards[server_id].rarity.capitalize())
             except AttributeError:
                 return "No such attribute."
-            except TypeError:
-                return self._last_cards[server_id].__getattr__(attr)
 
     def func(self, msg, server_id):
         command = msg.split(" ")[0]
         attr = msg.split(" ")[1] if len(msg.split(" ")) > 1 else " "
-
-        if msg.startswith(self.DETAILS_COMMAND):
-            return self.get_details(attr, server_id)
-
-        # Aliases
-        elif command in self.COMMAND_SHORTCUTS:
-            return self.get_details(
-                self.COMMAND_SHORTCUTS[command],
-                server_id) + " - " + self._last_cards[server_id].name
 
         result = []
         for match in re.findall(self.pattern, msg):
@@ -103,5 +95,15 @@ class CardFetcher(HookPlugin):
 
         if (len(result)) > 0:
             self._last_cards[server_id] = result[0]
+
+        # If the message starts with !card return the attribute requested
+        if msg.startswith(self.DETAILS_COMMAND):
+            return self.get_details(attr, server_id)
+
+        # Aliases
+        elif command in self.COMMAND_SHORTCUTS:
+            return self.get_details(
+                self.COMMAND_SHORTCUTS[command],
+                server_id)
 
         return "".join(str(x) for x in result)
