@@ -1,28 +1,29 @@
-class Card:
+class Card(dict):
     """
     A wrapper around a Scryfall json card object.
     """
 
-    def __init__(self, cardData):
-        self._data = cardData
-
-    def __getattr__(self, attr):
+    def __getattr__(self, name):
         """
         A hack that makes all attributes inaccessible,
         and instead returns the stored json values as class fields.
         """
-        if attr in self._data and (isinstance(self._data[attr], str) or
-                                   isinstance(self._data[attr], bool)):
-            return str(self._data[attr])
-
-        elif (isinstance(self._data[attr], dict)):
-            return self.format_dict(self._data[attr])
-
+        if name in self:
+            if (isinstance(self[name], dict)):
+                return self._format_dict(self[name])
+            else:
+                return str(self[name])
         else:
-            return "Attribute not found."
+            raise AttributeError("No such attribute: " + name)
 
-    def __contains__(self, arg):
-        return arg in self._data
+    def __setattr__(self, name, value):
+        self[name] = value
+
+    def __delattr__(self, name):
+        if name in self:
+            del self[name]
+        else:
+            raise AttributeError("No such attribute: " + name)
 
     def __str__(self):
         """
@@ -31,7 +32,7 @@ class Card:
         """
         # Power/toughness, seen only if it's a creature
         pt = ""
-        if "power" in self._data:
+        if "power" in self:
             pt = "{0}/{1}".format(self.power, self.toughness)
 
         return "**{0}** {1}\n{2} {3}\n{4}\n\n".format(self.name,
@@ -40,7 +41,7 @@ class Card:
                                                       pt,
                                                       self.oracle_text)
 
-    def format_dict(self, dict):
+    def _format_dict(self, dict):
         """
         Converts a dict into a readable, discord compatible string.
         """

@@ -58,15 +58,20 @@ class CardFetcher(HookPlugin):
         if server_id not in self._last_cards:
             return "Please find a card first"
         else:
-            if attr and attr != " ":
+            try:
+                if attr and attr != " ":
+                    return self._last_cards[server_id].__getattr__(attr)
+                else:
+                    return "**{0}(Details): **"\
+                        "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
+                            self._last_cards[server_id].name,
+                            self._last_cards[server_id].artist,
+                            self._last_cards[server_id].set_name,
+                            self._last_cards[server_id].rarity.capitalize())
+            except AttributeError:
+                return "No such attribute."
+            except TypeError:
                 return self._last_cards[server_id].__getattr__(attr)
-            else:
-                return "**{0}(Details): **"\
-                    "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
-                        self._last_cards[server_id].name,
-                        self._last_cards[server_id].artist,
-                        self._last_cards[server_id].set_name,
-                        self._last_cards[server_id].rarity.capitalize())
 
     def func(self, msg, server_id):
         command = msg.split(" ")[0]
@@ -79,7 +84,7 @@ class CardFetcher(HookPlugin):
         elif command in self.COMMAND_SHORTCUTS:
             return self.get_details(
                 self.COMMAND_SHORTCUTS[command],
-                server_id)
+                server_id) + " - " + self._last_cards[server_id].name
 
         result = []
         for match in re.findall(self.pattern, msg):

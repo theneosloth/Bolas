@@ -1,5 +1,3 @@
-# _*_ coding:utf-8 _*_
-
 import json
 
 import urllib.request as request
@@ -15,6 +13,10 @@ class ScryFall:
 
     def __init__(self):
         self.API_URL = "https://api.scryfall.com"
+
+        # If set to true the wrapper will load every single match and not just
+        # the first page of responses
+        self.LOAD_ALL_MATCHES = False
 
     def _load_url_as_json(self, url):
         """
@@ -56,7 +58,7 @@ class ScryFall:
                     else:
                         cards.append(Card(x))
 
-                if j["has_more"]:
+                if j["has_more"] and self.LOAD_ALL_MATCHES:
                     url = j["next_page"]
                 else:
                     break

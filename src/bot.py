@@ -27,7 +27,7 @@ class Bolas(discord.Client):
         self.HELP_COMMAND = "!help"
 
         # Concatenate the docstrings from each one of the plugins
-        self.docstring = "```{0}```".format("\n".join(
+        self.docstring = "```{0}```".format("\n\n".join(
             x.__doc__.strip() for x in (CommandPlugin.plugins +
                                         HookPlugin.plugins))
         )
@@ -50,6 +50,7 @@ class Bolas(discord.Client):
 
     async def say(self, message, channel):
         """ Wrapper for send_typing and send_message """
+        print("Saying: {0}".format(message).encode("ascii", "ignore"))
         await self.send_typing(channel)
         await self.send_message(channel, message)
 

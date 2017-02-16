@@ -22,7 +22,7 @@ class CommandObey(CommandPlugin):
     def __init__(self):
         self.command = "!obey"
         self.obey_dict = {
-            'neosloth': 'Long days and pleasant nights, neosloth.'
+            'neosloth': "I also think that Consecrated Sphinx is a bad card."
         }
 
     def func(self, user, args):
@@ -42,18 +42,8 @@ class CommandPing(CommandPlugin):
         return user.mention
 
 
-class CommandSheep(CommandPlugin):
-    """!sheep: baa"""
-
-    def __init__(self):
-        self.command = "!sheep"
-
-    def func(self, user, args):
-        return ":sheep:"
-
-
 class CommandAddMe(CommandPlugin):
-    """!addme: the link to add Bolas to your Discord room."""
+    """!addme: The link to add Bolas to your Discord room."""
 
     def __init__(self):
         self.command = "!addme"
