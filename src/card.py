@@ -35,8 +35,14 @@ class Card(dict):
         if "power" in self:
             pt = "{0}/{1}".format(self.power, self.toughness)
 
+        mana_cost = ""
+        if "mana_cost" in self:
+            mana_cost = self.mana_cost
+        else:
+            mana_cost = "{N/A}"
+
         return "**{0}** {1}\n{2} {3}\n{4}\n\n".format(self.name,
-                                                      self.mana_cost,
+                                                      mana_cost,
                                                       self.type_line,
                                                       pt,
                                                       self.oracle_text)
