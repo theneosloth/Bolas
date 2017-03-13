@@ -25,6 +25,7 @@ class Bolas(discord.Client):
         self.admins = []
 
         self.HELP_COMMAND = "!help"
+        self.MESSAGE_MAX_LEN = 2000
 
         # Concatenate the docstrings from each one of the plugins
         self.docstring = "```{0}```".format("\n\n".join(
@@ -50,6 +51,12 @@ class Bolas(discord.Client):
 
     async def say(self, message, channel):
         """ Wrapper for send_typing and send_message """
+        if (len(message) > self.MESSAGE_MAX_LEN):
+            print("Splitting into two messages.")
+            await self.say(message[:self.MESSAGE_MAX_LEN], channel)
+            await self.say(message[self.MESSAGE_MAX_LEN:], channel)
+            return
+
         print("Saying: {0}".format(message).encode("ascii", "ignore"))
         await self.send_typing(channel)
         await self.send_message(channel, message)
