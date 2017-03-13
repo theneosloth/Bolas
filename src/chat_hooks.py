@@ -27,7 +27,7 @@ class CardFetcher(HookPlugin):
     !price to get its price in usd
     !tix to get its price in tix
     !details to get an overview of the card
-    !scryfall to get it's scryfall page
+    !scryfall to get its scryfall page
     !buy to get the list of places you can buy it from
     !legality to get the list of formats where the card is legalities
     !reserved to see whether the card is on the reserved list
