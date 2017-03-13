@@ -29,7 +29,8 @@ class CardFetcher(HookPlugin):
     !details to get an overview of the card
     !scryfall to get it's scryfall page
     !buy to get the list of places you can buy it from
-    !legality to get the list of format legalities
+    !legality to get the list of formats where the card is legalities
+    !reserved to see whether the card is on the reserved list
 
     !card 'property' (without quotes) to get a specific property of the card.
     Some examples: usd, tix, set, rarity.
@@ -52,6 +53,7 @@ class CardFetcher(HookPlugin):
                                   "!scryfall": "scryfall_uri",
                                   "!buy": "purchase_uris",
                                   "!legality": "legalities",
+                                  "!reserved": "reserved"
                                   }
 
     def get_details(self, attr, server_id):
