@@ -51,6 +51,7 @@ class Bolas(discord.Client):
 
     async def say(self, message, channel):
         """ Wrapper for send_typing and send_message """
+
         if (len(message) > self.MESSAGE_MAX_LEN):
             print("Splitting into two messages.")
             await self.say(message[:self.MESSAGE_MAX_LEN], channel)
