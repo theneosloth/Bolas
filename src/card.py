@@ -31,21 +31,20 @@ class Card(dict):
         The ** is the Discord way to bolden the text
         """
         # Power/toughness, seen only if it's a creature
-        pt = ""
-        if "power" in self:
-            pt = "{0}/{1}".format(self.power, self.toughness)
+        pt = "" if "power" not in self else "{0}/{1}".format(self.power,
+                                                             self.toughness)
 
-        mana_cost = ""
-        if "mana_cost" in self:
-            mana_cost = self.mana_cost
-        else:
-            mana_cost = "{N/A}"
+        mana_cost = "" if "mana_cost" not in self else self.mana_cost
 
-        return "**{0}** {1}\n{2} {3}\n{4}\n\n".format(self.name,
-                                                      mana_cost,
-                                                      self.type_line,
-                                                      pt,
-                                                      self.oracle_text)
+        if "loyalty" in self:
+            self.oracle_text = "{0}\n\nStarting Loyalty: {1}".format(
+                self.oracle_text, self.loyalty)
+
+        return "**{0}** {1}\n\n{2} {3}\n\n{4}\n\n".format(self.name,
+                                                          mana_cost,
+                                                          self.type_line,
+                                                          pt,
+                                                          self.oracle_text)
 
     def _format_dict(self, dict):
         """
