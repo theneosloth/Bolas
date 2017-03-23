@@ -14,7 +14,7 @@ class Card(dict):
             else:
                 return str(self[name])
         else:
-            raise AttributeError("No such attribute: " + name)
+            return ""
 
     def __setattr__(self, name, value):
         self[name] = value
@@ -34,17 +34,15 @@ class Card(dict):
         pt = "" if "power" not in self else "{0}/{1}".format(self.power,
                                                              self.toughness)
 
-        mana_cost = "" if "mana_cost" not in self else self.mana_cost
-
         if "loyalty" in self:
             self.oracle_text = "{0}\n\nStarting Loyalty: {1}".format(
                 self.oracle_text, self.loyalty)
 
-        return "**{0}** {1}\n\n{2} {3}\n\n{4}\n\n".format(self.name,
-                                                          mana_cost,
-                                                          self.type_line,
-                                                          pt,
-                                                          self.oracle_text)
+        return "**{0}** {1}\n{2} {3}\n{4}\n\n".format(self.name,
+                                                      self.mana_cost,
+                                                      self.type_line,
+                                                      pt,
+                                                      self.oracle_text)
 
     def _format_dict(self, dict):
         """

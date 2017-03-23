@@ -1,4 +1,5 @@
 import discord
+import logging
 import asyncio
 
 from .commands import CommandPlugin
@@ -32,6 +33,13 @@ class Bolas(discord.Client):
             x.__doc__.strip() for x in (CommandPlugin.plugins +
                                         HookPlugin.plugins))
         )
+
+        self.logger = logging.getLogger("discord")
+        handler = logging.FileHandler(
+            filename='discord.log', encoding='utf-8', mode='w')
+        handler.setFormatter(logging.Formatter(
+            '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+        self.logger.addHandler(handler)
 
     def get_admins(self):
         """ A generator that yields all the administrators."""
@@ -101,3 +109,6 @@ class Bolas(discord.Client):
     async def on_ready(self):
         """Overloaded Method"""
         print("Logged in as {0}".format(self.user.name))
+
+        await self.change_presence(game=discord.Game(
+            name="Add me to your server with the !addme command."))
