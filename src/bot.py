@@ -111,4 +111,4 @@ class Bolas(discord.Client):
         print("Logged in as {0}".format(self.user.name))
 
         await self.change_presence(game=discord.Game(
-            name="Add me to your server with the !addme command."))
+            name=": Add me to your server with the !addme command."))
