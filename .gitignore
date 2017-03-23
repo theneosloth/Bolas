@@ -1,5 +1,6 @@
 secret_token.txt
 discord.log
+run.py 
 
 # Vim Swap files
 *.swp
