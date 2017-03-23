@@ -22,7 +22,7 @@ class CommandObey(CommandPlugin):
     def __init__(self):
         self.command = "!obey"
         self.obey_dict = {
-            'neosloth': "I also think that Consecrated Sphinx is a bad card."
+            "neosloth": "I also think that Consecrated Sphinx is a bad card."
         }
 
     def func(self, user, args):

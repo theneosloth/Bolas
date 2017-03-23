@@ -35,7 +35,7 @@ class Card(dict):
                                                              self.toughness)
 
         if "loyalty" in self:
-            self.oracle_text = "{0}\n\nStarting Loyalty: {1}".format(
+            self.oracle_text = "{0}\nStarting Loyalty: {1}".format(
                 self.oracle_text, self.loyalty)
 
         return "**{0}** {1}\n{2} {3}\n{4}\n\n".format(self.name,
@@ -53,4 +53,4 @@ class Card(dict):
         for k, v in dict.items():
             result += "\n{0}: {1}".format(k.capitalize(), v)
 
-        return "```\n{0}\n```".format(result)
+        return result
