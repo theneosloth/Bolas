@@ -30,7 +30,7 @@ class CardFetcher(HookPlugin):
     !details to get an overview of the card
     !scryfall to get its scryfall page
     !buy to get the list of places you can buy it from
-    !legality to get the list of formats where the card is legalities
+    !legality to get the list of formats where the card is legal
     !reserved to see whether the card is on the reserved list
 
     !card 'property' (without quotes) to get a specific property of the card.
@@ -44,7 +44,7 @@ class CardFetcher(HookPlugin):
         self.pattern = re.compile("\[\[([^\]]+)\]\]")
         self.sc = ScryFall()
         self._last_cards = {}
-        self.MAX_CARDS = 10
+        self.MAX_CARDS = 9
         self.DETAILS_COMMAND = "!card"
         self.COMMAND_SHORTCUTS = {"!image": "image_uri",
                                   "!flavor": "flavor_text",
