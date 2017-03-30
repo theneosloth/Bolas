@@ -1,5 +1,4 @@
 import discord
-import logging
 import asyncio
 
 from .commands import CommandPlugin
@@ -34,12 +33,6 @@ class Bolas(discord.Client):
                                         HookPlugin.plugins))
         )
 
-        self.logger = logging.getLogger("discord")
-        handler = logging.FileHandler(
-            filename='discord.log', encoding='utf-8', mode='w')
-        handler.setFormatter(logging.Formatter(
-            '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-        self.logger.addHandler(handler)
 
     def get_admins(self):
         """ A generator that yields all the administrators."""
