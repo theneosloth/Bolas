@@ -22,7 +22,7 @@ class CardFetcher(HookPlugin):
     Card Fetcher documentation:
 
     [[Card Name]] to get a card.
-    The fetcher supports the scryfall syntax, so a query like [[t:goblin t:instant]] will return a goblin instant (tarfire)
+    The fetcher supports the scryfall/magiccards.info syntax, so a query like [[t:goblin t:instant]] will return a goblin instant (tarfire)
     !image to get its image
     !flavor to get its flavor text
     !price to get its price in usd
@@ -90,7 +90,9 @@ class CardFetcher(HookPlugin):
                 return str(self.sc.search_card("Teferi, Temporal Archmage")[0])
 
             cards = self.sc.search_card(match)
-            if len(cards) < self.MAX_CARDS:
+            if len(cards) == 0:
+                result.append("**{0}** not found.\n\n".format(match))
+            elif len(cards) < self.MAX_CARDS:
                 result += [card for card in cards]
             else:
                 return "Too many matches. Try being more specific."
@@ -107,5 +109,4 @@ class CardFetcher(HookPlugin):
             return self.get_details(
                 self.COMMAND_SHORTCUTS[command],
                 server_id)
-
         return "".join(str(x) for x in result)
