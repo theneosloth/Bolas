@@ -62,13 +62,14 @@ class CardFetcher(HookPlugin):
             return "Please find a card first"
         else:
             try:
-                if attr and attr != " ":
+                # Return the attribute if it exists on the card
+                if attr and attr in self._last_cards[server_id]:
                     return "{0} -- {1}".format(
                         self._last_cards[server_id].__getattr__(attr),
                         self._last_cards[server_id].name
                     )
                 else:
-                    return "**{0}(Details): **"\
+                    return "**{0} (Details): **"\
                         "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
                             self._last_cards[server_id].name,
                             self._last_cards[server_id].artist,

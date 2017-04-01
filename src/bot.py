@@ -33,7 +33,6 @@ class Bolas(discord.Client):
                                         HookPlugin.plugins))
         )
 
-
     def get_admins(self):
         """ A generator that yields all the administrators."""
         admin_permissions = ["administrator"]
