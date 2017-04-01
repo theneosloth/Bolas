@@ -70,7 +70,7 @@ class CommandChoice(CommandPlugin):
 
     def func(self, user, args):
         return "I choose: {0}".format(
-            choice(args.split("or")))
+            choice(" ".join(args).split("or")))
 
 
 class CommandGit(CommandPlugin):
