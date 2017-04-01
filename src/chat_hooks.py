@@ -108,6 +108,4 @@ class CardFetcher(HookPlugin):
                 self.COMMAND_SHORTCUTS[command],
                 server_id)
 
-        if len(result) == 0:
-            return "Card not found."
         return "".join(str(x) for x in result)
