@@ -4,6 +4,8 @@ import asyncio
 from .commands import CommandPlugin
 from .chat_hooks import HookPlugin
 
+from random import choice
+
 
 class Bolas(discord.Client):
 
@@ -28,26 +30,10 @@ class Bolas(discord.Client):
         self.MESSAGE_MAX_LEN = 2000
 
         # Concatenate the docstrings from each one of the plugins
-        self.docstring = "```{0}```".format("\n\n".join(
+        self.docstring = "```{0}\n\nYou can also PM me!```".format("\n\n".join(
             x.__doc__.strip() for x in (CommandPlugin.plugins +
                                         HookPlugin.plugins))
         )
-
-    def get_admins(self):
-        """ A generator that yields all the administrators."""
-        admin_permissions = ["administrator"]
-        for server in self.servers:
-            for member in server.members:
-                for role in member.roles:
-                    for permission in role.permissions:
-                        # permissions are tuples
-                        if (permission[0] in admin_permissions and
-                                permission[1]):
-                            yield member
-
-    def is_admin(self, user):
-        """ Checks if a user is an admin """
-        return user in self.admins or user.id in self.get_admins()
 
     async def say(self, message, channel):
         """ Wrapper for send_typing and send_message """
@@ -94,7 +80,13 @@ class Bolas(discord.Client):
                     return
 
             for plugin in self.chat_hook:
-                result = plugin.func(text, message.server.id)
+                result = ""
+                try:
+                    result = plugin.func(text, message.server.id)
+                except AttributeError:
+                    # For PMs we use server id instead of message id
+                    result = plugin.func(text, message.author.id)
+
                 if result:
                     await self.say(result, message.channel)
 
@@ -102,5 +94,7 @@ class Bolas(discord.Client):
         """Overloaded Method"""
         print("Logged in as {0}".format(self.user.name))
 
+        formats = ["Vintage", "Pauper",  "EDH", "Legacy"]
+
         await self.change_presence(game=discord.Game(
-            name=": Add me to your server with the !addme command."))
+            name="{0}".format(choice(formats))))

@@ -22,7 +22,7 @@ class CommandObey(CommandPlugin):
     def __init__(self):
         self.command = "!obey"
         self.obey_dict = {
-            "neosloth": "I also think that Consecrated Sphinx is a bad card."
+            "neosloth": "I obey."
         }
 
     def func(self, user, args):
@@ -70,7 +70,7 @@ class CommandChoice(CommandPlugin):
 
     def func(self, user, args):
         return "I choose: {0}".format(
-            choice(" ".join(args).split("or")))
+            choice(" ".join(args).split(" or ")))
 
 
 class CommandGit(CommandPlugin):
@@ -80,4 +80,6 @@ class CommandGit(CommandPlugin):
         self.command = "!git"
 
     def func(self, user, args):
-        return "https://gitlab.com/neosloth/Bolas/"
+        return "{0}\n{1}".format(
+            "https://gitlab.com/neosloth/bolas",
+            "https://github.com/superstepa/bolas")
