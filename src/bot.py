@@ -18,10 +18,11 @@ class Bolas(discord.Client):
         super().__init__()
 
         self.token = token
-        self.commands = CommandPlugin.plugins
 
+        self.commands = CommandPlugin.plugins
         self.chat_hook = HookPlugin.plugins
-        self.admins = ["neosloth"]
+
+        self.admins = []
 
         self.HELP_COMMAND = "!help"
         self.QUIT_COMMAND = "!quit"
@@ -71,7 +72,7 @@ class Bolas(discord.Client):
                                message.channel)
                 return
 
-            if (command == self.QUIT_COMMAND):
+            if (command == self.QUIT_COMMAND and user.id in self.admins):
                 await self.close()
 
             for cmd in self.commands:
