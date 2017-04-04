@@ -18,21 +18,20 @@ class Bolas(discord.Client):
         super().__init__()
 
         self.token = token
-        self.commands = {}
-        for command in CommandPlugin.plugins:
-            # command.command is a string version of it, for example !ping
-            self.commands[command.command] = command
+        self.commands = CommandPlugin.plugins
 
         self.chat_hook = HookPlugin.plugins
-        self.admins = []
+        self.admins = ["neosloth"]
 
         self.HELP_COMMAND = "!help"
+        self.QUIT_COMMAND = "!quit"
+
         self.MESSAGE_MAX_LEN = 2000
 
-        # Concatenate the docstrings from each one of the plugins
+        # Concatenate the helpstrings from each one of the plugins
         self.docstring = "```{0}\n\nYou can also PM me!```".format("\n\n".join(
-            x.__doc__.strip() for x in (CommandPlugin.plugins +
-                                        HookPlugin.plugins))
+            x.helpstring.strip() for x in (CommandPlugin.plugins +
+                                           HookPlugin.plugins))
         )
 
     async def say(self, message, channel):
@@ -72,20 +71,18 @@ class Bolas(discord.Client):
                                message.channel)
                 return
 
-            for name, cmd in self.commands.items():
-                if (command == name):
+            if (command == self.QUIT_COMMAND):
+                await self.close()
+
+            for cmd in self.commands:
+                if (cmd.command == command):
                     await self.say(str(cmd.func(user, args)),
                                    message.channel)
                     # Don't run the chat hook if we found a command
                     return
 
             for plugin in self.chat_hook:
-                result = ""
-                try:
-                    result = plugin.func(text, message.server.id)
-                except AttributeError:
-                    # For PMs we use server id instead of message id
-                    result = plugin.func(text, message.author.id)
+                result = plugin.func(message)
 
                 if result:
                     await self.say(result, message.channel)

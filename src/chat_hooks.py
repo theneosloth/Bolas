@@ -10,40 +10,18 @@ class HookPlugin(metaclass=PluginMount):
     """
 
     def func(self):
-        raise NotImplementedError("Please implement this method")
+        raise NotImplementedError("Please implement this method.")
 
     def __init__(self):
-        raise NotImplementedError("Please implement a command")
+        raise NotImplementedError("Please implement a command.")
 
 
 class CardFetcher(HookPlugin):
-    """
-
-    Card Fetcher documentation:
-
-    [[Card Name]] to get a card.
-    The fetcher supports the scryfall/magiccards.info syntax, so a query like [[t:goblin t:instant]] will return a goblin instant (tarfire)
-    !image to get its image
-    !flavor to get its flavor text
-    !price to get its price in usd
-    !tix to get its price in tix
-    !details to get an overview of the card
-    !scryfall to get its scryfall page
-    !buy to get the list of places you can buy it from
-    !legality to get the list of formats where the card is legal
-    !reserved to see whether the card is on the reserved list
-
-    !card 'property' (without quotes) to get a specific property of the card.
-    Some examples: usd, tix, set, rarity.
-    Full list: https://scryfall.com/docs/api-overview
-
-
-    """
 
     def __init__(self):
         self.pattern = re.compile("\[\[([^\]]+)\]\]")
         self.sc = ScryFall()
-        self._last_cards = {}
+        self._cards = {}
         self.MAX_CARDS = 9
         self.DETAILS_COMMAND = "!card"
         self.COMMAND_SHORTCUTS = {"!image": "image_uri",
@@ -56,29 +34,59 @@ class CardFetcher(HookPlugin):
                                   "!legality": "legalities",
                                   "!reserved": "reserved"
                                   }
+        self.helpstring = """
+
+        Card Fetcher documentation:
+
+        [[Card Name]] to get a card.
+        The fetcher supports the scryfall/magiccards.info syntax, so a query like [[t:goblin t:instant]] will return a goblin instant (tarfire)
+        !image to get its image
+        !flavor to get its flavor text
+        !price to get its price in usd
+        !tix to get its price in tix
+        !details to get an overview of the card
+        !scryfall to get its scryfall page
+        !buy to get the list of places you can buy it from
+        !legality to get the list of formats where the card is legal
+        !reserved to see whether the card is on the reserved list
+
+        !card 'property' (without quotes) to get a specific property of the card.
+        Some examples: usd, tix, set, rarity.
+        Full list: https://scryfall.com/docs/api-overview
+
+
+        """
 
     def get_details(self, attr, server_id):
-        if server_id not in self._last_cards:
+        if server_id not in self._cards:
             return "Please find a card first"
         else:
             try:
                 # Return the attribute if it exists on the card
-                if attr and attr in self._last_cards[server_id]:
+                if attr and attr in self._cards[server_id]:
                     return "{0} -- {1}".format(
-                        self._last_cards[server_id].__getattr__(attr),
-                        self._last_cards[server_id].name
+                        self._cards[server_id].__getattr__(attr),
+                        self._cards[server_id].name
                     )
                 else:
                     return "**{0} (Details): **"\
                         "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
-                            self._last_cards[server_id].name,
-                            self._last_cards[server_id].artist,
-                            self._last_cards[server_id].set_name,
-                            self._last_cards[server_id].rarity.capitalize())
+                            self._cards[server_id].name,
+                            self._cards[server_id].artist,
+                            self._cards[server_id].set_name,
+                            self._cards[server_id].rarity.capitalize())
             except AttributeError:
                 return "No such attribute."
 
-    def func(self, msg, server_id):
+    def func(self, message):
+        msg = message.content
+
+        try:
+            server_id = message.server.id
+        except AttributeError:
+            # If this is a PM, store the card with the individual usr id
+            server_id = message.author.id
+
         command = msg.split(" ")[0]
         attr = msg.split(" ")[1] if len(msg.split(" ")) > 1 else " "
 
@@ -98,7 +106,7 @@ class CardFetcher(HookPlugin):
                 return "Too many matches. Try being more specific."
 
         if (len(result)) > 0:
-            self._last_cards[server_id] = result[0]
+            self._cards[server_id] = result[0]
 
         # If the message starts with !card return the attribute requested
         if msg.startswith(self.DETAILS_COMMAND):

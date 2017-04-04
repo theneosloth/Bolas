@@ -34,15 +34,21 @@ class Card(dict):
         pt = "" if "power" not in self else "{0}/{1}".format(self.power,
                                                              self.toughness)
 
+        # Append loyalty to the end of oracle text if the creature is a
+        # planewsalker
         if "loyalty" in self:
             self.oracle_text = "{0}\nStarting Loyalty: {1}".format(
                 self.oracle_text, self.loyalty)
 
-        return "**{0}** {1}\n{2} {3}\n{4}\n\n".format(self.name,
-                                                      self.mana_cost,
-                                                      self.type_line,
-                                                      pt,
-                                                      self.oracle_text)
+        flavor = "*{0}*".format(
+            self.flavor_text) if "flavor_text" in self else ""
+
+        return "**{0}** {1}\n{2} {3}\n{4}\n\n{5}\n\n".format(self.name,
+                                                             self.mana_cost,
+                                                             self.type_line,
+                                                             pt,
+                                                             self.oracle_text,
+                                                             flavor)
 
     def _format_dict(self, dict):
         """

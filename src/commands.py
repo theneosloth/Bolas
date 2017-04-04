@@ -10,17 +10,21 @@ class CommandPlugin(metaclass=PluginMount):
     """
 
     def func(self):
-        raise NotImplementedError("Please implement this method")
+        raise NotImplementedError("Please implement this method.")
 
     def __init__(self):
-        raise NotImplementedError("Please implement a command variable")
+        raise NotImplementedError(
+            "Please implement a command variable and a helpstring variable.")
 
 
 class CommandObey(CommandPlugin):
-    """!obey: This only works if you are one of the chosen ones."""
 
     def __init__(self):
         self.command = "!obey"
+
+        self.helpstring = "!obey: " \
+                          "This only works if you are one of the chosen ones."
+
         self.obey_dict = {
             "neosloth": "I obey."
         }
@@ -33,10 +37,10 @@ class CommandObey(CommandPlugin):
 
 
 class CommandPing(CommandPlugin):
-    """!pingme: Pings the user"""
 
     def __init__(self):
         self.command = "!pingme"
+        self.helpstring = "!pingme: Pings the user."
 
     def func(self, user, args):
         return user.mention
@@ -47,26 +51,29 @@ class CommandAddMe(CommandPlugin):
 
     def __init__(self):
         self.command = "!addme"
+        self.helpstring = "!addme: " \
+                          "The link to add Bolas to your Discord server."
 
     def func(self, user, args):
         return "https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0"
 
 
 class CommandCoin(CommandPlugin):
-    """!coin: Flips a coin"""
 
     def __init__(self):
         self.command = "!coin"
+        self.helpstring = "!coin: Flips a coin."
 
     def func(self, user, args):
         return ["Heads", "Tails"][getrandbits(1)]
 
 
 class CommandChoice(CommandPlugin):
-    """!choose: Chooses an option. Example: !choose apples or oranges"""
 
     def __init__(self):
         self.command = "!choose"
+        self.helpstring = "!choose: Chooses an option. "\
+                          "Example: !choose apples or oranges"
 
     def func(self, user, args):
         return "I choose: {0}".format(
@@ -74,10 +81,10 @@ class CommandChoice(CommandPlugin):
 
 
 class CommandGit(CommandPlugin):
-    """!git: Repo link"""
 
     def __init__(self):
         self.command = "!git"
+        self.helpstring = "!git: Repo link."
 
     def func(self, user, args):
         return "{0}\n{1}".format(
