@@ -43,12 +43,12 @@ class Card(dict):
         flavor = "*{0}*".format(
             self.flavor_text) if "flavor_text" in self else ""
 
-        return "**{0}** {1}\n{2} {3}\n{4}\n\n{5}\n\n".format(self.name,
-                                                             self.mana_cost,
-                                                             self.type_line,
-                                                             pt,
-                                                             self.oracle_text,
-                                                             flavor)
+        return "**{0}** {1}\n{2} {3}\n{4}\n{5}\n\n".format(self.name,
+                                                           self.mana_cost,
+                                                           self.type_line,
+                                                           pt,
+                                                           self.oracle_text,
+                                                           flavor)
 
     def _format_dict(self, dict):
         """
