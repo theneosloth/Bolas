@@ -84,7 +84,7 @@ class CardFetcher(HookPlugin):
         try:
             server_id = message.server.id
         except AttributeError:
-            # If this is a PM, store the card with the individual usr id
+            # If this is a PM, store the card with the individual user id
             server_id = message.author.id
 
         command = msg.split(" ")[0]
@@ -117,4 +117,5 @@ class CardFetcher(HookPlugin):
             return self.get_details(
                 self.COMMAND_SHORTCUTS[command],
                 server_id)
-        return "".join(str(x) for x in result)
+
+        return [str(x) for x in result]

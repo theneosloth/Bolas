@@ -85,8 +85,11 @@ class Bolas(discord.Client):
             for plugin in self.chat_hook:
                 result = plugin.func(message)
 
-                if result:
+                if result and type(result) is str:
                     await self.say(result, message.channel)
+                elif result and type(result) is list:
+                    for r in result:
+                        await self.say(r, message.channel)
 
     async def on_ready(self):
         """Overloaded Method"""
