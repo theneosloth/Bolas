@@ -36,6 +36,7 @@ class ScryFall:
             # card
             if card.name.lower() == query.lower() and "all_parts" not in card:
                 return [card]
+            # Return all matching DFC
             elif card.name.lower() == query.lower() and "all_parts" in card:
                 return [card for card in result if "all_parts" in card]
         return result

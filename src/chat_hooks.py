@@ -23,6 +23,7 @@ class CardFetcher(HookPlugin):
         self.sc = ScryFall()
         self._cards = {}
         self.MAX_CARDS = 9
+        self.MAX_CARDS_BEFORE_LIST = 5
         self.DETAILS_COMMAND = "!card"
         self.COMMAND_SHORTCUTS = {"!image": "image_uri",
                                   "!flavor": "flavor_text",
@@ -50,6 +51,8 @@ class CardFetcher(HookPlugin):
         !legality to get the list of formats where the card is legal
         !reserved to see whether the card is on the reserved list
 
+        The card query and a command can be in the same message, so "!image [[Goblin Welder]]" will return the image of goblin welder.
+
         !card 'property' (without quotes) to get a specific property of the card.
         Some examples: usd, tix, set, rarity.
         Full list: https://scryfall.com/docs/api-overview
@@ -58,8 +61,11 @@ class CardFetcher(HookPlugin):
         """
 
     def get_details(self, attr, server_id):
+        """
+        Returns a string containing the requested card attribute
+        """
         if server_id not in self._cards:
-            return "Please find a card first"
+            return "Please find a card first."
         else:
             try:
                 # Return the attribute if it exists on the card
@@ -97,15 +103,28 @@ class CardFetcher(HookPlugin):
             if ("KANYE" in match.upper()):
                 return str(self.sc.search_card("Teferi, Temporal Archmage")[0])
 
-            cards = self.sc.search_card(match)
+            try:
+                cards = self.sc.search_card(match)
+            # TODO: Proper Exception handling
+            except Exception:
+                return "Scryfall appears to be down. No cards can be found."
+
             if len(cards) == 0:
                 result.append("**{0}** not found.\n\n".format(match))
+            elif len(cards) < self.MAX_CARDS_BEFORE_LIST:
+                result += cards
             elif len(cards) < self.MAX_CARDS:
-                result += [card for card in cards]
+                # Return titles and mana costs if there are too many results to
+                # display details
+                return "".join(
+                    "**{0}** {1}\n".format(card.name, card.mana_cost)
+                    for card in cards)
             else:
-                return "Too many matches. Try being more specific."
+                url = "https://scryfall.com/search?q={}".format(match)
+                return "Too many matches. Try being more specific. You can see the full list of matched cards here: {}".format(url.replace(" ", "+"))
 
         if (len(result)) > 0:
+            # Store the last card found
             self._cards[server_id] = result[0]
 
         # If the message starts with !card return the attribute requested
