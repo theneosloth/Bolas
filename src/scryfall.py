@@ -33,12 +33,14 @@ class ScryFall:
         result = self.get_cards_from_url(url)
         for card in result:
             # If we have an exact match and it's not a DFC, return just one
-            # card
-            if card.name.lower() == query.lower() and "all_parts" not in card:
+            # cardthats the posta
+            if card.name.lower() == query.lower() and (
+                    ("all_parts" not in card) and ("card_faces" not in card)):
                 return [card]
-            # Return all matching DFC
-            elif card.name.lower() == query.lower() and "all_parts" in card:
-                return [card for card in result if "all_parts" in card]
+            # Return all matching DFC and Split cards
+            elif card.name.lower() == query.lower() and (
+                    ("all_parts" in card) or ("card_faces" in card)):
+                return [card for card in result]
         return result
 
     def get_cards_from_url(self, url):
@@ -58,6 +60,9 @@ class ScryFall:
                                   for part in x["all_parts"]]
                     else:
                         cards.append(Card(x))
+
+                    if "card_faces" in x:
+                        cards += [Card(face) for face in x["card_faces"]]
 
                 if j["has_more"] and self.LOAD_ALL_MATCHES:
                     url = j["next_page"]
