@@ -1,5 +1,7 @@
 import re
 
+from urllib.parse import quote
+
 from .plugin_mount import PluginMount
 
 from .scryfall import ScryFall
@@ -120,8 +122,8 @@ class CardFetcher(HookPlugin):
                     "**{0}** {1}\n".format(card.name, card.mana_cost)
                     for card in cards)
             else:
-                url = "https://scryfall.com/search?q={}".format(match)
-                return "Too many matches. Try being more specific. You can see the full list of matched cards here: {}".format(url.replace(" ", "+"))
+                url = "https://scryfall.com/search?q={}".format(quote(match))
+                return "Too many matches. Try being more specific. You can see the full list of matched cards here: {}".format(url)
 
         if (len(result)) > 0:
             # Store the last card found
