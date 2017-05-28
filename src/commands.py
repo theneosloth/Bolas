@@ -1,7 +1,7 @@
 from .plugin_mount import PluginMount
 
 from random import getrandbits, choice
-from subprocess import run, PIPE
+from subprocess import check_output
 
 class CommandPlugin(metaclass=PluginMount):
     """
@@ -84,20 +84,10 @@ class CommandGit(CommandPlugin):
 
     def __init__(self):
         self.command = "!git"
-        self.helpstring = "!git: Repo link."
+        self.helpstring = "!git: Repo link and changelog."
 
     def func(self, user, args):
-        return "{0}\n{1}".format(
+        return "{0}\n{1}\n```{2}```".format(
             "https://gitlab.com/neosloth/bolas",
-            "https://github.com/superstepa/bolas")
-
-class CommandChangelog(CommandPlugin):
-    def __init__(self):
-        self.command = "!changelog"
-        self.helpstring = "!changelog: Gets the last 3 changes to the bot"
-
-    def func(self, user, args):
-        changes = run(
-            "git log --oneline -3",
-            stdout=PIPE).stdout.decode('utf-8')
-        return "{}".format(changes)
+            "https://github.com/superstepa/bolas",
+            check_output("git log --oneline -3", shell=True).decode("utf-8"))
