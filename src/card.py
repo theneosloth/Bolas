@@ -33,9 +33,10 @@ class Card(dict):
         # Power/toughness, seen only if it's a creature
         pt = "" if "power" not in self else "{0}/{1}".format(self.power,
                                                              self.toughness)
-
+        if "*" in pt:
+            pt="`{}`".format(pt)
         # Append loyalty to the end of oracle text if the creature is a
-        # planewsalker
+        # planeswalker
         if "loyalty" in self:
             self.oracle_text = "{0}\nStarting Loyalty: {1}".format(
                 self.oracle_text, self.loyalty)

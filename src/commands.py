@@ -3,6 +3,7 @@ from .plugin_mount import PluginMount
 from random import getrandbits, choice
 from subprocess import check_output
 
+
 class CommandPlugin(metaclass=PluginMount):
     """
     Class that stores the instances for each command.

@@ -95,7 +95,7 @@ class Bolas(discord.Client):
         """Overloaded Method"""
         print("Logged in as {0}".format(self.user.name))
 
-        formats = ["Vintage", "Pauper",  "EDH", "Legacy"]
+        formats = ["Vintage", "Pauper", "EDH", "Legacy"]
 
         await self.change_presence(game=discord.Game(
             name="{0}".format(choice(formats))))
