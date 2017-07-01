@@ -137,10 +137,14 @@ class CommandCockatrice(CommandPlugin):
             asyncio.ensure_future(
                 parent.remove_roles(message.author, cockatrice_role)
             )
-            return "User removed from the Cockatrice role."
+            return "{0.nick} removed from the Cockatrice role.".format(
+                message.author
+            )
         else:
             # The add role method is a coroutine so we have to wrap it in an asyncio call
             asyncio.ensure_future(
                 parent.add_roles(message.author, cockatrice_role)
             )
-            return "User added to the Cockatrice role."
+            return "{0.nick} added to the Cockatrice role.".format(
+                message.author
+            )
