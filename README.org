@@ -5,7 +5,7 @@ The core of the bot is located in bot.py, all simple commands such as !pingme sh
 
 The plugins are loaded through a metaclass called PluginMount. Every class derived from PluginMount will be automatically loaded and added to either the =self.chat_hook= or =self.commands= variables.
 
-The docstring of each one of the plugins are concatenated and displayed with the hardcoded "!help" command.
+The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded "!help" command.
 * Example run file
 #+BEGIN_SRC python
 from src import bot

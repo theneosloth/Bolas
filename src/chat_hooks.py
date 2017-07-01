@@ -76,13 +76,15 @@ class CardFetcher(HookPlugin):
                         self._cards[server_id].__getattr__(attr),
                         self._cards[server_id].name
                     )
-                else:
+                elif attr.strip() == "":
                     return "**{0} (Details): **"\
                         "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
                             self._cards[server_id].name,
                             self._cards[server_id].artist,
                             self._cards[server_id].set_name,
                             self._cards[server_id].rarity.capitalize())
+                else:
+                    return "No such attribute"
             except AttributeError:
                 return "No such attribute."
 

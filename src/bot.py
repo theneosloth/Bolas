@@ -30,7 +30,7 @@ class Bolas(discord.Client):
         self.MESSAGE_MAX_LEN = 2000
 
         # Concatenate the helpstrings from each one of the plugins
-        self.docstring = "```{0}\n\nYou can also PM me!```".format("\n\n".join(
+        self.docstring = "```{0}\n\nYou can also PM me with your queries!```".format("\n\n".join(
             x.helpstring.strip() for x in (CommandPlugin.plugins +
                                            HookPlugin.plugins))
         )
@@ -55,16 +55,10 @@ class Bolas(discord.Client):
             text = message.content
             user = message.author
 
-            # Split it into words.
-            msg = text.split(" ")
-
             # The first word is the command.
-            command = msg[0]
+            command = text.split(" ")[0]
 
-            # The remainder are the arguments.
-            args = msg[1:]
-
-            print("{0} sent: {1} {2}".format(user, command, args).
+            print("{0} sent: {1}".format(user, text).
                   encode("ascii", "ignore"))
 
             if (command == self.HELP_COMMAND):
@@ -77,7 +71,7 @@ class Bolas(discord.Client):
 
             for cmd in self.commands:
                 if (cmd.command == command):
-                    await self.say(str(cmd.func(user, args)),
+                    await self.say(str(cmd.func(self, message)),
                                    message.channel)
                     # Don't run the chat hook if we found a command
                     return
@@ -85,9 +79,9 @@ class Bolas(discord.Client):
             for plugin in self.chat_hook:
                 result = plugin.func(message)
 
-                if result and type(result) is str:
+                if result and isinstance(result, str):
                     await self.say(result, message.channel)
-                elif result and type(result) is list:
+                elif result and isinstance(result, list):
                     for r in result:
                         await self.say(r, message.channel)
 
@@ -96,6 +90,5 @@ class Bolas(discord.Client):
         print("Logged in as {0}".format(self.user.name))
 
         formats = ["Vintage", "Pauper", "EDH", "Legacy"]
-
         await self.change_presence(game=discord.Game(
             name="{0}".format(choice(formats))))

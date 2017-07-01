@@ -1,3 +1,5 @@
+import asyncio
+
 from .plugin_mount import PluginMount
 
 from random import getrandbits, choice
@@ -27,12 +29,15 @@ class CommandObey(CommandPlugin):
                           "This only works if you are one of the chosen ones."
 
         self.obey_dict = {
-            "neosloth": "I obey."
+            # neosloth
+            "120767447681728512": "I obey",
+            #A verage Dragon
+            "182268688559374336": "Eat a dick, dragon."
         }
 
-    def func(self, user, args):
-        if user.name in self.obey_dict.keys():
-            return self.obey_dict[user.name]
+    def func(self, parent, message):
+        if message.author.id in self.obey_dict.keys():
+            return self.obey_dict[message.author.id]
         else:
             return "I will not obey."
 
@@ -41,10 +46,10 @@ class CommandPing(CommandPlugin):
 
     def __init__(self):
         self.command = "!pingme"
-        self.helpstring = "!pingme: Pings the user."
+        self.helpstring = "!pingme: Pings the message.author."
 
-    def func(self, user, args):
-        return user.mention
+    def func(self, parent, message):
+        return message.author.mention
 
 
 class CommandAddMe(CommandPlugin):
@@ -55,7 +60,7 @@ class CommandAddMe(CommandPlugin):
         self.helpstring = "!addme: " \
                           "The link to add Bolas to your Discord server."
 
-    def func(self, user, args):
+    def func(self, parent, message):
         return "https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0"
 
 
@@ -65,7 +70,7 @@ class CommandCoin(CommandPlugin):
         self.command = "!coin"
         self.helpstring = "!coin: Flips a coin."
 
-    def func(self, user, args):
+    def func(self, parent, message):
         return ["Heads", "Tails"][getrandbits(1)]
 
 
@@ -76,9 +81,9 @@ class CommandChoice(CommandPlugin):
         self.helpstring = "!choose: Chooses an option. "\
                           "Example: !choose apples or oranges"
 
-    def func(self, user, args):
+    def func(self, parent, message):
         return "I choose: {0}".format(
-            choice(" ".join(args).split(" or ")))
+            choice(" ".join(message.text.split(" ")[1:]).split(" or ")))
 
 
 class CommandGit(CommandPlugin):
@@ -87,8 +92,55 @@ class CommandGit(CommandPlugin):
         self.command = "!git"
         self.helpstring = "!git: Repo link and changelog."
 
-    def func(self, user, args):
+    def func(self, parent, message):
         return "{0}\n{1}\n```{2}```".format(
             "https://gitlab.com/neosloth/bolas",
             "https://github.com/superstepa/bolas",
             check_output("git log --oneline -3", shell=True).decode("utf-8"))
+
+
+class CommandCockatrice(CommandPlugin):
+
+    def __init__(self):
+        self.command = "!cockatrice"
+        self.helpstring = "!cockatrice: Add yourself to the cockatrice role."
+        self.role_name = "Cockatrice"
+
+    def func(self, parent, message):
+
+        if message.server is None:
+            return "Sorry, I can't set roles in PMs."
+
+        # The discord bot Client only stores the user,
+        # so we have to manually get the Member object
+        client_member = message.server.get_member(parent.user.id)
+
+        sufficient_permissions = message.channel.permissions_for(
+            client_member).manage_roles
+
+        if not sufficient_permissions:
+            return "I do not have sufficient permissions to set roles."
+
+        cockatrice_role = None
+
+        # Find the appropriate role object
+        for role in message.server.roles:
+            if role.name == self.role_name:
+                cockatrice_role = role
+
+        # Can't do anything if the role doesn't exist
+        if cockatrice_role is None:
+            return "Sorry, this server does not have a cockatrice role."
+
+        if cockatrice_role in message.author.roles:
+            # The remove role method is a coroutine so we have to wrap it in an asyncio call
+            asyncio.ensure_future(
+                parent.remove_roles(member, cockatrice_role)
+            )
+            return "User removed from the Cockatrice role."
+        else:
+            # The add role method is a coroutine so we have to wrap it in an asyncio call
+            asyncio.ensure_future(
+                parent.add_roles(member, cockatrice_role)
+            )
+            return "User added to the Cockatrice role."

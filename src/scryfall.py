@@ -5,7 +5,6 @@ import urllib.parse as parse
 
 from .card import Card
 
-
 class ScryFall:
     """
     A very barebone wrapper around the scryfall api.
@@ -32,15 +31,11 @@ class ScryFall:
         url = self.API_URL + "/cards/search?q=" + parse.quote(query)
         result = self.get_cards_from_url(url)
         for card in result:
-            # If we have an exact match and it's not a DFC, return just one
-            # cardthats the posta
+            # If we have an exact match and it's not a DFC or a flip card, return just one
             if card.name.lower() == query.lower() and (
-                    ("all_parts" not in card) and ("card_faces" not in card)):
+                    ("all_parts" not in card) and (card.object != "card_face")):
                 return [card]
-            # Return all matching DFC and Split cards
-            elif card.name.lower() == query.lower() and (
-                    ("all_parts" in card) or ("card_faces" in card)):
-                return [card for card in result]
+
         return result
 
     def get_cards_from_url(self, url):
@@ -58,13 +53,13 @@ class ScryFall:
                         # response
                         cards += [Card(self._load_url_as_json(part["uri"]))
                                   for part in x["all_parts"]]
+                    elif "card_faces" in x:
+                        cards += [Card(face)
+                                  for face in x["card_faces"]]
                     else:
                         cards.append(Card(x))
 
-                    if "card_faces" in x:
-                        cards += [Card(face) for face in x["card_faces"]]
-
-                if j["has_more"] and self.LOAD_ALL_MATCHES:
+                if self.LOAD_ALL_MATCHES and j["has_more"]:
                     url = j["next_page"]
                 else:
                     break
