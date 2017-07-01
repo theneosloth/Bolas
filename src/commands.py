@@ -31,7 +31,7 @@ class CommandObey(CommandPlugin):
         self.obey_dict = {
             # neosloth
             "120767447681728512": "I obey",
-            #A verage Dragon
+            # Average Dragon
             "182268688559374336": "Eat a dick, dragon."
         }
 
@@ -135,12 +135,12 @@ class CommandCockatrice(CommandPlugin):
         if cockatrice_role in message.author.roles:
             # The remove role method is a coroutine so we have to wrap it in an asyncio call
             asyncio.ensure_future(
-                parent.remove_roles(member, cockatrice_role)
+                parent.remove_roles(message.author, cockatrice_role)
             )
             return "User removed from the Cockatrice role."
         else:
             # The add role method is a coroutine so we have to wrap it in an asyncio call
             asyncio.ensure_future(
-                parent.add_roles(member, cockatrice_role)
+                parent.add_roles(message.author, cockatrice_role)
             )
             return "User added to the Cockatrice role."
