@@ -137,7 +137,7 @@ class CommandCockatrice(CommandPlugin):
             asyncio.ensure_future(
                 parent.remove_roles(message.author, cockatrice_role)
             )
-            return "{0.nick} removed from the Cockatrice role.".format(
+            return "Removed {0.nick} from the Cockatrice role.".format(
                 message.author
             )
         else:
