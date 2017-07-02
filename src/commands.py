@@ -30,7 +30,7 @@ class CommandObey(CommandPlugin):
 
         self.obey_dict = {
             # neosloth
-            "120767447681728512": "I obey",
+            "120767447681728512": "I obey.",
             # Average Dragon
             "182268688559374336": "Eat a dick, dragon."
         }
@@ -145,6 +145,6 @@ class CommandCockatrice(CommandPlugin):
             asyncio.ensure_future(
                 parent.add_roles(message.author, cockatrice_role)
             )
-            return "{0.nick} added to the Cockatrice role.".format(
+            return "Added {0.nick} to the Cockatrice role.".format(
                 message.author
             )
