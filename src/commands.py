@@ -83,7 +83,7 @@ class CommandChoice(CommandPlugin):
 
     def func(self, parent, message):
         return "I choose: {0}".format(
-            choice(" ".join(message.text.split(" ")[1:]).split(" or ")))
+            choice(" ".join(message.content.split(" ")[1:]).split(" or ")))
 
 
 class CommandGit(CommandPlugin):
