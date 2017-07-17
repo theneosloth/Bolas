@@ -1742,7 +1742,7 @@ Example: Exquisite Archangel has an ability which reads “If you would lose the g
 504.1. First, the active player draws a card. This turn-based action doesn’t use the stack.
 
 504.2. Second, the active player gets priority. (See rule 116, “Timing and Priority.”)
-
+ 
 505. Main Phase
 
 505.1. There are two main phases in a turn. In each turn, the first main phase (also known as the precombat main phase) and the second main phase (also known as the postcombat main phase) are separated by the combat phase (see rule 506, “Combat Phase”). The precombat and postcombat main phases are individually and collectively known as the main phase.
@@ -6794,3 +6794,5 @@ Thanks to all our project team members and the many others too numerous to menti
 These rules are effective as of July 8, 2017.
 
 Published by Wizards of the Coast LLC, PO Box 707, Renton, WA 98057-0707, USA. Wizards of the Coast, Magic: The Gathering, Magic, Oracle, Arabian Nights, Antiquities, Homelands, Exodus, Odyssey, Mirrodin, Kamigawa, Ravnica: City of Guilds, Time Spiral, Future Sight, Lorwyn, Shadowmoor, Zendikar, Scars of Mirrodin, Innistrad, Return to Ravnica, Khans of Tarkir, Magic Origins, Shadows over Innistrad, Eldritch Moon, and Magic: The Gathering—Conspiracy are trademarks of Wizards of the Coast LLC in the USA and other countries. ©2017 Wizards. U.S. Pat. No. RE 37,957.
+
+
