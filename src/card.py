@@ -34,7 +34,7 @@ class Card(dict):
         pt = ""
         if "power" in self:
             pt = "{0}/{1}".format(self.power,
-                                  self.toughness).replace("*","\*")
+                                  self.toughness).replace("*", "\*")
         # Append loyalty to the end of oracle text if the creature is a
         # planeswalker
         if "loyalty" in self:

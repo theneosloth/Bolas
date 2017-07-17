@@ -148,3 +148,29 @@ class CommandCockatrice(CommandPlugin):
             return "Added {0.name} to the Cockatrice role.".format(
                 message.author
             )
+
+class CommandRule(CommandPlugin):
+    def __init__(self):
+        self.command = "!rule"
+        self.helpstring = "!rule {rule number}: Cite a mtg rule."
+        self.FILE_NAME = "./MagicCompRules_20170707.txt"
+
+
+    def get_rule(self, num):
+        try:
+            with open(self.FILE_NAME, "r") as f:
+                # Using enumerate so the file is read sequentially and is not stored in memory
+                for i, line in enumerate(f):
+                    if (line.startswith(str(num))):
+                        return line
+            return "Could not find the matching rule."
+        except FileNotFoundError:
+            return "Could not find the magic comprehensive rules file."
+
+
+    def func(self, parent, message):
+        args = message.content.split()
+        if len(args) > 1:
+            return self.get_rule(args[1])
+        else:
+            return "Please provide a rule number."
