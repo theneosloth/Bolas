@@ -162,7 +162,6 @@ class CommandRule(CommandPlugin):
             with open(self.FILE_NAME, "r") as f:
                 # Using enumerate so the file is read sequentially and is not stored in memory
                 for i, line in enumerate(f):
-                    print(line)
                     if (line.startswith(str(num))):
                         return line
             return "Could not find the matching rule."
