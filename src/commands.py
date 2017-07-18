@@ -163,7 +163,7 @@ class CommandRule(CommandPlugin):
                 # Using enumerate so the file is read sequentially and is not stored in memory
                 for i, line in enumerate(f):
                     if (line.startswith(str(num))):
-                        return line
+                        return "```{}```".format(line)
             return "Could not find the matching rule."
         except FileNotFoundError:
             return "Could not find the magic comprehensive rules file."
