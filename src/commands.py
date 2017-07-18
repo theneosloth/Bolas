@@ -174,4 +174,5 @@ class CommandRule(CommandPlugin):
         if len(args) > 1:
             return self.get_rule(args[1])
         else:
-            return "Please provide a rule number."
+            return "Please provide a rule number."\
+                " See the full list of rules here: http://magic.wizards.com/en/game-info/gameplay/rules-and-formats/rules"
