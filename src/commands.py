@@ -154,7 +154,7 @@ class CommandCockatrice(CommandPlugin):
 class CommandRule(CommandPlugin):
     def __init__(self):
         self.command = "!rule"
-        self.helpstring = "!rule {rule number}: Cite a mtg rule."
+        self.helpstring = "!rule {rule number or set of keywords.}: Cite a mtg rule."
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         # Move 1 directory up and into misc
         self.FILE_NAME = os.path.realpath(os.path.join(self.ROOT_DIR, "../misc/MagicCompRules_20170707.txt"))
