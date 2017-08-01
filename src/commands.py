@@ -182,7 +182,7 @@ class CommandRule(CommandPlugin):
                         rule_count+=1
 
             if rule_count >= self.RULE_LIMIT:
-                result += "The query returned too many results, so some rules were omited. Please provide more keywords to narrow the search down."
+                result += "The query returned too many results, so some of the results were omitted. Please provide more keywords to narrow the search down."
 
             return result or "Could not find the matching rule."
         except FileNotFoundError:
