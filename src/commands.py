@@ -173,11 +173,11 @@ class CommandRule(CommandPlugin):
                 # Using enumerate so the file is read sequentially and is not stored in memory
                 for i, line in enumerate(f):
                     if (line.startswith(str(num))):
-                        return "```{}```".format(line)
+                        return line
                     # Append the rule number if all the words are in that substring.
                     # Only check the lines that start with a number.
                     if (line[0].isdigit() and all(word in line for word in tokens)):
-                        result = "{}{}\n".format(result, line.split(" ")[0])
+                        result = "{}* {}\n".format(result, line.split(" ")[0])
 
             return result or "Could not find the matching rule."
         except FileNotFoundError:
@@ -186,7 +186,8 @@ class CommandRule(CommandPlugin):
     def func(self, parent, message):
         args = message.content.split()
         if len(args) > 1:
-            return self.get_rule(args)
+            # Surround the result with markdown code tags (for nice bullets)
+            return "```markdown\n{}```".format(self.get_rule(args))
         else:
             return "Please provide a rule number."\
                 " See the full list of rules here: http://magic.wizards.com/en/game-info/gameplay/rules-and-formats/rules"
