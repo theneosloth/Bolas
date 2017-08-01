@@ -158,21 +158,25 @@ class CommandRule(CommandPlugin):
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         # Move 1 directory up and into misc
         self.FILE_NAME = os.path.realpath(os.path.join(self.ROOT_DIR, "../misc/MagicCompRules_20170707.txt"))
+
     def get_rule(self, args):
         try:
+
             # First argument (presumably the rule number)
-            num = args[0]
+            num = args[1]
+            print(num)
             # All the words after the command
             tokens = args[1:]
             result = ""
 
-            with open(self.FILE_NAME, "r") as f:
+            with open(self.FILE_NAME, "r", encoding="utf-8") as f:
                 # Using enumerate so the file is read sequentially and is not stored in memory
                 for i, line in enumerate(f):
                     if (line.startswith(str(num))):
                         return "```{}```".format(line)
-                    # Append the rule number if all the words are in that substring
-                    if (all(word in line for word in tokens) and line[0].isdigit()):
+                    # Append the rule number if all the words are in that substring.
+                    # Only check the lines that start with a number.
+                    if (line[0].isdigit() and all(word in line for word in tokens)):
                         result = "{}{}\n".format(result, line.split(" ")[0])
 
             return result or "Could not find the matching rule."
