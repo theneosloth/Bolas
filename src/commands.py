@@ -1,5 +1,5 @@
- # -*- coding: utf-8 -*-
 import asyncio
+import os.path
 
 from .plugin_mount import PluginMount
 
@@ -150,29 +150,39 @@ class CommandCockatrice(CommandPlugin):
                 message.author
             )
 
+
 class CommandRule(CommandPlugin):
     def __init__(self):
         self.command = "!rule"
         self.helpstring = "!rule {rule number}: Cite a mtg rule."
-        self.FILE_NAME = "./MagicCompRules_20170707.txt"
-
-
-    def get_rule(self, num):
+        self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+        # Move 1 directory up and into misc
+        self.FILE_NAME = os.path.realpath(os.path.join(self.ROOT_DIR, "../misc/MagicCompRules_20170707.txt"))
+    def get_rule(self, args):
         try:
+            # First argument (presumably the rule number)
+            num = args[0]
+            # All the words after the command
+            tokens = args[1:]
+            result = ""
+
             with open(self.FILE_NAME, "r") as f:
                 # Using enumerate so the file is read sequentially and is not stored in memory
                 for i, line in enumerate(f):
                     if (line.startswith(str(num))):
                         return "```{}```".format(line)
-            return "Could not find the matching rule."
+                    # Append the rule number if all the words are in that substring
+                    if (all(word in line for word in tokens) and line[0].isdigit()):
+                        result = "{}{}\n".format(result, line.split(" ")[0])
+
+            return result or "Could not find the matching rule."
         except FileNotFoundError:
             return "Could not find the magic comprehensive rules file."
-
 
     def func(self, parent, message):
         args = message.content.split()
         if len(args) > 1:
-            return self.get_rule(args[1])
+            return self.get_rule(args)
         else:
             return "Please provide a rule number."\
                 " See the full list of rules here: http://magic.wizards.com/en/game-info/gameplay/rules-and-formats/rules"
