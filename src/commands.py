@@ -3,7 +3,7 @@ import os.path
 
 from .plugin_mount import PluginMount
 
-from random import getrandbits, choice
+from random import choice
 from subprocess import check_output
 
 
@@ -72,7 +72,7 @@ class CommandCoin(CommandPlugin):
         self.helpstring = "!coin: Flips a coin."
 
     def func(self, parent, message):
-        return ["Heads", "Tails"][getrandbits(1)]
+        return choice(["Heads", "Tails"])
 
 
 class CommandChoice(CommandPlugin):
@@ -99,6 +99,23 @@ class CommandGit(CommandPlugin):
             "https://github.com/superstepa/bolas",
             check_output("git log --oneline -3", shell=True).decode("utf-8"))
 
+class CommandStats(CommandPlugin):
+
+    def __init__(self):
+        self.command = "!stats"
+        self.helpstring = "!stats: Return the number of users and servers served."
+
+    def func(self, parent, message):
+        num_servers = len(parent.servers)
+        #parents.server.members
+        num_users = sum(
+            (map(lambda x: len(x.members),
+                             parent.servers)))
+
+        return "Fetching cards for {} servers and {} users".format(
+            num_servers,
+            num_users
+        )
 
 class CommandCockatrice(CommandPlugin):
 
@@ -179,7 +196,7 @@ class CommandRule(CommandPlugin):
                     # Also check if we've gone over our rule count
                     if (line[0].isdigit() and all(word in line for word in tokens) and rule_count < self.RULE_LIMIT):
                         result = "{}* {}\n".format(result, line.split(" ")[0])
-                        rule_count+=1
+                        rule_count += 1
 
             if rule_count >= self.RULE_LIMIT:
                 result += "The query returned too many results, so some of the results were omitted. Please provide more keywords to narrow the search down."
