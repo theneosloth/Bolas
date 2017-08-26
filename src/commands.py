@@ -99,6 +99,7 @@ class CommandGit(CommandPlugin):
             "https://github.com/superstepa/bolas",
             check_output("git log --oneline -3", shell=True).decode("utf-8"))
 
+
 class CommandStats(CommandPlugin):
 
     def __init__(self):
@@ -108,14 +109,12 @@ class CommandStats(CommandPlugin):
     def func(self, parent, message):
         num_servers = len(parent.servers)
         #parents.server.members
-        num_users = sum(
-            (map(lambda x: len(x.members),
-                             parent.servers)))
-
+        num_users = sum([len(server.members) for server in parent.servers])
         return "Fetching cards for {} servers and {} users".format(
             num_servers,
             num_users
         )
+
 
 class CommandCockatrice(CommandPlugin):
 
