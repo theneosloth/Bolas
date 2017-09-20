@@ -193,7 +193,7 @@ class CommandRule(CommandPlugin):
                     # Append the rule number if all the words are in that substring.
                     # Only check the lines that start with a number.
                     # Also check if we've gone over our rule count
-                    if (line[0].isdigit() and all(word in line for word in tokens) and rule_count < self.RULE_LIMIT):
+                    if (line[0].isdigit() and all(word.lower() in line.lower() for word in tokens) and rule_count < self.RULE_LIMIT):
                         result = "{}* {}\n".format(result, line.split(" ")[0])
                         rule_count += 1
 
