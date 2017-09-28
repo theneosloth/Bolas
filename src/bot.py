@@ -77,7 +77,7 @@ class Bolas(discord.Client):
                     return
 
             for plugin in self.chat_hook:
-                result = plugin.func(message)
+                result = plugin.func(self, message)
 
                 if result and isinstance(result, str):
                     await self.say(result, message.channel)
