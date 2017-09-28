@@ -19,6 +19,31 @@ class HookPlugin(metaclass=PluginMount):
         raise NotImplementedError("Please implement a command.")
 
 
+class ChannelCleaner(HookPlugin):
+    def __init__(self):
+        self.whitelist = {
+            #EDH Discord server. Remove all non link posts from #decklists
+            "144547963484635137":(["decklists"], re.compile(".*http(s)*:\/\/.*")),
+            "189194499333947392":(["shhh"], re.compile(".*http(s)*:\/\/.*"))
+        }
+        self.helpstring = ""
+
+    def func(self, parent, message):
+        # Stop the function if the channel is not checked or if the channel doesnt exist
+        if (message.server.id not in self.whitelist) or (
+                (message.channel is None) or (message.channel.name not in self.whitelist[message.server.id][0])):
+            return
+
+        client_member = message.server.get_member(parent.user.id)
+        if not message.channel.permissions_for(client_member).manage_messages:
+            return
+
+        if (self.whitelist[message.server.id][1].match(message.content)) is None:
+            asyncio.ensure_future(
+                parent.delete_message(message)
+            )
+
+
 class CardFetcher(HookPlugin):
 
     def __init__(self):
@@ -146,28 +171,3 @@ class CardFetcher(HookPlugin):
                 server_id)
 
         return [str(x) for x in result]
-
-
-class ChannelCleaner(HookPlugin):
-    def __init__(self):
-        self.whitelist = {
-            #EDH Discord server. Remove all non link posts from #decklists
-            "144547963484635137":(["decklists"], re.compile(".*http(s)*:\/\/.*")),
-            "189194499333947392":(["shhh"], re.compile(".*http(s)*:\/\/.*"))
-        }
-        self.helpstring = ""
-
-    def func(self, parent, message):
-        # Stop the function if the channel is not checked or if the channel doesnt exist
-        if (message.server.id not in self.whitelist) or (
-                (message.channel is None) or (message.channel.name not in self.whitelist[message.server.id][0])):
-            return
-
-        client_member = message.server.get_member(parent.user.id)
-        if not message.channel.permissions_for(client_member).manage_messages:
-            return
-
-        if (self.whitelist[message.server.id][1].match(message.content)) is None:
-            asyncio.ensure_future(
-                parent.delete_message(message)
-            )
