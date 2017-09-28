@@ -158,8 +158,13 @@ class ChannelCleaner(HookPlugin):
         self.helpstring = ""
 
     def func(self, parent, message):
+
+        #Terminate execution when in PMs
+        if (message.server is None):
+            return
+
         # Stop the function if the channel is not checked or if the channel doesnt exist
-        if (message.server is not None and message.server.id not in self.whitelist) or (
+        if (message.server.id not in self.whitelist) or (
                 (message.channel is None) or (message.channel.name not in self.whitelist[message.server.id][0])):
             return
 
