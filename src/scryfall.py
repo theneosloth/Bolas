@@ -1,4 +1,5 @@
 import json
+import re
 
 import urllib.request as request
 import urllib.parse as parse
@@ -30,9 +31,11 @@ class ScryFall:
         """
         url = self.API_URL + "/cards/search?q=" + parse.quote(query)
         result = self.get_cards_from_url(url)
+        # Strip custom scryfall arguments from the cardname
+        name = re.sub("[a-z]+:[a-z]+", "", query).strip().lower()
         for card in result:
             # If we have an exact match and it's not a DFC or a flip card, return just one
-            if card.name.lower() == query.lower() and (
+            if card.name.lower() == name and (
                     ("all_parts" not in card) and (card.object != "card_face")):
                 return [card]
 
