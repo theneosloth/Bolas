@@ -6,6 +6,7 @@ import urllib.parse as parse
 
 from .card import Card
 
+
 class ScryFall:
     """
     A very barebone wrapper around the scryfall api.
@@ -36,7 +37,8 @@ class ScryFall:
         for card in result:
             # If we have an exact match and it's not a DFC or a flip card, return just one
             if card.name.lower() == name and (
-                    ("all_parts" not in card) and (card.object != "card_face")):
+                    ("all_parts" not in card) and
+                    (card.object != "card_face")):
                 return [card]
 
         return result

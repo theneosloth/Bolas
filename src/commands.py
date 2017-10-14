@@ -96,7 +96,7 @@ class CommandGit(CommandPlugin):
     def func(self, parent, message):
         return "{0}\n{1}\n```{2}```".format(
             "https://gitlab.com/neosloth/bolas",
-            "https://github.com/superstepa/bolas",
+            "https://theneosloth.github.io/Bolas/",
             check_output("git log --oneline -3", shell=True).decode("utf-8"))
 
 
@@ -108,7 +108,6 @@ class CommandStats(CommandPlugin):
 
     def func(self, parent, message):
         num_servers = len(parent.servers)
-        #parents.server.members
         num_users = sum([len(server.members) for server in parent.servers])
         return "Fetching cards for {} servers and {} users".format(
             num_servers,
