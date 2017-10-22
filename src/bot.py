@@ -22,7 +22,7 @@ class Bolas(discord.Client):
         self.commands = CommandPlugin.plugins
         self.chat_hook = HookPlugin.plugins
 
-        self.admins = []
+        self.admins = ["120767447681728512"]
 
         self.HELP_COMMAND = "!help"
         self.QUIT_COMMAND = "!quit"
@@ -67,12 +67,14 @@ class Bolas(discord.Client):
                 return
 
             if (command == self.QUIT_COMMAND and user.id in self.admins):
-                await self.close()
+                await self.logout()
 
             for cmd in self.commands:
                 if (cmd.command == command):
-                    await self.say(str(cmd.func(self, message)),
-                                   message.channel)
+                    result = cmd.func(self, message)
+                    # Some commands don't need to print a message
+                    if (result is not None):
+                        await self.say(str(result), message.channel)
                     # Don't run the chat hook if we found a command
                     return
 

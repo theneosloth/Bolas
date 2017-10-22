@@ -3,7 +3,7 @@ import os.path
 
 from .plugin_mount import PluginMount
 
-from random import choice
+from random import choice, random
 from subprocess import check_output
 
 
@@ -62,7 +62,8 @@ class CommandAddMe(CommandPlugin):
                           "The link to add Bolas to your Discord server."
 
     def func(self, parent, message):
-        return "https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0"
+        return "https://discordapp.com/oauth2/authorize?"\
+            "client_id=245372541915365377&scope=bot&permissions=0"
 
 
 class CommandCoin(CommandPlugin):
@@ -104,7 +105,8 @@ class CommandStats(CommandPlugin):
 
     def __init__(self):
         self.command = "!stats"
-        self.helpstring = "!stats: Return the number of users and servers served."
+        self.helpstring = "!stats: " \
+                          " Return the number of users and servers served."
 
     def func(self, parent, message):
         num_servers = len(parent.servers)
@@ -149,7 +151,8 @@ class CommandCockatrice(CommandPlugin):
             return "Sorry, this server does not have a cockatrice role."
 
         if cockatrice_role in message.author.roles:
-            # The remove role method is a coroutine so we have to wrap it in an asyncio call
+            # The remove role method is a coroutine
+            # so we have to wrap it in an asyncio call
             asyncio.ensure_future(
                 parent.remove_roles(message.author, cockatrice_role)
             )
@@ -157,7 +160,7 @@ class CommandCockatrice(CommandPlugin):
                 message.author
             )
         else:
-            # The add role method is a coroutine so we have to wrap it in an asyncio call
+            # The add role method is a couroutine
             asyncio.ensure_future(
                 parent.add_roles(message.author, cockatrice_role)
             )
@@ -169,10 +172,13 @@ class CommandCockatrice(CommandPlugin):
 class CommandRule(CommandPlugin):
     def __init__(self):
         self.command = "!rule"
-        self.helpstring = "!rule {rule number or set of keywords.}: Cite a mtg rule."
+        self.helpstring = "!rule {rule number or set of keywords.}:"\
+                          " Cite a mtg rule."
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         # Move 1 directory up and into misc
-        self.FILE_NAME = os.path.realpath(os.path.join(self.ROOT_DIR, "../misc/MagicCompRules_20170707.txt"))
+        self.FILE_NAME = os.path.realpath(os.path.join(
+            self.ROOT_DIR, "../misc/MagicCompRules_20170707.txt"))
+
         self.RULE_LIMIT = 10
 
     def get_rule(self, args):
@@ -185,19 +191,26 @@ class CommandRule(CommandPlugin):
 
         try:
             with open(self.FILE_NAME, "r", encoding="utf-8") as f:
-                # Using enumerate so the file is read sequentially and is not stored in memory
+                # Using enumerate so the file is read sequentially
+                # and is not stored in memory
                 for i, line in enumerate(f):
                     if (line.startswith(str(num))):
                         return line
-                    # Append the rule number if all the words are in that substring.
+                    # Append the rule number if all the words are in
+                    # that rule.
                     # Only check the lines that start with a number.
                     # Also check if we've gone over our rule count
-                    if (line[0].isdigit() and all(word.lower() in line.lower() for word in tokens) and rule_count < self.RULE_LIMIT):
+                    if (line[0].isdigit() and all(
+                            word.lower() in line.lower() for word in tokens
+                    ) and (rule_count < self.RULE_LIMIT)):
+
                         result = "{}* {}\n".format(result, line.split(" ")[0])
                         rule_count += 1
 
             if rule_count >= self.RULE_LIMIT:
-                result += "The query returned too many results, so some of the results were omitted. Please provide more keywords to narrow the search down."
+                result += "The query returned too many results, " \
+                          " so some of the results were omitted. " \
+                          "Please provide more keywords to narrow the search."
 
             return result or "Could not find the matching rule."
         except FileNotFoundError:
@@ -209,5 +222,36 @@ class CommandRule(CommandPlugin):
             # Surround the result with markdown code tags (for nice bullets)
             return "```markdown\n{}```".format(self.get_rule(args))
         else:
-            return "Please provide a rule number or a set of keywords."\
-                " See the full list of rules here: http://magic.wizards.com/en/game-info/gameplay/rules-and-formats/rules"
+            return "Please provide a rule number or a set of keywords." \
+                "See the full list of rules here: http://magic.wizards.com" \
+                "/en/game-info/gameplay/rules-and-formats/rules"
+
+
+class CommandVideo(CommandPlugin):
+
+    def __init__(self):
+        self.command = "!appearin"
+        self.helpstring = "!appearin:"\
+                          " Create a new videocall with everyone mentioned."
+
+    def func(self, parent, message):
+        # Random 10 digit number
+        call_id = str(random())[2:12]
+        url = "https://appear.in/{}?widescreen".format(call_id)
+
+        # Simply send out the url if no one was mentioned
+        if (not len(message.mentions)):
+            return url
+
+        invite_message = "{} is inviting you to a videocall.\n{}".format(
+            message.author.name,
+            url
+        )
+
+        for mention in message.mentions:
+            asyncio.ensure_future(
+                parent.send_message(mention, invite_message)
+            )
+
+        # No message is returned to the chat
+        return None
