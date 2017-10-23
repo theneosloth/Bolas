@@ -248,12 +248,12 @@ class CommandVideo(CommandPlugin):
             url
         )
 
-        parent.send_message(message.author, invite_message)
+        asyncio.ensure_future(
+            parent.send_message(message.author, invite_message))
 
         for mention in message.mentions:
             asyncio.ensure_future(
-                parent.send_message(mention, invite_message)
-            )
+                parent.send_message(mention, invite_message))
 
         # No message is returned to the chat
         return None
