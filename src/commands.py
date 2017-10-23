@@ -248,6 +248,8 @@ class CommandVideo(CommandPlugin):
             url
         )
 
+        parent.send_message(message.author, invite_message)
+
         for mention in message.mentions:
             asyncio.ensure_future(
                 parent.send_message(mention, invite_message)
