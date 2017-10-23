@@ -230,8 +230,8 @@ class CommandRule(CommandPlugin):
 class CommandVideo(CommandPlugin):
 
     def __init__(self):
-        self.command = "!appearin"
-        self.helpstring = "!appearin:"\
+        self.command = "!videocall"
+        self.helpstring = "!videocall:"\
                           " Create a new videocall with everyone mentioned."
 
     def func(self, parent, message):
