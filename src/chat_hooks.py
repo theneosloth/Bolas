@@ -46,6 +46,7 @@ class CardFetcher(HookPlugin):
         [[Card Name]] to get a card.
         The fetcher supports the scryfall/magiccards.info syntax, so a query like [[t:goblin t:instant]] will return a goblin instant (tarfire)
         !image to get its image
+        !art to get the full art
         !flavor to get its flavor text
         !price to get its price in usd
         !tix to get its price in tix
