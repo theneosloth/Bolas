@@ -230,8 +230,8 @@ class CommandRule(CommandPlugin):
 class CommandVideo(CommandPlugin):
 
     def __init__(self):
-        self.command = "!appearin"
-        self.helpstring = "!appearin:"\
+        self.command = "!videocall"
+        self.helpstring = "!videocall:"\
                           " Create a new videocall with everyone mentioned."
 
     def func(self, parent, message):
@@ -248,10 +248,12 @@ class CommandVideo(CommandPlugin):
             url
         )
 
+        asyncio.ensure_future(
+            parent.send_message(message.author, invite_message))
+
         for mention in message.mentions:
             asyncio.ensure_future(
-                parent.send_message(mention, invite_message)
-            )
+                parent.send_message(mention, invite_message))
 
         # No message is returned to the chat
         return None

@@ -175,7 +175,10 @@ class ChannelCleaner(HookPlugin):
         self.whitelist = {
             #EDH Discord server. Remove all non link posts from #decklists
             "144547963484635137":(["decklists"], re.compile(".*http(s)*:\/\/.*")),
+            "304276578005942272":(["decklists"], re.compile(".*http(s)*:\/\/.*")),
+            #Dragon's server
             "334571063197302784 ":(["decklists"], re.compile(".*http(s)*:\/\/.*")),
+            #My personal server
             "189194499333947392":(["shhh"], re.compile(".*http(s)*:\/\/.*"))
         }
         self.helpstring = ""
