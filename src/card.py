@@ -1,7 +1,16 @@
 class Card(dict):
     """
     A wrapper around a Scryfall json card object.
+    It's just a dict with a custom __str__ method
     """
+
+    def __init__(self, *args, **kwargs):
+        # Superclass constructor
+        dict.__init__( self, *args, **kwargs )
+
+        # Setting up custom fields
+        if "image_uris" in self:
+            self.__setattr__("image", self.image_uris["normal"])
 
     def __getattr__(self, name):
         """
@@ -9,10 +18,7 @@ class Card(dict):
         and instead returns the stored json values as class fields.
         """
         if name in self:
-            if (isinstance(self[name], dict)):
-                return self._format_dict(self[name])
-            else:
-                return str(self[name])
+            return self[name]
         else:
             return ""
 
@@ -28,7 +34,6 @@ class Card(dict):
     def __str__(self):
         """
         Returns the string representation of a magic card.
-        The ** is the Discord way to bolden the text
         """
         # Power/toughness, seen only if it's a creature
         pt = ""
@@ -50,14 +55,3 @@ class Card(dict):
                                                            pt,
                                                            self.oracle_text,
                                                            flavor)
-
-    def _format_dict(self, dict):
-        """
-        Converts a dict into a readable, discord compatible string.
-        """
-
-        result = ""
-        for k, v in dict.items():
-            result += "\n{0}: {1}".format(k.capitalize(), v)
-
-        return result

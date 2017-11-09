@@ -28,7 +28,7 @@ class CardFetcher(HookPlugin):
         self.MAX_CARDS = 9
         self.MAX_CARDS_BEFORE_LIST = 5
         self.DETAILS_COMMAND = "!card"
-        self.COMMAND_SHORTCUTS = {"!image": "image_uri",
+        self.COMMAND_SHORTCUTS = {"!image": "image",
                                   "!flavor": "flavor_text",
                                   "!price": "usd",
                                   "!tix": "tix",
@@ -63,6 +63,19 @@ class CardFetcher(HookPlugin):
 
         """
 
+
+    def _format_dict(self, dict):
+        """
+        Converts a dict into a readable string.
+        """
+
+        result = ""
+        for k, v in dict.items():
+            result += "\n{0}: {1}".format(k.capitalize(), v)
+
+        return result
+
+
     def get_details(self, attr, server_id):
         """
         Returns a string containing the requested card attribute
@@ -72,18 +85,26 @@ class CardFetcher(HookPlugin):
         else:
             try:
                 # Return the attribute if it exists on the card
-                if attr and attr in self._cards[server_id]:
+                card = self.sc.search_card(self._cards[server_id])[0]
+                if (attr and attr in card) or (attr == "image"):
+
+                    card_attr = card.__getattr__(attr)
+                    if isinstance(card_attr, dict):
+                        card_attr = self._format_dict(card_attr)
+                    else:
+                        card_attr = str(card_attr)
+
                     return "{0} -- {1}".format(
-                        self._cards[server_id].__getattr__(attr),
-                        self._cards[server_id].name
+                        card_attr,
+                        card.name
                     )
                 elif attr.strip() == "":
                     return "**{0} (Details): **"\
                         "\nArtist:{1},\nPrinting:{2},\nRarity: {3}\n".format(
-                            self._cards[server_id].name,
-                            self._cards[server_id].artist,
-                            self._cards[server_id].set_name,
-                            self._cards[server_id].rarity.capitalize())
+                            card.name,
+                            card.artist,
+                            card.set_name,
+                            card.rarity.capitalize())
                 else:
                     return "No such attribute."
             except AttributeError:
@@ -114,7 +135,8 @@ class CardFetcher(HookPlugin):
             try:
                 cards = self.sc.search_card(match)
             # TODO: Proper Exception handling
-            except Exception:
+            except Exception as e:
+                print(e)
                 return "Scryfall appears to be down. No cards can be found."
 
             if len(cards) == 0:
@@ -133,7 +155,7 @@ class CardFetcher(HookPlugin):
 
         if (len(result)) > 0:
             # Store the last card found
-            self._cards[server_id] = result[0]
+            self._cards[server_id] = result[0].name
 
         # If the message starts with !card return the attribute requested
         if msg.startswith(self.DETAILS_COMMAND):
