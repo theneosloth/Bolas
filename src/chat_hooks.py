@@ -29,6 +29,7 @@ class CardFetcher(HookPlugin):
         self.MAX_CARDS_BEFORE_LIST = 5
         self.DETAILS_COMMAND = "!card"
         self.COMMAND_SHORTCUTS = {"!image": "image",
+                                  "!art": "art_crop",
                                   "!flavor": "flavor_text",
                                   "!price": "usd",
                                   "!tix": "tix",

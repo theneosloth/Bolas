@@ -11,6 +11,7 @@ class Card(dict):
         # Setting up custom fields
         if "image_uris" in self:
             self.__setattr__("image", self.image_uris["normal"])
+            self.__setattr__("art_crop", self.image_uris["art_crop"])
 
     def __getattr__(self, name):
         """
