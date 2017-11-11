@@ -142,7 +142,7 @@ class CardFetcher(HookPlugin):
                 return "Scryfall appears to be down. No cards can be found."
 
             if len(cards) == 0:
-                result.append("**{0}** not found.\n\n".format(match))
+                return "**{0}** not found.\n\n".format(match)
             elif len(cards) < self.MAX_CARDS_BEFORE_LIST:
                 result += cards
             elif len(cards) < self.MAX_CARDS:
