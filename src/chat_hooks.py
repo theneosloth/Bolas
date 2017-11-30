@@ -7,7 +7,6 @@ from .plugin_mount import PluginMount
 
 from .scryfall import ScryFall
 
-
 class HookPlugin(metaclass=PluginMount):
     """
     """
@@ -65,7 +64,6 @@ class CardFetcher(HookPlugin):
 
         """
 
-
     def _format_dict(self, dict):
         """
         Converts a dict into a readable string.
@@ -76,7 +74,6 @@ class CardFetcher(HookPlugin):
             result += "\n{0}: {1}".format(k.capitalize(), v)
 
         return result
-
 
     def get_details(self, attr, server_id):
         """
@@ -137,8 +134,9 @@ class CardFetcher(HookPlugin):
             try:
                 cards = self.sc.search_card(match)
             # TODO: Proper Exception handling
-            except Exception as e:
-                print(e)
+            except Exception:
+                import traceback
+                print(traceback.format_exc())
                 return "Scryfall appears to be down. No cards can be found."
 
             if len(cards) == 0:
@@ -155,7 +153,7 @@ class CardFetcher(HookPlugin):
                 url = "https://scryfall.com/search?q={}".format(quote(match))
                 return "Too many matches. Try being more specific. You can see the full list of matched cards here: {}".format(url)
 
-        if (len(result)) > 0:
+        if len(result) > 0:
             # Store the last card found
             self._cards[server_id] = result[0].name
 
@@ -175,24 +173,24 @@ class CardFetcher(HookPlugin):
 class ChannelCleaner(HookPlugin):
     def __init__(self):
         self.whitelist = {
-            #EDH Discord server. Remove all non link posts from #decklists
-            "144547963484635137":(["decklists"], re.compile(".*http(s)*:\/\/.*")),
-            #PlayEDH
-            "304276578005942272":(["decklists"], re.compile(".*http(s)*:\/\/.*")),
-            #Dragon's server
-            "334571063197302784 ":(["decklists"], re.compile(".*http(s)*:\/\/.*")),
-            #My personal server
-            "189194499333947392":(["shhh"], re.compile(".*http(s)*:\/\/.*"))
+            # EDH Discord server. Remove all non link posts from #decklists
+            "144547963484635137": (["decklists"], re.compile(".*http(s)*:\/\/.*")),
+            # PlayEDH
+            "304276578005942272": (["decklists"], re.compile(".*http(s)*:\/\/.*")),
+            # Dragon's server
+            "334571063197302784 ": (["decklists"], re.compile(".*http(s)*:\/\/.*")),
+            # My personal server
+            "189194499333947392": (["shhh"], re.compile(".*http(s)*:\/\/.*"))
         }
         self.helpstring = ""
 
     def func(self, parent, message):
 
-        #Terminate execution when in PMs
-        if (message.server is None):
+        # Terminate execution when in PMs
+        if message.server is None:
             return
 
-        # Stop the function if the channel is not checked or if the channel doesnt exist
+        # Stop the function if the channel is not checked or if the channel doesn't exist
         if (message.server.id not in self.whitelist) or (
                 (message.channel is None) or (message.channel.name not in self.whitelist[message.server.id][0])):
             return

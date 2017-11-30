@@ -6,12 +6,15 @@ class Card(dict):
 
     def __init__(self, *args, **kwargs):
         # Superclass constructor
-        dict.__init__( self, *args, **kwargs )
+        dict.__init__(self, *args, **kwargs)
 
         # Setting up custom fields
         if "image_uris" in self:
             self.__setattr__("image", self.image_uris["normal"])
-            self.__setattr__("art_crop", self.image_uris["art_crop"])
+            try:
+                self.__setattr__("art_crop", self.image_uris["art_crop"])
+            except KeyError:
+                pass
 
     def __getattr__(self, name):
         """
@@ -20,8 +23,8 @@ class Card(dict):
         """
         if name in self:
             return self[name]
-        else:
-            return ""
+
+        return ""
 
     def __setattr__(self, name, value):
         self[name] = value
