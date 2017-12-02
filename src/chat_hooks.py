@@ -158,7 +158,7 @@ class CardFetcher(HookPlugin):
 
         if len(result) > 0:
             # Store the last card found
-            self._cards[server_id] = result[0].name
+            self._cards[server_id] = "{} not:online include:extras".format(result[0].name)
 
         # If the message starts with !card return the attribute requested
         if msg.startswith(self.DETAILS_COMMAND):
