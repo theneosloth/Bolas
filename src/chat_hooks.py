@@ -127,6 +127,9 @@ class CardFetcher(HookPlugin):
             # Make sure we prioritize paper cards
             match += " not:online"
 
+            #Thanks Sheldon
+            match += " include:extras"
+
             # lil meme
             if ("KANYE" in match.upper()):
                 return str(self.sc.search_card("Teferi, Temporal Archmage")[0])
