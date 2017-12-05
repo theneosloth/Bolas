@@ -1,5 +1,9 @@
+import logging
+import logging.handlers
+
 import discord
 import asyncio
+
 
 from .commands import CommandPlugin
 from .chat_hooks import HookPlugin
@@ -35,16 +39,26 @@ class Bolas(discord.Client):
                                            HookPlugin.plugins))
         )
 
+
+        self.logger = logging.getLogger('discord')
+        self.logger.setLevel(logging.INFO)
+        handler = logging.handlers.RotatingFileHandler(filename='discord.log', encoding='utf-8',
+                                                       mode='w', backupCount=1, maxBytes=1000000)
+        handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+        self.logger.addHandler(handler)
+
+
+
     async def say(self, message, channel):
         """ Wrapper for send_typing and send_message """
 
         if (len(message) > self.MESSAGE_MAX_LEN):
-            print("Splitting into two messages.")
+            self.logger.info("Splitting into two messages.")
             await self.say(message[:self.MESSAGE_MAX_LEN], channel)
             await self.say(message[self.MESSAGE_MAX_LEN:], channel)
             return
 
-        print("Saying: {0}".format(message).encode("ascii", "ignore"))
+        self.logger.info("Saying: {0}".format(message).encode("ascii", "ignore"))
         await self.send_typing(channel)
         await self.send_message(channel, message)
 
@@ -58,7 +72,7 @@ class Bolas(discord.Client):
             # The first word is the command.
             command = text.split(" ")[0]
 
-            print("{0} sent: {1}".format(user, text).
+            self.logger.info("{0} sent: {1}".format(user, text).
                   encode("ascii", "ignore"))
 
             if (command == self.HELP_COMMAND):
@@ -72,7 +86,7 @@ class Bolas(discord.Client):
             for cmd in self.commands:
                 if (cmd.command == command):
                     result = cmd.func(self, message)
-                    # Some commands don't need to print a message
+                    # Some commands don't need to self.logger.info a message
                     if (result is not None):
                         await self.say(str(result), message.channel)
                     # Don't run the chat hook if we found a command
@@ -89,7 +103,7 @@ class Bolas(discord.Client):
 
     async def on_ready(self):
         """Overloaded Method"""
-        print("Logged in as {0}".format(self.user.name))
+        self.logger.info("Logged in as {0}".format(self.user.name))
 
         formats = ["Vintage", "Pauper", "EDH", "Legacy"]
         await self.change_presence(game=discord.Game(

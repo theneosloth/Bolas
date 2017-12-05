@@ -1,3 +1,5 @@
+import logging
+
 from src import bot
 
 token = ""
