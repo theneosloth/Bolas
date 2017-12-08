@@ -117,12 +117,12 @@ class CommandStats(CommandPlugin):
         )
 
 
-class CommandCockatrice(CommandPlugin):
+class CommandLfg(CommandPlugin):
 
     def __init__(self):
-        self.command = "!cockatrice"
-        self.helpstring = "!cockatrice: Add yourself to the cockatrice role."
-        self.role_name = "Cockatrice"
+        self.command = "!lfg"
+        self.helpstring = "!lfg: Add yourself to the cockatrice role."
+        self.role_name = "LFG"
 
     def func(self, parent, message):
 
@@ -139,32 +139,32 @@ class CommandCockatrice(CommandPlugin):
         if not sufficient_permissions:
             return "I do not have sufficient permissions to set roles."
 
-        cockatrice_role = None
+        lfg_role = None
 
         # Find the appropriate role object
         for role in message.server.roles:
             if role.name == self.role_name:
-                cockatrice_role = role
+                lfg_role = role
 
         # Can't do anything if the role doesn't exist
-        if cockatrice_role is None:
-            return "Sorry, this server does not have a cockatrice role."
+        if lfg_role is None:
+            return "Sorry, this server does not have a LFG role."
 
-        if cockatrice_role in message.author.roles:
+        if lfg_role in message.author.roles:
             # The remove role method is a coroutine
             # so we have to wrap it in an asyncio call
             asyncio.ensure_future(
-                parent.remove_roles(message.author, cockatrice_role)
+                parent.remove_roles(message.author, lfg_role)
             )
-            return "Removed {0.name} from the Cockatrice role.".format(
+            return "Removed {0.name} from the LFG role.".format(
                 message.author
             )
         else:
             # The add role method is a couroutine
             asyncio.ensure_future(
-                parent.add_roles(message.author, cockatrice_role)
+                parent.add_roles(message.author, lfg_role)
             )
-            return "Added {0.name} to the Cockatrice role.".format(
+            return "Added {0.name} to the LFG role.".format(
                 message.author
             )
 
