@@ -1,11 +1,12 @@
 import asyncio
 import os.path
+import sqlite3
 
-from .plugin_mount import PluginMount
-
+from datetime import date, timedelta
 from random import choice, random
 from subprocess import check_output
 
+from .plugin_mount import PluginMount
 
 class CommandPlugin(metaclass=PluginMount):
     """
@@ -13,7 +14,7 @@ class CommandPlugin(metaclass=PluginMount):
     Every command must contain a command string property and a func function
     """
 
-    def func(self):
+    def func(self, parent, message):
         raise NotImplementedError("Please implement this method.")
 
     def __init__(self):
@@ -159,15 +160,13 @@ class CommandLfg(CommandPlugin):
             return "Removed {0.name} from the LFG role.".format(
                 message.author
             )
-        else:
-            # The add role method is a couroutine
-            asyncio.ensure_future(
-                parent.add_roles(message.author, lfg_role)
-            )
-            return "Added {0.name} to the LFG role.".format(
-                message.author
-            )
 
+        asyncio.ensure_future(
+            parent.add_roles(message.author, lfg_role)
+        )
+        return "Added {0.name} to the LFG role.".format(
+            message.author
+        )
 
 class CommandRule(CommandPlugin):
     def __init__(self):
@@ -240,7 +239,7 @@ class CommandVideo(CommandPlugin):
         url = "https://appear.in/{}?widescreen".format(call_id)
 
         # Simply send out the url if no one was mentioned
-        if (not len(message.mentions)):
+        if not message.mentions:
             return url
 
         invite_message = "{} is inviting you to a videocall.\n{}".format(
@@ -256,4 +255,52 @@ class CommandVideo(CommandPlugin):
                 parent.send_message(mention, invite_message))
 
         # No message is returned to the chat
+        return None
+
+
+class CommandConfirm(CommandPlugin):
+
+    def __init__(self):
+        self.command = "!match"
+        self.helpstring = "!match:"\
+                          " Store the results of a match"
+
+        # Move 1 directory up and into misc
+        self.file_name = os.path.realpath(os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "../misc/entries.db"))
+
+        self.server_id = "304276578005942272"
+
+
+
+    def func(self, parent, message):
+        # No message is returned to the chat
+        # Only works on PlayEDH
+        if not message.mentions or message.server.id != self.server_id:
+            return None
+
+        message.mentions.append(message.author)
+
+        result = "You have successfully entered the giveaway. You can enter again in 24 hours."
+
+        db = sqlite3.connect(self.file_name)
+        cursor = db.cursor()
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS entries(id TEXT KEY, name TEXT, day DATE, unique(id, day))
+        ''')
+
+        today = date.today() + timedelta(days=1)
+        entries = [(u.id, u.name, today) for u in message.mentions]
+        try:
+            cursor.executemany(''' INSERT INTO entries(id, name, day) VALUES(?,?,?)''', entries)
+        # Name and date have to be unique
+        except sqlite3.IntegrityError:
+            result = "You have already entered today"
+
+        db.commit()
+        db.close()
+
+        asyncio.ensure_future(
+            parent.send_message(message.author, result))
+
         return None
