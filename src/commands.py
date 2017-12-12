@@ -280,7 +280,7 @@ class CommandConfirm(CommandPlugin):
     def func(self, parent, message):
         # No message is returned to the chat
         # Only works on PlayEDH
-        if not message.mentions or message.server.id != self.server_id:
+        if not message.mentions or not message.server or message.server.id != self.server_id:
             return None
 
         message.mentions.append(message.author)
