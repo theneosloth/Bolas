@@ -34,7 +34,11 @@ class CommandObey(CommandPlugin):
             # neosloth
             "120767447681728512": "I obey.",
             # Average Dragon
-            "182268688559374336": "Eat a dick, dragon."
+            "182268688559374336": "Eat a dick, dragon.",
+            # Garta
+            "217005730149040128": "Welcome, Srammiest Man",
+            # spitefiremase
+            "165971889351688192": "Mase, you're cooler and smarter and stronger and funnier in real life"
         }
 
     def func(self, parent, message):
@@ -122,7 +126,7 @@ class CommandLfg(CommandPlugin):
 
     def __init__(self):
         self.command = "!lfg"
-        self.helpstring = "!lfg: Add yourself to the cockatrice role."
+        self.helpstring = "!lfg: Add yourself to the LFG role."
         self.role_name = "LFG"
 
     def func(self, parent, message):
@@ -138,7 +142,7 @@ class CommandLfg(CommandPlugin):
             client_member).manage_roles
 
         if not sufficient_permissions:
-            return "I do not have sufficient permissions to set roles."
+            return None
 
         lfg_role = None
 
@@ -292,7 +296,7 @@ class CommandConfirm(CommandPlugin):
         today = date.today() + timedelta(days=1)
         entries = [(u.id, u.name, today) for u in message.mentions]
         try:
-            cursor.executemany(''' INSERT INTO entries(id, name, day) VALUES(?,?,?)''', entries)
+            cursor.executemany('''INSERT INTO entries(id, name, day) VALUES(?,?,?)''', entries)
         # Name and date have to be unique
         except sqlite3.IntegrityError:
             result = "You have already entered today"
