@@ -285,7 +285,7 @@ class CommandConfirm(CommandPlugin):
 
         message.mentions.append(message.author)
 
-        result = "You have successfully entered the giveaway. You can enter again in 24 hours."
+        result = "Your daily giveaway entry has been received."
 
         db = sqlite3.connect(self.file_name)
         cursor = db.cursor()
@@ -293,13 +293,15 @@ class CommandConfirm(CommandPlugin):
         CREATE TABLE IF NOT EXISTS entries(id TEXT KEY, name TEXT, day DATE, unique(id, day))
         ''')
 
+        # Forgot to remove the timedelta clause when debugging so now
+        # this has to stick for the whole giveaway
         today = date.today() + timedelta(days=1)
         entries = [(u.id, u.name, today) for u in message.mentions]
         try:
             cursor.executemany('''INSERT INTO entries(id, name, day) VALUES(?,?,?)''', entries)
         # Name and date have to be unique
         except sqlite3.IntegrityError:
-            result = "You have already entered today"
+            result = "You have already entered today. Daily entries reset at midnight GMT"
 
         db.commit()
         db.close()
