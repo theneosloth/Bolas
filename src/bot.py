@@ -58,7 +58,7 @@ class Bolas(discord.Client):
             await self.say(message[self.MESSAGE_MAX_LEN:], channel)
             return
 
-        self.logger.info("Saying: {0}".format(message).encode("ascii", "ignore"))
+        #self.logger.info("Saying: {0}".format(message).encode("ascii", "ignore"))
         await self.send_typing(channel)
         await self.send_message(channel, message)
 
@@ -72,8 +72,8 @@ class Bolas(discord.Client):
             # The first word is the command.
             command = text.split(" ")[0]
 
-            self.logger.info("{0} sent: {1}".format(user, text).
-                  encode("ascii", "ignore"))
+            #self.logger.info("{0} sent: {1}".format(user, text).
+            #      encode("ascii", "ignore"))
 
             if (command == self.HELP_COMMAND):
                 await self.say(self.docstring,
