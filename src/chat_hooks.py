@@ -122,6 +122,10 @@ class CardFetcher(HookPlugin):
         attr = msg.split(" ")[1] if len(msg.split(" ")) > 1 else " "
 
         result = []
+
+        if len(re.findall(self.pattern, msg)) > self.MAX_CARDS_BEFORE_LIST:
+            return "Too many queries in one message."
+
         for match in re.findall(self.pattern, msg):
 
             # Make sure we prioritize paper cards
