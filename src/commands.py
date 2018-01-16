@@ -260,3 +260,35 @@ class CommandVideo(CommandPlugin):
 
         # No message is returned to the chat
         return None
+
+
+class CommandJitsi(CommandPlugin):
+
+    def __init__(self):
+        self.command = "!jitsi"
+        self.helpstring = "!jitsi:"\
+                          " Create a new videocall with everyone mentioned."
+
+    def func(self, parent, message):
+        # Random 10 digit number
+        call_id = str(random())[2:12]
+        url = "https://meet.jit.si/{}".format(call_id)
+
+        # Simply send out the url if no one was mentioned
+        if not message.mentions:
+            return url
+
+        invite_message = "{} is inviting you to a videocall.\n{}".format(
+            message.author.name,
+            url
+        )
+
+        asyncio.ensure_future(
+            parent.send_message(message.author, invite_message))
+
+        for mention in message.mentions:
+            asyncio.ensure_future(
+                parent.send_message(mention, invite_message))
+
+        # No message is returned to the chat
+        return None
