@@ -59,7 +59,6 @@ class Bolas(discord.Client):
             return
 
         #self.logger.info("Saying: {0}".format(message).encode("ascii", "ignore"))
-        await self.send_typing(channel)
         await self.send_message(channel, message)
 
     async def on_message(self, message):
