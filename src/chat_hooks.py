@@ -7,6 +7,7 @@ from .plugin_mount import PluginMount
 
 from .scryfall import ScryFall
 
+
 class HookPlugin(metaclass=PluginMount):
     """
     """
@@ -38,6 +39,13 @@ class CardFetcher(HookPlugin):
                                   "!legality": "legalities",
                                   "!reserved": "reserved"
                                   }
+        self.CARD_SHORTCUTS ={"sad robot" : "Solemn Simulacrum",
+                              "bob": "Dark Confidant",
+                              "steve": "Sakura-Tribe Elder",
+                              "scooze": "Scavenging Ooze",
+                              "gary": "Gray Merchant of Asphodel"
+
+        }
         self.helpstring = """
 
         Card Fetcher documentation:
@@ -128,15 +136,13 @@ class CardFetcher(HookPlugin):
 
         for match in re.findall(self.pattern, msg):
 
+            if (match.lower() in self.CARD_SHORTCUTS):
+                match = self.CARD_SHORTCUTS[match.lower()]
             # Make sure we prioritize paper cards
             match += " not:online"
 
             #Thanks Sheldon
             match += " include:extras"
-
-            # lil meme
-            if ("KANYE" in match.upper()):
-                return str(self.sc.search_card("Teferi, Temporal Archmage")[0])
 
             try:
                 cards = self.sc.search_card(match)
@@ -147,7 +153,7 @@ class CardFetcher(HookPlugin):
                 return "Scryfall appears to be down. No cards can be found."
 
             if len(cards) == 0:
-                return "**{0}** not found.\n\n".format(match)
+                return "No cards found."
             elif len(cards) < self.MAX_CARDS_BEFORE_LIST:
                 result += cards
             elif len(cards) < self.MAX_CARDS:
@@ -185,9 +191,7 @@ class ChannelCleaner(HookPlugin):
             # PlayEDH
             "304276578005942272": (["decklists"], re.compile(".*http(s)*:\/\/.*")),
             # Dragon's server
-            "334571063197302784 ": (["decklists"], re.compile(".*http(s)*:\/\/.*")),
-            # My personal server
-            "189194499333947392": (["shhh"], re.compile(".*http(s)*:\/\/.*"))
+            "334571063197302784 ": (["decklists"], re.compile(".*http(s)*:\/\/.*"))
         }
         self.helpstring = ""
 
