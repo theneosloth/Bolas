@@ -39,11 +39,15 @@ class CardFetcher(HookPlugin):
                                   "!legality": "legalities",
                                   "!reserved": "reserved"
                                   }
-        self.CARD_SHORTCUTS ={"sad robot" : "Solemn Simulacrum",
+        self.CARD_NICKNAMES ={"sad robot" : "Solemn Simulacrum",
                               "bob": "Dark Confidant",
                               "steve": "Sakura-Tribe Elder",
                               "scooze": "Scavenging Ooze",
-                              "gary": "Gray Merchant of Asphodel"
+                              "gary": "Gray Merchant of Asphodel",
+                              "tim": "Prodigal Sorcerer",
+                              "prime time": "Primeval Titan",
+                              "skittles": "Skithiryx, the Blight Dragon"
+
 
         }
         self.helpstring = """
@@ -136,8 +140,10 @@ class CardFetcher(HookPlugin):
 
         for match in re.findall(self.pattern, msg):
 
-            if (match.lower() in self.CARD_SHORTCUTS):
-                match = self.CARD_SHORTCUTS[match.lower()]
+            # Replace nicknames with the real card name
+            if (match.lower() in self.CARD_NICKNAMES):
+                match = self.CARD_NICKNAMES[match.lower()]
+
             # Make sure we prioritize paper cards
             match += " not:online"
 
