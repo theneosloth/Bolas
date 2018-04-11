@@ -52,14 +52,12 @@ class Bolas(discord.Client):
     async def say(self, message, channel):
         """ Wrapper for send_typing and send_message """
 
-        if (len(message) > self.MESSAGE_MAX_LEN):
-            self.logger.info("Splitting into two messages.")
-            await self.say(message[:self.MESSAGE_MAX_LEN], channel)
-            await self.say(message[self.MESSAGE_MAX_LEN:], channel)
-            return
+        #self.logger.info("Saying: #{0}".format(message).encode("ascii", "ignore"))
 
-        #self.logger.info("Saying: {0}".format(message).encode("ascii", "ignore"))
-        await self.send_message(channel, message)
+        try:
+            await self.send_message(channel, message)
+        except discord.errors.HTTPException:
+            self.logger.error("Insufficient permissions for " + channel.id)
 
     async def on_message(self, message):
         """Overloaded Method"""
