@@ -155,7 +155,6 @@ class CardFetcher(HookPlugin):
 
             try:
                 cards = self.sc.search_card(match)
-                print(cards)
             # TODO: Proper Exception handling
             except Exception:
                 import traceback
