@@ -134,6 +134,7 @@ class CardFetcher(HookPlugin):
         attr = msg.split(" ")[1] if len(msg.split(" ")) > 1 else " "
 
         result = []
+        last_match = ""
 
         if len(re.findall(self.pattern, msg)) > self.MAX_CARDS_BEFORE_LIST:
             return "Too many queries in one message."
@@ -145,22 +146,23 @@ class CardFetcher(HookPlugin):
                 match = self.CARD_NICKNAMES[match.lower()]
 
             # Make sure we prioritize paper cards
-            match += " not:online"
+            #match += " not:online"
 
             #Thanks Sheldon
             match += " include:extras"
+            # Store the last match for attribute commands
+            last_match = match
 
             try:
                 cards = self.sc.search_card(match)
+                print(cards)
             # TODO: Proper Exception handling
             except Exception:
                 import traceback
                 print(traceback.format_exc())
                 return "Scryfall appears to be down. No cards can be found."
 
-            if len(cards) == 0:
-                return "No cards found."
-            elif len(cards) < self.MAX_CARDS_BEFORE_LIST:
+            if len(cards) < self.MAX_CARDS_BEFORE_LIST:
                 result += cards
             elif len(cards) < self.MAX_CARDS:
                 # Return titles and mana costs if there are too many results to
@@ -174,7 +176,7 @@ class CardFetcher(HookPlugin):
 
         if len(result) > 0:
             # Store the last card found
-            self._cards[server_id] = "{} not:online include:extras".format(result[0].name)
+            self._cards[server_id] = last_match
 
         # If the message starts with !card return the attribute requested
         if msg.startswith(self.DETAILS_COMMAND):
