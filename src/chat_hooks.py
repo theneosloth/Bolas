@@ -151,7 +151,6 @@ class CardFetcher(HookPlugin):
             #Thanks Sheldon
             match += " include:extras"
             # Store the last match for attribute commands
-            last_match = match
 
             try:
                 cards = self.sc.search_card(match)
@@ -161,8 +160,11 @@ class CardFetcher(HookPlugin):
                 print(traceback.format_exc())
                 return "Scryfall appears to be down. No cards can be found."
 
-            if len(cards) < self.MAX_CARDS_BEFORE_LIST:
+            if len(cards) == 0:
+                result.append("Card not found.")
+            elif len(cards) < self.MAX_CARDS_BEFORE_LIST:
                 result += cards
+                last_match = match
             elif len(cards) < self.MAX_CARDS:
                 # Return titles and mana costs if there are too many results to
                 # display details
@@ -173,7 +175,7 @@ class CardFetcher(HookPlugin):
                 url = "https://scryfall.com/search?q={}".format(quote(match))
                 return "Too many matches. Try being more specific. You can see the full list of matched cards here: {}".format(url)
 
-        if len(result) > 0:
+        if len(result) > 0 and last_match:
             # Store the last card found
             self._cards[server_id] = last_match
 
