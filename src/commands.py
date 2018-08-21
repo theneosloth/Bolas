@@ -37,7 +37,9 @@ class CommandObey(CommandPlugin):
             # Garta
             "217005730149040128": "Welcome, Srammiest Man",
             # spitefiremase
-            "165971889351688192": "Mase, you're cooler and smarter and stronger and funnier in real life"
+            "165971889351688192": "Mase, you're cooler and smarter and stronger and funnier in real life",
+            # Shaper
+            "115501385679634439": "Shaped shape shaping shapes~"
         }
 
     def func(self, parent, message):
