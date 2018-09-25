@@ -150,8 +150,6 @@ class CardFetcher(HookPlugin):
             # Make sure we prioritize paper cards
             #match += " not:online"
 
-            #Thanks Sheldon
-            match += " include:extras"
             # Store the last match for attribute commands
 
             try:
