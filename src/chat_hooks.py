@@ -22,7 +22,9 @@ class HookPlugin(metaclass=PluginMount):
 class CardFetcher(HookPlugin):
 
     def __init__(self):
-        self.pattern = re.compile("\[\[([^\]]+)\]\]")
+        #Captures text between [[ and ]] that contains one or more instances of
+        #either a non-] character or ] followed by a non-] character.
+        self.pattern = re.compile("\[\[((?:[^\]]|\][^\]])+)\]\]")
         self.sc = ScryFall()
         self._cards = {}
         self.MAX_CARDS = 9
