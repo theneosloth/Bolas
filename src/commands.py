@@ -182,7 +182,7 @@ class CommandRule(CommandPlugin):
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         # Move 1 directory up and into misc
         self.FILE_NAME = os.path.realpath(os.path.join(
-            self.ROOT_DIR, "../misc/MagicCompRules_20170707.txt"))
+            self.ROOT_DIR, "../misc/MagicCompRules_20181005.txt"))
 
         self.RULE_LIMIT = 10
 
