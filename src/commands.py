@@ -320,9 +320,11 @@ class CommandDiff(CommandPlugin):
 
         self.re_stripangle = re.compile(r"^<(.*)>$")
         # Gets count and card name from decklist line
-        self.re_line = re.compile(r"^(?P<count>[0-9]*)x?\s+(?P<name>.*)$")
+        self.re_line = re.compile(
+                r"^\s*(?:(?P<sb>SB:)\s)?\s*"
+                r"(?P<count>[0-9]+)x?\s+(?P<name>.*)\s*$")
         # Lines to skip when reading decklists
-        self.re_skip = re.compile(r"^(?:$|//|SB:\s)")
+        self.re_skip = re.compile(r"^(?:$|//)")
 
         # Dict of card names that should be replaced due to inconsistancy
         # AKA Wizards needs to errata Lim-Dûl's Vault already :(
@@ -365,9 +367,10 @@ class CommandDiff(CommandPlugin):
     def filter_name(self, name):
         return self.name_replacements.get(name, name)
 
-    # Parses decklist string into dict
+    # Parses decklist string into a tuple of dicts for main and sideboards
     def get_list(self, deck):
-        decklist = defaultdict(int)
+        mainboard = defaultdict(int)
+        sideboard = defaultdict(int)
         for line in deck.split("\n"):
             # Need to allow blank lines
             line = line.strip()
@@ -376,8 +379,12 @@ class CommandDiff(CommandPlugin):
             match = self.re_line.match(line)
             if not match:
                 raise CommandDiff.MessageError("Error parsing file.")
-            decklist[self.filter_name(match["name"])] += int(match["count"])
-        return decklist
+            if match["sb"]:
+                lst = sideboard
+            else:
+                lst = mainboard
+            lst[self.filter_name(match["name"])] += int(match["count"])
+        return (mainboard, sideboard)
 
     # Diffs two decklist dicts
     # Returns 4-tuple with count and card name columns for both lists
@@ -393,20 +400,19 @@ class CommandDiff(CommandPlugin):
                 diff[2].append(list_r[c] - list_l[c])
         return diff
 
-    # Takes a diff 4-tuple and returns the embed to send.
-    def format_diff_embed(self, diff):
+    # Takes a diff 4-tuple and adds it as fields on given embed.
+    def format_diff_embed(self, diff, name, embed):
         strdiff = (
                 ([str(i) for i in diff[0]], diff[1]),
                 ([str(i) for i in diff[2]], diff[3])
         )
-        result = discord.Embed()
         for num, lst in enumerate(strdiff, start=1):
-            col1_len = max(len(i) for i in lst[0])
-            formatstr = "{{:<{}}} {{}}".format(col1_len)
-            output = "\n".join(map(lambda x: formatstr.format(*x), zip(*lst)))
-            result.add_field(name="List {}".format(num), value=output,
-                    inline=True)
-        return result
+            output = "\n".join(map(lambda x: "{} {}".format(*x), zip(*lst)))
+            # Discord doesn't like empty fields
+            if output:
+                embed.add_field(name="{} {}".format(name, num), value=output,
+                        inline=True)
+        return embed
 
     def func(self, parent, message):
         try:
@@ -423,8 +429,13 @@ class CommandDiff(CommandPlugin):
             except urllib.error.URLError as e:
                 raise CommandDiff.MessageError("Failed to open url.")
 
-            diff = self.get_diff(decklists[0], decklists[1])
-            return self.format_diff_embed(diff)
+            maindiff = self.get_diff(decklists[0][0], decklists[1][0])
+            sidediff = self.get_diff(decklists[0][1], decklists[1][1])
+
+            result = discord.Embed()
+            self.format_diff_embed(maindiff, "Mainboard", result)
+            self.format_diff_embed(sidediff, "Sideboard", result)
+            return result
         except CommandDiff.MessageError as e:
             return e.message
 
