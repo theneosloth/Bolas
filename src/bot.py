@@ -49,13 +49,13 @@ class Bolas(discord.Client):
 
 
 
-    async def say(self, message, channel):
+    async def say(self, message, channel, embed=None):
         """ Wrapper for send_typing and send_message """
 
         #self.logger.info("Saying: #{0}".format(message).encode("ascii", "ignore"))
 
         try:
-            await self.send_message(channel, message)
+            await self.send_message(channel, message, embed=embed)
         except discord.errors.HTTPException:
             self.logger.error("Insufficient permissions for " + channel.id)
 
@@ -85,7 +85,10 @@ class Bolas(discord.Client):
                     result = cmd.func(self, message)
                     # Some commands don't need to self.logger.info a message
                     if (result is not None):
-                        await self.say(str(result), message.channel)
+                        if isinstance(result, discord.Embed):
+                            await self.say(None, message.channel, result)
+                        else:
+                            await self.say(str(result), message.channel)
                     # Don't run the chat hook if we found a command
                     return
 
