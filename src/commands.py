@@ -3,11 +3,11 @@ import os.path
 import re
 import urllib.request
 import urllib.error
+import discord
 
 from random import choice, random
 from subprocess import check_output
 from collections import defaultdict
-from itertools import zip_longest
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 
 from .plugin_mount import PluginMount
@@ -393,22 +393,20 @@ class CommandDiff(CommandPlugin):
                 diff[2].append(list_r[c] - list_l[c])
         return diff
 
-    # Takes a diff 4-tuple and returns the message to send.
-    def format_diff(self, diff):
+    # Takes a diff 4-tuple and returns the embed to send.
+    def format_diff_embed(self, diff):
         strdiff = (
-                [str(i) for i in diff[0]],
-                diff[1],
-                [str(i) for i in diff[2]],
-                diff[3]
+                ([str(i) for i in diff[0]], diff[1]),
+                ([str(i) for i in diff[2]], diff[3])
         )
-        lengths = tuple(map(lambda l: max(len(i) for i in l), strdiff))
-        columns = zip_longest(*strdiff, fillvalue="")
-        formatstr = "{{:<{}}} {{:<{}}}   {{:<{}}} {{:<{}}}\n".format(*lengths)
-        output = "```\n"
-        for c in columns:
-            output += formatstr.format(*c)
-        output += "```"
-        return output
+        result = discord.Embed()
+        for num, lst in enumerate(strdiff, start=1):
+            col1_len = max(len(i) for i in lst[0])
+            formatstr = "{{:<{}}} {{}}".format(col1_len)
+            output = "\n".join(map(lambda x: formatstr.format(*x), zip(*lst)))
+            result.add_field(name="List {}".format(num), value=output,
+                    inline=True)
+        return result
 
     def func(self, parent, message):
         try:
@@ -426,7 +424,7 @@ class CommandDiff(CommandPlugin):
                 raise CommandDiff.MessageError("Failed to open url.")
 
             diff = self.get_diff(decklists[0], decklists[1])
-            return self.format_diff(diff)
+            return self.format_diff_embed(diff)
         except CommandDiff.MessageError as e:
             return e.message
 
