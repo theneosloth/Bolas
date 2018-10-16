@@ -322,9 +322,10 @@ class CommandDiff(CommandPlugin):
         # Gets count and card name from decklist line
         self.re_line = re.compile(
                 r"^\s*(?:(?P<sb>SB:)\s)?\s*"
-                r"(?P<count>[0-9]+)x?\s+(?P<name>.*)\s*$")
+                r"(?P<count>[0-9]+)x?\s+(?P<name>.*?)\s*"
+                r"(?:<[^>]*>\s*)*(?:#.*)?$")
         # Lines to skip when reading decklists
-        self.re_skip = re.compile(r"^(?:$|//)")
+        self.re_skip = re.compile(r"^\s*(?:$|//)")
 
         # Dict of card names that should be replaced due to inconsistancy
         # AKA Wizards needs to errata Lim-Dûl's Vault already :(
@@ -372,8 +373,6 @@ class CommandDiff(CommandPlugin):
         mainboard = defaultdict(int)
         sideboard = defaultdict(int)
         for line in deck.split("\n"):
-            # Need to allow blank lines
-            line = line.strip()
             if self.re_skip.match(line):
                 continue
             match = self.re_line.match(line)
