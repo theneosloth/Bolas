@@ -107,8 +107,7 @@ class CommandGit(CommandPlugin):
         self.helpstring = "!git: Repo link and changelog."
 
     def func(self, parent, message):
-        return "{0}\n{1}\n```{2}```".format(
-            "https://gitlab.com/neosloth/bolas",
+        return "{}\n```{}```".format(
             "https://theneosloth.github.io/Bolas/",
             check_output("git log --oneline -3", shell=True).decode("utf-8"))
 
@@ -437,4 +436,3 @@ class CommandDiff(CommandPlugin):
             return result
         except CommandDiff.MessageError as e:
             return e.message
-
