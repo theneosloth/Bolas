@@ -61,7 +61,6 @@ class Card(dict):
 
     def format_embed(self):
         name, oracle = str(self).split("\n", 1)
-        name = name.strip("*")
         embed = Embed(title=name,
                       url=self["scryfall_uri"],
                       description=oracle,
