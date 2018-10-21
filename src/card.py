@@ -1,3 +1,6 @@
+from discord import Embed
+
+
 class Card(dict):
     """
     A wrapper around a Scryfall json card object.
@@ -34,6 +37,39 @@ class Card(dict):
             del self[name]
         else:
             raise AttributeError("No such attribute: " + name)
+
+    def get_hex_color(self):
+        "Returns the hex code of the color of the card"
+
+        hex_colors = {
+                "W": 0xffffff,
+                "U": 0x0080ff,
+                "B": 0x000000,
+                "R": 0xff0000,
+                "G": 0x008000,
+            }
+
+        if (len(self["colors"]) == 0):
+            # Gray for artifacts and lands
+            return 0xc0c0c0
+        elif (len(self["colors"]) == 1):
+            # Color of the card
+            return hex_colors[self["colors"][0]]
+        else:
+            # Gold for multicolor
+            return 0xffff00
+
+    def format_embed(self):
+        name, oracle = str(self).split("\n", 1)
+        embed = Embed(title=name,
+                      url=self["scryfall_uri"],
+                      description=oracle,
+                      color=self.get_hex_color())
+
+        if "image" in self:
+            embed.set_thumbnail(url=self["image"])
+
+        return embed
 
     def __str__(self):
         """

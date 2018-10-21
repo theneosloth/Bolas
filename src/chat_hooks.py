@@ -189,7 +189,7 @@ class CardFetcher(HookPlugin):
                 self.COMMAND_SHORTCUTS[command],
                 server_id)
 
-        return [str(x) for x in result]
+        return [x.format_embed() for x in result]
 
 
 class ChannelCleaner(HookPlugin):

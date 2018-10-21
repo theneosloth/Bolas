@@ -94,12 +94,16 @@ class Bolas(discord.Client):
 
             for plugin in self.chat_hook:
                 result = plugin.func(self, message)
+                if result is not None:
+                    if isinstance(result, list):
+                        for r in result:
+                            if (isinstance(r, discord.embeds.Embed)):
+                                await self.say(None, message.channel, r)
+                            else:
+                                await self.say(str(r), message.channel)
+                    else:
+                        await self.say(str(result), message.channel)
 
-                if result and isinstance(result, str):
-                    await self.say(result, message.channel)
-                elif result and isinstance(result, list):
-                    for r in result:
-                        await self.say(r, message.channel)
 
     async def on_ready(self):
         """Overloaded Method"""
