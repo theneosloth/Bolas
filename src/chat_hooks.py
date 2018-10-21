@@ -6,7 +6,7 @@ from urllib.parse import quote
 from .plugin_mount import PluginMount
 
 from .scryfall import ScryFall
-
+from .card import Card
 
 class HookPlugin(metaclass=PluginMount):
     """
@@ -189,7 +189,7 @@ class CardFetcher(HookPlugin):
                 self.COMMAND_SHORTCUTS[command],
                 server_id)
 
-        return [x.format_embed() for x in result]
+        return [x.format_embed() if isinstance(x, Card) else x for x in result]
 
 
 class ChannelCleaner(HookPlugin):
