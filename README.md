@@ -1,4 +1,4 @@
-[https://theneosloth.github.io/Bolas/](neosloth.gitlab.io/Bolas)
+[https://theneosloth.github.io/Bolas/](https://theneosloth.github.io/Bolas)
 
 # Bolas
 
@@ -10,20 +10,26 @@ The core of the bot is located in bot.py, all simple commands such as !pingme sh
 
 The plugins are loaded through a metaclass called PluginMount. Every class derived from PluginMount will be automatically loaded and added to either the self.chat_hook or self.commands variables.
 
-The docstring for each one of the plugins are all concatenated together and can be displayed with the “!help” command.
+The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded “!help” command.
 
-## Example run file
-```python
-from src import bot
+## How to run
 
-token = ""
-# Assuming that the file just contains the token and nothing else
-with open("secret_token") as f:
-    token = f.read()
+Export BOLAS_SECRET_TOKEN. Execute run.py.
 
-bot = bot.Bolas(token)
-bot.run(bot.token)
+```sh
+#!/usr/bin/env bash
+export BOLASDIR=/home/bolas/bolas
+export $BOLAS_SECRET_TOKEN=THIS-IS-A-SECRET
+
+cd $BOLASDIR
+source $BOLASDIR/bin/activate
+pgrep -f run.py || python $BOLASDIR/run.py
+
 ```
+
+## Stats
+
+Fetching cards for 152 servers and 15122 users (9151 unique users) as of September 2018.
 
 ## Add Bolas to your Discord server
 
