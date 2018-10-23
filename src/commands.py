@@ -122,7 +122,9 @@ class CommandStats(CommandPlugin):
     def func(self, parent, message):
         num_servers = len(parent.servers)
         num_users = sum([len(server.members) for server in parent.servers])
-        unique_users = set([server.members for server in parent.servers][0])
+        unique_users = len(
+            set([server.members for server in parent.servers][0]))
+
         return "Fetching cards for {} servers and {} users ({} unique users)".format(
             num_servers,
             num_users,
