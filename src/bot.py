@@ -33,13 +33,6 @@ class Bolas(discord.Client):
 
         self.MESSAGE_MAX_LEN = 2000
 
-        # Concatenate the helpstrings from each one of the plugins
-        self.docstring = "```{0}\n\nYou can also PM me with your queries!```".format("\n\n".join(
-            x.helpstring.strip() for x in (CommandPlugin.plugins +
-                                           HookPlugin.plugins))
-        )
-
-
         self.logger = logging.getLogger('discord')
         self.logger.setLevel(logging.INFO)
         handler = logging.handlers.RotatingFileHandler(filename='discord.log', encoding='utf-8',
@@ -47,12 +40,23 @@ class Bolas(discord.Client):
         handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
         self.logger.addHandler(handler)
 
+    def generate_help_embed(self):
 
+        result = discord.Embed(title="Bolas Help",
+                               description="You can also PM me with your queries!")
+
+        for plugin in (CommandPlugin.plugins + HookPlugin.plugins):
+            result.add_field(name=plugin.name.strip(),
+                             value=plugin.helpstring.strip(),
+                             inline=False)
+        result.add_field(name="Donate",
+                         value="[Donate using Liberapay](https://liberapay.com/neosloth/donate)")
+        return result
 
     async def say(self, message, channel, embed=None):
         """ Wrapper for send_typing and send_message """
 
-        #self.logger.info("Saying: #{0}".format(message).encode("ascii", "ignore"))
+        # self.logger.info("Saying: #{0}".format(message).encode("ascii", "ignore"))
 
         try:
             await self.send_message(channel, message, embed=embed)
@@ -69,12 +73,13 @@ class Bolas(discord.Client):
             # The first word is the command.
             command = text.split(" ")[0]
 
-            #self.logger.info("{0} sent: {1}".format(user, text).
+            # self.logger.info("{0} sent: {1}".format(user, text).
             #      encode("ascii", "ignore"))
 
             if (command == self.HELP_COMMAND):
-                await self.say(self.docstring,
-                               message.channel)
+                await self.say(None,
+                               message.channel,
+                               self.generate_help_embed())
                 return
 
             if (command == self.QUIT_COMMAND and user.id in self.admins):
@@ -104,11 +109,6 @@ class Bolas(discord.Client):
                     else:
                         await self.say(str(result), message.channel)
 
-
     async def on_ready(self):
         """Overloaded Method"""
         self.logger.info("Logged in as {0}".format(self.user.name))
-
-        formats = ["Vintage", "Pauper", "EDH", "Legacy"]
-        await self.change_presence(game=discord.Game(
-            name="{0}".format(choice(formats))))

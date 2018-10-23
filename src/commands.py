@@ -27,13 +27,27 @@ class CommandPlugin(metaclass=PluginMount):
         raise NotImplementedError(
             "Please implement a command variable and a helpstring variable.")
 
+    @property
+    def helpstring(self):
+        return self._helpstring
+
+    @property
+    def command(self):
+        """Get the command"""
+        return self._command
+
+    @property
+    def name(self):
+        """Get the name of the plugin (in this case it is the command)"""
+        return self._command
+
 
 class CommandObey(CommandPlugin):
 
     def __init__(self):
-        self.command = "!obey"
+        self._command = "!obey"
 
-        self.helpstring = "!obey: " \
+        self._helpstring = "!obey: " \
                           "This only works if you are one of the chosen ones."
 
         self.obey_dict = {
@@ -59,8 +73,8 @@ class CommandObey(CommandPlugin):
 class CommandPing(CommandPlugin):
 
     def __init__(self):
-        self.command = "!pingme"
-        self.helpstring = "!pingme: Pings the message.author."
+        self._command = "!pingme"
+        self._helpstring = "!pingme: Pings the message.author."
 
     def func(self, parent, message):
         return message.author.mention
@@ -70,8 +84,8 @@ class CommandAddMe(CommandPlugin):
     """!addme: The link to add Bolas to your Discord room."""
 
     def __init__(self):
-        self.command = "!addme"
-        self.helpstring = "!addme: " \
+        self._command = "!addme"
+        self._helpstring = "!addme: " \
                           "The link to add Bolas to your Discord server."
 
     def func(self, parent, message):
@@ -82,8 +96,8 @@ class CommandAddMe(CommandPlugin):
 class CommandCoin(CommandPlugin):
 
     def __init__(self):
-        self.command = "!coin"
-        self.helpstring = "!coin: Flips a coin."
+        self._command = "!coin"
+        self._helpstring = "!coin: Flips a coin."
 
     def func(self, parent, message):
         return choice(["Heads", "Tails"])
@@ -92,8 +106,8 @@ class CommandCoin(CommandPlugin):
 class CommandChoice(CommandPlugin):
 
     def __init__(self):
-        self.command = "!choose"
-        self.helpstring = "!choose: Chooses an option. "\
+        self._command = "!choose"
+        self._helpstring = "!choose: Chooses an option. "\
                           "Example: !choose apples or oranges"
 
     def func(self, parent, message):
@@ -104,8 +118,8 @@ class CommandChoice(CommandPlugin):
 class CommandGit(CommandPlugin):
 
     def __init__(self):
-        self.command = "!git"
-        self.helpstring = "!git: Repo link and changelog."
+        self._command = "!git"
+        self._helpstring = "!git: Repo link and changelog."
 
     def func(self, parent, message):
         return "{}\n```{}```".format(
@@ -116,8 +130,8 @@ class CommandGit(CommandPlugin):
 class CommandStats(CommandPlugin):
 
     def __init__(self):
-        self.command = "!stats"
-        self.helpstring = "!stats: " \
+        self._command = "!stats"
+        self._helpstring = "!stats: " \
                           " Return the number of users and servers served."
 
     def func(self, parent, message):
@@ -134,8 +148,8 @@ class CommandStats(CommandPlugin):
 class CommandLfg(CommandPlugin):
 
     def __init__(self):
-        self.command = "!lfg"
-        self.helpstring = "!lfg: Add yourself to the LFG role."
+        self._command = "!lfg"
+        self._helpstring = "!lfg: Add yourself to the LFG role."
         self.role_name = "LFG"
 
     def func(self, parent, message):
@@ -184,8 +198,8 @@ class CommandLfg(CommandPlugin):
 
 class CommandRule(CommandPlugin):
     def __init__(self):
-        self.command = "!rule"
-        self.helpstring = "!rule {rule number or set of keywords.}:"\
+        self._command = "!rule"
+        self._helpstring = "!rule {rule number or set of keywords.}:"\
                           " Cite a mtg rule."
         self.ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         # Move 1 directory up and into misc
@@ -243,8 +257,8 @@ class CommandRule(CommandPlugin):
 class CommandAppearin(CommandPlugin):
 
     def __init__(self):
-        self.command = "!appearin"
-        self.helpstring = "!appearin:"\
+        self._command = "!appearin"
+        self._helpstring = "!appearin:"\
                           " Create a new appearin call with everyone mentioned."
 
     def func(self, parent, message):
@@ -275,8 +289,8 @@ class CommandAppearin(CommandPlugin):
 class CommandVideo(CommandPlugin):
 
     def __init__(self):
-        self.command = "!videocall"
-        self.helpstring = "!videocall:"\
+        self._command = "!videocall"
+        self._helpstring = "!videocall:"\
                           " Create a new videocall with everyone mentioned."
 
     def func(self, parent, message):
@@ -303,11 +317,12 @@ class CommandVideo(CommandPlugin):
         # No message is returned to the chat
         return None
 
+
 class CommandDiff(CommandPlugin):
 
     def __init__(self):
-        self.command = "!diff"
-        self.helpstring = "!diff:"\
+        self._command = "!diff"
+        self._helpstring = "!diff:"\
                           " Generates diff of two decklists."
 
         # Dict of valid url domains, and options for those domains
