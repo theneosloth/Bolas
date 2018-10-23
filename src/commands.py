@@ -5,7 +5,6 @@ import urllib.request
 import urllib.error
 import discord
 
-from itertools import chain
 from random import choice, random
 from subprocess import check_output
 from collections import defaultdict
