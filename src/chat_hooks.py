@@ -8,6 +8,7 @@ from .plugin_mount import PluginMount
 from .scryfall import ScryFall
 from .card import Card
 
+
 class HookPlugin(metaclass=PluginMount):
     """
     """
@@ -18,12 +19,20 @@ class HookPlugin(metaclass=PluginMount):
     def __init__(self):
         raise NotImplementedError("Please implement a command.")
 
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def helpstring(self):
+        return self._helpstring
+
 
 class CardFetcher(HookPlugin):
 
     def __init__(self):
-        #Captures text between [[ and ]] that contains one or more instances of
-        #either a non-] character or ] followed by a non-] character.
+        # Captures text between [[ and ]] that contains one or more instances of
+        # either a non-] character or ] followed by a non-] character.
         self.pattern = re.compile("\[\[((?:[^\]]|\][^\]])+)\]\]")
         self.sc = ScryFall()
         self._cards = {}
@@ -52,7 +61,10 @@ class CardFetcher(HookPlugin):
 
 
         }
-        self.helpstring = """
+
+        self._name = "Card Fetcher"
+
+        self._helpstring = """
 
         Card Fetcher documentation:
 
@@ -205,7 +217,9 @@ class ChannelCleaner(HookPlugin):
             # Teferi server
             "278284235125686272": (["decklists"], re.compile(".*http(s)*:\/\/.*"))
         }
-        self.helpstring = ""
+
+        self._name = "Channel Cleaner"
+        self._helpstring = "Set up on a per server basis"
 
     def func(self, parent, message):
 
