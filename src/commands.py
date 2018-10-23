@@ -5,6 +5,7 @@ import urllib.request
 import urllib.error
 import discord
 
+from itertools import chain
 from random import choice, random
 from subprocess import check_output
 from collections import defaultdict
@@ -120,15 +121,13 @@ class CommandStats(CommandPlugin):
                           " Return the number of users and servers served."
 
     def func(self, parent, message):
-        num_servers = len(parent.servers)
-        num_users = sum([len(server.members) for server in parent.servers])
-        unique_users = len(
-            set([server.members for server in parent.servers][0]))
+        users = list(chain.from_iterable(
+            [list(server.members) for server in parent.servers]))
 
         return "Fetching cards for {} servers and {} users ({} unique users)".format(
-            num_servers,
-            num_users,
-            unique_users
+            len(parent.servers),
+            len(users),
+            len(set(users))
         )
 
 
