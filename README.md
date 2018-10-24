@@ -23,7 +23,7 @@ export $BOLAS_SECRET_TOKEN=THIS-IS-A-SECRET
 
 cd $BOLASDIR
 source $BOLASDIR/bin/activate
-pgrep -f run.py || python $BOLASDIR/run.py
+pgrep -qf run.py || python $BOLASDIR/run.py
 
 ```
 
