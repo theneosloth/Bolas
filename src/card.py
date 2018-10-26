@@ -49,7 +49,7 @@ class Card(dict):
                 "G": 0x008000,
             }
 
-        if (len(self["colors"]) == 0):
+        if ("colors" not in self or len(self["colors"]) == 0):
             # Gray for artifacts and lands
             return 0xc0c0c0
         elif (len(self["colors"]) == 1):
@@ -61,14 +61,16 @@ class Card(dict):
 
     def format_embed(self):
         name, oracle = str(self).split("\n", 1)
+
         embed = Embed(title=name,
-                      url=self["scryfall_uri"],
+                      url=self["scryfall_uri"] if "scryfall_uri" in self else "",
                       description=oracle,
                       color=self.get_hex_color())
 
         if "image" in self:
             embed.set_thumbnail(url=self["image"])
 
+        print(embed)
         return embed
 
     def __str__(self):
