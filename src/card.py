@@ -70,7 +70,6 @@ class Card(dict):
         if "image" in self:
             embed.set_thumbnail(url=self["image"])
 
-        print(embed)
         return embed
 
     def __str__(self):
