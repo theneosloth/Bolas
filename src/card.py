@@ -62,7 +62,7 @@ class Card(dict):
     def format_embed(self):
         name, oracle = str(self).split("\n", 1)
 
-        embed = Embed(title=name.replace("*",""),
+        embed = Embed(title=name.replace("*", ""),
                       url=self["scryfall_uri"] if "scryfall_uri" in self else "",
                       description=oracle,
                       color=self.get_hex_color())

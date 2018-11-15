@@ -2,6 +2,7 @@ import re
 import asyncio
 
 from urllib.parse import quote
+from time import sleep
 
 from .plugin_mount import PluginMount
 
@@ -109,6 +110,7 @@ class CardFetcher(HookPlugin):
             return "Please find a card first."
         else:
             try:
+                sleep(0.1)
                 # Return the attribute if it exists on the card
                 card = self.sc.search_card(self._cards[server_id])[0]
                 if (attr and attr in card) or (attr == "image"):
