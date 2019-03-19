@@ -39,11 +39,11 @@ class Card(dict):
         "Returns the hex code of the color of the card"
 
         hex_colors = {
-                "W": 0xffffff,
-                "U": 0x0080ff,
-                "B": 0x000000,
-                "R": 0xff0000,
-                "G": 0x008000,
+                "W": 0xe8e4db,
+                "U": 0xc1d8e9,
+                "B": 0x201720,
+                "R": 0xF79D74,
+                "G": 0xC2D6BF,
             }
 
         if ("colors" not in self or len(self["colors"]) == 0):
@@ -54,7 +54,7 @@ class Card(dict):
             return hex_colors[self["colors"][0]]
         else:
             # Gold for multicolor
-            return 0xffff00
+            return 0xEDDC8A
 
     def format_embed(self):
         name, oracle = str(self).split("\n", 1)
