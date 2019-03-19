@@ -13,11 +13,8 @@ class Card(dict):
 
         # Setting up custom fields
         if "image_uris" in self:
-            self.__setattr__("image", self.image_uris["normal"])
-            try:
-                self.__setattr__("art_crop", self.image_uris["art_crop"])
-            except KeyError:
-                pass
+            for key in self.image_uris:
+                self.__setattr__("image_" + key, self.image_uris[key])
 
     def __getattr__(self, name):
         """
@@ -67,8 +64,8 @@ class Card(dict):
                       description=oracle,
                       color=self.get_hex_color())
 
-        if "image" in self:
-            embed.set_thumbnail(url=self["image"])
+        if "image_small" in self:
+            embed.set_thumbnail(url=self["image_small"])
 
         return embed
 
