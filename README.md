@@ -1,3 +1,6 @@
+![Stats](https://img.shields.io/badge/discord-177%20servers%2012271%20unique%20users-blue.svg)
+![Docker Pulls](https://img.shields.io/docker/pulls/neosloth/bolasbot.svg)
+
 [https://theneosloth.github.io/Bolas/](https://theneosloth.github.io/Bolas)
 
 # Bolas
@@ -17,34 +20,26 @@ The docstring for each one of the plugins are all concatenated together and can 
 Export BOLAS_SECRET_TOKEN. Execute run.py.
 
 ```sh
-#!/usr/bin/env bash
-export BOLASDIR=/home/bolas/bolas
 export $BOLAS_SECRET_TOKEN=THIS-IS-A-SECRET
-
-cd $BOLASDIR
-source $BOLASDIR/bin/activate
-pgrep -qf run.py || python $BOLASDIR/run.py
+python ./run.py
 
 ```
 
 ## Using docker
 
+
 ### Building the image
 
-``` shell
-$ docker build --tag=bolas .
+``` sh
+docker build --tag=bolasbot .
 ```
 
 ### Running Bolas
 
-``` shell
-$ docker run -e BOLAS_SECRET_TOKEN=THIS_IS_A_SECRET --name bolas --restart unless-stopped bolas
+``` sh
+docker run -e BOLAS_SECRET_TOKEN=THIS_IS_A_SECRET --name bolas --restart unless-stopped bolasbot
 
 ```
-
-## Stats
-
-Fetching cards for 152 servers and 15122 users (9151 unique users) as of September 2018.
 
 ## Add Bolas to your Discord server
 

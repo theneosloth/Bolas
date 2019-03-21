@@ -8,6 +8,6 @@ WORKDIR /bolas
 
 RUN pip install -r requirements.txt
 
-ENV NAME BOLAS_SECRET_TOKEN
+ENV BOLAS_SECRET_TOKEN
 
 CMD ["python", "./run.py"]
