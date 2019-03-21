@@ -40,8 +40,8 @@ class CardFetcher(HookPlugin):
         self.MAX_CARDS = 9
         self.MAX_CARDS_BEFORE_LIST = 5
         self.DETAILS_COMMAND = "!card"
-        self.COMMAND_SHORTCUTS = {"!image": "image",
-                                  "!art": "art_crop",
+        self.COMMAND_SHORTCUTS = {"!image": "image_normal",
+                                  "!art": "image_art_crop",
                                   "!flavor": "flavor_text",
                                   "!price": "usd",
                                   "!tix": "tix",
@@ -59,8 +59,6 @@ class CardFetcher(HookPlugin):
                               "tim": "Prodigal Sorcerer",
                               "prime time": "Primeval Titan",
                               "skittles": "Skithiryx, the Blight Dragon"
-
-
         }
 
         self._name = "Card Fetcher"
