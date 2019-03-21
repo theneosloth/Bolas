@@ -1,9 +1,11 @@
-![Stats](https://img.shields.io/badge/discord-177%20servers%2012271%20unique%20users-blue.svg)(https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)
-![Docker Pulls](https://img.shields.io/docker/pulls/neosloth/bolasbot.svg)(https://hub.docker.com/r/neosloth/bolasbot)
+[![Stats](https://img.shields.io/badge/discord-177%20servers%2012271%20unique%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)
+[![Docker Pulls](https://img.shields.io/docker/pulls/neosloth/bolasbot.svg)](https://hub.docker.com/r/neosloth/bolasbot)
+
+
+# Bolas
 
 [https://theneosloth.github.io/Bolas/](https://theneosloth.github.io/Bolas)
 
-# Bolas
 
 Bolas is a mtg card-fetcher discord bot that is heavily inspired by [yawgmoth](https://github.com/Lerker3/yawgmoth). I am using this project as a way to try out some new approaches to api wrappers and plugin systems, so the way some parts of the bot are implemented are a bit esoteric.
 
@@ -27,7 +29,7 @@ python ./run.py
 
 ## Using docker
 
-The arm64v8 and amd64 images are available at neosloth/bolasbot. For other architectures the image can be built using the included Dockerfile
+The arm64v8 and amd64 images are available at [neosloth/bolasbot](https://hub.docker.com/r/neosloth/bolasbot). For other architectures the image can be built using the included Dockerfile
 
 ### Building the image
 
