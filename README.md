@@ -1,5 +1,5 @@
-![Stats](https://img.shields.io/badge/discord-177%20servers%2012271%20unique%20users-blue.svg)
-![Docker Pulls](https://img.shields.io/docker/pulls/neosloth/bolasbot.svg)
+![Stats](https://img.shields.io/badge/discord-177%20servers%2012271%20unique%20users-blue.svg)(https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)
+![Docker Pulls](https://img.shields.io/docker/pulls/neosloth/bolasbot.svg)(https://hub.docker.com/r/neosloth/bolasbot)
 
 [https://theneosloth.github.io/Bolas/](https://theneosloth.github.io/Bolas)
 
@@ -27,6 +27,7 @@ python ./run.py
 
 ## Using docker
 
+The arm64v8 and amd64 images are available at neosloth/bolasbot. For other architectures the image can be built using the included Dockerfile
 
 ### Building the image
 

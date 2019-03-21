@@ -1,15 +1,9 @@
-import logging
-import logging.handlers
-
 import discord
 import asyncio
 
 
 from .commands import CommandPlugin
 from .chat_hooks import HookPlugin
-
-from random import choice
-
 
 class Bolas(discord.Client):
 
@@ -33,13 +27,6 @@ class Bolas(discord.Client):
 
         self.MESSAGE_MAX_LEN = 2000
 
-        self.logger = logging.getLogger('discord')
-        self.logger.setLevel(logging.INFO)
-        handler = logging.handlers.RotatingFileHandler(filename='discord.log', encoding='utf-8',
-                                                       mode='w', backupCount=1, maxBytes=1000000)
-        handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-        self.logger.addHandler(handler)
-
     def generate_help_embed(self):
 
         result = discord.Embed(title="Bolas Help",
@@ -56,12 +43,10 @@ class Bolas(discord.Client):
     async def say(self, message, channel, embed=None):
         """ Wrapper for send_typing and send_message """
 
-        # self.logger.info("Saying: #{0}".format(message).encode("ascii", "ignore"))
-
         try:
             await self.send_message(channel, message, embed=embed)
         except discord.errors.HTTPException:
-            self.logger.error("Insufficient permissions for " + channel.id)
+            print("Insufficient permissions for " + channel.id)
 
     async def on_message(self, message):
         """Overloaded Method"""
@@ -72,9 +57,6 @@ class Bolas(discord.Client):
 
             # The first word is the command.
             command = text.split(" ")[0]
-
-            # self.logger.info("{0} sent: {1}".format(user, text).
-            #      encode("ascii", "ignore"))
 
             if (command == self.HELP_COMMAND):
                 await self.say(None,
@@ -111,4 +93,4 @@ class Bolas(discord.Client):
 
     async def on_ready(self):
         """Overloaded Method"""
-        self.logger.info("Logged in as {0}".format(self.user.name))
+        print("Logged in as {0}".format(self.user.name))
