@@ -27,6 +27,21 @@ pgrep -qf run.py || python $BOLASDIR/run.py
 
 ```
 
+## Using docker
+
+### Building the image
+
+``` shell
+$ docker build --tag=bolas .
+```
+
+### Running Bolas
+
+``` shell
+$ docker run -e BOLAS_SECRET_TOKEN=THIS_IS_A_SECRET --name bolas --restart unless-stopped bolas
+
+```
+
 ## Stats
 
 Fetching cards for 152 servers and 15122 users (9151 unique users) as of September 2018.
