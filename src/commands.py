@@ -438,7 +438,8 @@ class CommandDiff(CommandPlugin):
                 raise CommandDiff.MessageError("Exactly two urls are needed.")
 
             try:
-                files = (urllib.request.urlopen(u)
+                # Should definitely split this into a few more lines
+                files = (urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent':'Mozilla/5.0'}))
                         .read().decode("utf-8", "replace")
                     for u in urls)
                 decklists = [self.get_list(f) for f in files]

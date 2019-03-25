@@ -22,7 +22,7 @@ The docstring for each one of the plugins are all concatenated together and can 
 Export BOLAS_SECRET_TOKEN. Execute run.py.
 
 ```sh
-export $BOLAS_SECRET_TOKEN=THIS-IS-A-SECRET
+export BOLAS_SECRET_TOKEN=THIS-IS-A-SECRET
 python ./run.py
 
 ```
