@@ -52,15 +52,15 @@ class CommandObey(CommandPlugin):
 
         self.obey_dict = {
             # neosloth
-            "120767447681728512": "I obey.",
+            120767447681728512: "I obey.",
             # Average Dragon
-            "182268688559374336": "Eat a dick, dragon.",
+            182268688559374336: "Eat a dick, dragon.",
             # Garta
-            "217005730149040128": "Welcome, Srammiest Man",
+            217005730149040128: "Welcome, Srammiest Man",
             # spitefiremase
-            "165971889351688192": "Mase, you're cooler and smarter and stronger and funnier in real life",
+            165971889351688192: "Mase, you're cooler and smarter and stronger and funnier in real life",
             # Shaper
-            "115501385679634439": "Shaped shape shaping shapes~"
+            115501385679634439: "Shaped shape shaping shapes~"
         }
 
     def func(self, parent, message):
@@ -68,17 +68,6 @@ class CommandObey(CommandPlugin):
             return self.obey_dict[message.author.id]
         else:
             return "I will not obey."
-
-
-class CommandPing(CommandPlugin):
-
-    def __init__(self):
-        self._command = "!pingme"
-        self._helpstring = "!pingme: Pings the message.author."
-
-    def func(self, parent, message):
-        return message.author.mention
-
 
 class CommandAddMe(CommandPlugin):
     """!addme: The link to add Bolas to your Discord room."""
@@ -136,10 +125,10 @@ class CommandStats(CommandPlugin):
 
     def func(self, parent, message):
         users = list(chain.from_iterable(
-            [list(server.members) for server in parent.servers]))
+            [list(server.members) for server in parent.guilds]))
 
         return "Fetching cards for {} servers and {} users ({} unique users)".format(
-            len(parent.servers),
+            len(parent.guilds),
             len(users),
             len(set(users))
         )
@@ -149,7 +138,7 @@ class CommandLfg(CommandPlugin):
 
     def __init__(self):
         self._command = "!lfg"
-        self._helpstring = "!lfg: Add yourself to the LFG role."
+        self._helpstring = "!lfg: Add yourself to the LFG role. UNTESTED IN THE NEW UPDATE"
         self.role_name = "LFG"
 
     def func(self, parent, message):
@@ -159,7 +148,7 @@ class CommandLfg(CommandPlugin):
 
         # The discord bot Client only stores the user,
         # so we have to manually get the Member object
-        client_member = message.server.get_member(parent.user.id)
+        client_member = message.guild.get_member(parent.user.id)
 
         sufficient_permissions = message.channel.permissions_for(
             client_member).manage_roles
@@ -170,7 +159,7 @@ class CommandLfg(CommandPlugin):
         lfg_role = None
 
         # Find the appropriate role object
-        for role in message.server.roles:
+        for role in message.guild.roles:
             if role.name == self.role_name:
                 lfg_role = role
 
@@ -253,37 +242,6 @@ class CommandRule(CommandPlugin):
                 "See the full list of rules here: http://magic.wizards.com" \
                 "/en/game-info/gameplay/rules-and-formats/rules"
 
-
-class CommandAppearin(CommandPlugin):
-
-    def __init__(self):
-        self._command = "!appearin"
-        self._helpstring = "!appearin:"\
-                          " Create a new appearin call with everyone mentioned."
-
-    def func(self, parent, message):
-        # Random 10 digit number
-        call_id = str(random())[2:12]
-        url = "https://appear.in/{}?widescreen".format(call_id)
-
-        # Simply send out the url if no one was mentioned
-        if not message.mentions:
-            return url
-
-        invite_message = "{} is inviting you to a call.\n{}".format(
-            message.author.name,
-            url
-        )
-
-        asyncio.ensure_future(
-            parent.send_message(message.author, invite_message))
-
-        for mention in message.mentions:
-            asyncio.ensure_future(
-                parent.send_message(mention, invite_message))
-
-        # No message is returned to the chat
-        return None
 
 
 class CommandVideo(CommandPlugin):
