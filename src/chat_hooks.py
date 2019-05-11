@@ -100,17 +100,17 @@ class CardFetcher(HookPlugin):
 
         return result
 
-    def get_details(self, attr, server_id):
+    def get_details(self, attr, guild_id):
         """
         Returns a string containing the requested card attribute
         """
-        if server_id not in self._cards:
+        if guild_id not in self._cards:
             return "Please find a card first."
         else:
             try:
                 sleep(0.1)
                 # Return the attribute if it exists on the card
-                card = self.sc.search_card(self._cards[server_id])[0]
+                card = self.sc.search_card(self._cards[guild_id])[0]
                 if (attr and attr in card) or (attr == "image"):
 
                     card_attr = card.__getattr__(attr)
@@ -139,10 +139,10 @@ class CardFetcher(HookPlugin):
         msg = message.content
 
         try:
-            server_id = message.server.id
+            guild_id = message.guild.id
         except AttributeError:
             # If this is a PM, store the card with the individual user id
-            server_id = message.author.id
+            guild_id = message.author.id
 
         command = msg.split(" ")[0]
         attr = msg.split(" ")[1] if len(msg.split(" ")) > 1 else " "
@@ -189,17 +189,17 @@ class CardFetcher(HookPlugin):
 
         if len(result) > 0 and last_match:
             # Store the last card found
-            self._cards[server_id] = last_match
+            self._cards[guild_id] = last_match
 
         # If the message starts with !card return the attribute requested
         if msg.startswith(self.DETAILS_COMMAND):
-            return self.get_details(attr, server_id)
+            return self.get_details(attr, guild_id)
 
         # Aliases
         elif command in self.COMMAND_SHORTCUTS:
             return self.get_details(
                 self.COMMAND_SHORTCUTS[command],
-                server_id)
+                guild_id)
 
         return [x.format_embed() if isinstance(x, Card) else x for x in result]
 
@@ -224,18 +224,18 @@ class ChannelCleaner(HookPlugin):
     def func(self, parent, message):
 
         # Terminate execution when in PMs
-        if message.server is None:
+        if message.guild is None:
             return
 
         # Stop the function if the channel is not checked or if the channel doesn't exist
-        if (message.server.id not in self.whitelist) or (
-                (message.channel is None) or (message.channel.name not in self.whitelist[message.server.id][0])):
+        if (message.guild.id not in self.whitelist) or (
+                (message.channel is None) or (message.channel.name not in self.whitelist[message.guild.id][0])):
             return
 
-        client_member = message.server.get_member(parent.user.id)
+        client_member = message.guild.get_member(parent.user.id)
         if not message.channel.permissions_for(client_member).manage_messages:
             return
 
-        if (self.whitelist[message.server.id][1].match(message.content)) is None:
+        if (self.whitelist[message.guild.id][1].match(message.content)) is None:
             asyncio.ensure_future(
                 parent.delete_message(message))

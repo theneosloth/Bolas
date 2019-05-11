@@ -44,7 +44,7 @@ class Bolas(discord.Client):
         """ Wrapper for send_typing and send_message """
 
         try:
-            await self.send_message(channel, message, embed=embed)
+            await channel.send(message, embed=embed)
         except discord.errors.HTTPException:
             print("Insufficient permissions for " + channel.id)
 
