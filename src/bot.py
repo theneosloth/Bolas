@@ -7,15 +7,13 @@ from .chat_hooks import HookPlugin
 
 class Bolas(discord.Client):
 
-    def __init__(self, token):
+    def __init__(self):
         """ Constructor for the  bot class.
 
         Args:
             token (str): the token for the discord bot.
         """
         super().__init__()
-
-        self.token = token
 
         self.commands = CommandPlugin.plugins
         self.chat_hook = HookPlugin.plugins

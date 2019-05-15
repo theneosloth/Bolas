@@ -134,56 +134,6 @@ class CommandStats(CommandPlugin):
         )
 
 
-class CommandLfg(CommandPlugin):
-
-    def __init__(self):
-        self._command = "!lfg"
-        self._helpstring = "!lfg: Add yourself to the LFG role. UNTESTED IN THE NEW UPDATE"
-        self.role_name = "LFG"
-
-    def func(self, parent, message):
-
-        if message.server is None:
-            return "Sorry, I can't set roles in PMs."
-
-        # The discord bot Client only stores the user,
-        # so we have to manually get the Member object
-        client_member = message.guild.get_member(parent.user.id)
-
-        sufficient_permissions = message.channel.permissions_for(
-            client_member).manage_roles
-
-        if not sufficient_permissions:
-            return None
-
-        lfg_role = None
-
-        # Find the appropriate role object
-        for role in message.guild.roles:
-            if role.name == self.role_name:
-                lfg_role = role
-
-        # Can't do anything if the role doesn't exist
-        if lfg_role is None:
-            return "Sorry, this server does not have a LFG role."
-
-        if lfg_role in message.author.roles:
-            # The remove role method is a coroutine
-            # so we have to wrap it in an asyncio call
-            asyncio.ensure_future(
-                parent.remove_roles(message.author, lfg_role)
-            )
-            return "Removed {0.name} from the LFG role.".format(
-                message.author
-            )
-
-        asyncio.ensure_future(
-            parent.add_roles(message.author, lfg_role)
-        )
-        return "Added {0.name} to the LFG role.".format(
-            message.author
-        )
-
 
 class CommandRule(CommandPlugin):
     def __init__(self):
