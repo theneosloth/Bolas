@@ -1,4 +1,4 @@
-[![Stats](https://img.shields.io/badge/discord-177%20servers%2012271%20unique%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)
+[![Stats](https://img.shields.io/badge/discord-207%20servers%2015420%20unique%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)
 [![Docker Pulls](https://img.shields.io/docker/pulls/neosloth/bolasbot.svg)](https://hub.docker.com/r/neosloth/bolasbot)
 
 

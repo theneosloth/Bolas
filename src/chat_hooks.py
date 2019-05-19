@@ -43,8 +43,7 @@ class CardFetcher(HookPlugin):
         self.COMMAND_SHORTCUTS = {"!image": "image_normal",
                                   "!art": "image_art_crop",
                                   "!flavor": "flavor_text",
-                                  "!price": "usd",
-                                  "!tix": "tix",
+                                  "!price": "price",
                                   "!details": "",
                                   "!scryfall": "scryfall_uri",
                                   "!buy": "purchase_uris",
@@ -111,7 +110,9 @@ class CardFetcher(HookPlugin):
                 sleep(0.1)
                 # Return the attribute if it exists on the card
                 card = self.sc.search_card(self._cards[guild_id])[0]
-                if (attr and attr in card) or (attr == "image"):
+                if attr == "price":
+                    return self.get_price_string(card)
+                elif (attr and attr in card) or (attr == "image"):
 
                     card_attr = card.__getattr__(attr)
                     if isinstance(card_attr, dict):
@@ -134,6 +135,14 @@ class CardFetcher(HookPlugin):
                     return "No such attribute."
             except AttributeError:
                 return "No such attribute."
+
+    def get_price_string(self, card):
+        "Return a formatted string of a card's price"
+        if "prices" in card:
+            return "{} usd \n{} tix".format(card["prices"]["usd"],
+                                      card["prices"]["tix"])
+        else:
+            return "Price not found."
 
     def func(self, parent, message):
         msg = message.content
