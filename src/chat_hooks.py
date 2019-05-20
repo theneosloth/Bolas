@@ -57,7 +57,8 @@ class CardFetcher(HookPlugin):
                               "gary": "Gray Merchant of Asphodel",
                               "tim": "Prodigal Sorcerer",
                               "prime time": "Primeval Titan",
-                              "skittles": "Skithiryx, the Blight Dragon"
+                              "skittles": "Skithiryx, the Blight Dragon",
+                              "GAAIV": "Grand Arbiter Augustin IV"
         }
 
         self._name = "Card Fetcher"
