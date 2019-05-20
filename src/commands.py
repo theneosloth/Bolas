@@ -61,6 +61,8 @@ class CommandObey(CommandPlugin):
             165971889351688192: "Mase, you're cooler and smarter and stronger and funnier in real life",
             # Shaper
             115501385679634439: "Shaped shape shaping shapes~"
+            # Braden
+            279686121149956096: "Braden is definitely lame."
         }
 
     def func(self, parent, message):
