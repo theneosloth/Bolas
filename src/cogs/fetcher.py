@@ -74,6 +74,9 @@ class Fetcher(commands.Cog):
 
     async def _post_card_attribute(self, ctx, cardname, attr):
         # Send a card attribute or the associated exception message
+        if not cardname:
+            await ctx.send("Please provide a card name after the command.")
+            return
         try:
             card = self.sc.card_named(cardname)
             # Any generic exception provided by scryfall
@@ -89,29 +92,33 @@ class Fetcher(commands.Cog):
 
 
     @commands.command()
-    async def art(self, ctx, *, arg):
+    async def art(self, ctx, *, arg=None):
         "Return the art of a given card."
         await self._post_card_attribute(ctx, arg, "image_art_crop")
 
 
     @commands.command()
-    async def image(self, ctx, *, arg):
+    async def image(self, ctx, *, arg=None):
         "Return the image of a given card."
         await self._post_card_attribute(ctx, arg, "image_normal")
 
     @commands.command()
-    async def flavor(self, ctx, *, arg):
+    async def flavor(self, ctx, *, arg=None):
         "Return the flavor text of a given card."
         await self._post_card_attribute(ctx, arg, "flavor_text")
 
     @commands.command()
-    async def reserved(self, ctx, *, arg):
+    async def reserved(self, ctx, *, arg=None):
         "Return whether the given card is reserved."
         await self._post_card_attribute(ctx, arg, "reserved")
 
     @commands.command()
-    async def price(self, ctx, *, arg):
+    async def price(self, ctx, *, arg=None):
         "Return the price of a given card"
+        if not arg:
+            await ctx.send("Please provide a card name after the command.")
+            return
+
         # Send a card attribute or the associated exception message
         try:
             card = self.sc.card_named(arg)
