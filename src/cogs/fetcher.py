@@ -39,23 +39,38 @@ class Fetcher(commands.Cog):
 
         msg = message.content
         channel = message.channel
+        cards = []
 
         for match in re.findall(self.pattern, msg):
+            # Convert card nicknames to their full names
             if match.lower() in self.CARD_NICKNAMES:
                 match = self.CARD_NICKNAMES[match.lower()]
 
+            if len(re.findall(self.pattern, msg)) > self.MAX_CARDS_BEFORE_LIST:
+                await channel.send("Too many queries in one message.")
+                return
+
             await asyncio.sleep(0.05)
+
+            # Try to get an exact match first
             try:
-                cards = self.sc.search_card(match, self.MAX_CARDS)
-            # In hindsight giving this an exception is dumb
-            except ScryFall.CardLimitException as e:
-                url = "https://scryfall.com/search?q={}".format(quote(match))
-                await channel.send(f"Too many matches. You can see the full list of matched cards here: {url}")
-                return
-            # Any generic exception provided by scryfall
-            except ScryFall.ScryfallException as e:
-                await channel.send(e.message)
-                return
+                cards = self.sc.search_card("!" + match, self.MAX_CARDS)
+            # If a match was not made for some reason just try again
+            except ScryFall.ScryfallException:
+                pass
+
+            if not cards:
+                try:
+                    cards = self.sc.search_card(match, self.MAX_CARDS)
+                    # In hindsight giving this an exception is dumb
+                except ScryFall.CardLimitException as e:
+                    url = "https://scryfall.com/search?q={}".format(quote(match))
+                    await channel.send(f"Too many matches. You can see the full list of matched cards here: {url}")
+                    return
+                # Any generic exception provided by scryfall
+                except ScryFall.ScryfallException as e:
+                     await channel.send(e.message)
+                     return
 
             card_count = len(cards)
             if not card_count:
