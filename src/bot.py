@@ -3,11 +3,11 @@ import asyncio
 
 from discord.ext import commands
 
-from .cogs.fetcher import Fetcher
-from .cogs.commands import Misc
-from .cogs.deckdiff import Diff
-from .cogs.rule import Rule
-from .cogs.discord_cleaner import Cleaner
+from cogs.fetcher import Fetcher
+from cogs.commands import Misc
+from cogs.deckdiff import Diff
+from cogs.rule import Rule
+from cogs.discord_cleaner import Cleaner
 
 class Bolas(commands.Bot):
 

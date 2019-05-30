@@ -4,7 +4,7 @@ import re
 from discord.ext import commands
 from urllib.parse import quote
 
-from ..lib.scryfall import ScryFall
+from lib.scryfall import ScryFall
 
 class Fetcher(commands.Cog):
     """
