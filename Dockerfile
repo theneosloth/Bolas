@@ -10,4 +10,4 @@ WORKDIR /bolas
 
 RUN pip install -r requirements.txt
 
-CMD ["python", "./src/run.py"]
+CMD ["python", "./run.py"]

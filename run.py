@@ -1,7 +1,7 @@
 import os
 import logging
 
-import bot
+from src import bot
 
 logging.basicConfig(level=logging.INFO)
 token = os.environ['BOLAS_SECRET_TOKEN']
