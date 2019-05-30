@@ -54,7 +54,7 @@ class Fetcher(commands.Cog):
                 return
             # Any generic exception provided by scryfall
             except ScryFall.ScryfallException as e:
-                await channel.send(e.message())
+                await channel.send(e.message)
                 return
 
             card_count = len(cards)
