@@ -35,6 +35,15 @@ class Card(dict):
         else:
             raise AttributeError("No such attribute: " + name)
 
+
+    def get_price_string(self):
+        "Return a formatted string of a card's price"
+        if "prices" in self:
+            return "{} usd \n{} tix".format(self["prices"]["usd"],
+                                      self["prices"]["tix"])
+        else:
+            return "Price not found."
+
     def get_hex_color(self):
         "Returns the hex code of the color of the card"
 
