@@ -51,12 +51,12 @@ class Fetcher(commands.Cog):
                 return
 
             await asyncio.sleep(0.05)
-
             # Try to get an exact match first
             try:
-                cards = self.sc.search_card("!" + match, self.MAX_CARDS)
+                # The
+                cards = self.sc.search_card(f"!'{match}'", self.MAX_CARDS)
             # If a match was not made for some reason just try again
-            except ScryFall.ScryfallException:
+            except ScryFall.ScryfallException as e:
                 pass
 
             if not cards:
@@ -66,11 +66,9 @@ class Fetcher(commands.Cog):
                 except ScryFall.CardLimitException as e:
                     url = "https://scryfall.com/search?q={}".format(quote(match))
                     await channel.send(f"Too many matches. You can see the full list of matched cards here: {url}")
-                    return
                 # Any generic exception provided by scryfall
                 except ScryFall.ScryfallException as e:
                      await channel.send(e.message)
-                     return
 
             card_count = len(cards)
             if not card_count:
