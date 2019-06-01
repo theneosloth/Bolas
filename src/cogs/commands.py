@@ -76,3 +76,6 @@ class Misc(commands.Cog):
 
         for mention in ctx.message.mentions:
             await mention.send(invite_message)
+
+def setup(bot):
+    bot.add_cog(Misc(bot))

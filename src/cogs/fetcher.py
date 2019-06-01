@@ -41,22 +41,28 @@ class Fetcher(commands.Cog):
         channel = message.channel
         cards = []
 
+        if len(re.findall(self.pattern, msg)) > self.MAX_CARDS_BEFORE_LIST:
+            await channel.send("Too many queries in one message.")
+            return
+
         for match in re.findall(self.pattern, msg):
+
+            if (len(match) < 3):
+                await channel.send("Query too short")
+                continue
+
             # Convert card nicknames to their full names
             if match.lower() in self.CARD_NICKNAMES:
                 match = self.CARD_NICKNAMES[match.lower()]
 
-            if len(re.findall(self.pattern, msg)) > self.MAX_CARDS_BEFORE_LIST:
-                await channel.send("Too many queries in one message.")
-                return
-
             await asyncio.sleep(0.05)
             # Try to get an exact match first
             try:
-                # The
+                # ! is the scryfall syntax for exact matches. The card
+                # name has to be quoted
                 cards = self.sc.search_card(f"!'{match}'", self.MAX_CARDS)
             # If a match was not made for some reason just try again
-            except ScryFall.ScryfallException as e:
+            except ScryFall.ScryfallException:
                 pass
 
             if not cards:
@@ -66,9 +72,11 @@ class Fetcher(commands.Cog):
                 except ScryFall.CardLimitException as e:
                     url = "https://scryfall.com/search?q={}".format(quote(match))
                     await channel.send(f"Too many matches. You can see the full list of matched cards here: {url}")
+                    continue
                 # Any generic exception provided by scryfall
                 except ScryFall.ScryfallException as e:
                      await channel.send(e.message)
+                     continue
 
             card_count = len(cards)
             if not card_count:
@@ -141,3 +149,7 @@ class Fetcher(commands.Cog):
             return
 
         await ctx.send(card.get_price_string())
+
+
+def setup(bot):
+    bot.add_cog(Fetcher(bot))

@@ -59,3 +59,7 @@ class Rule(commands.Cog):
             await ctx.send("Please provide a rule number or a set of keywords." \
                 "See the full list of rules here: http://magic.wizards.com" \
                 "/en/game-info/gameplay/rules-and-formats/rules")
+
+
+def setup(bot):
+    bot.add_cog(Rule(bot))

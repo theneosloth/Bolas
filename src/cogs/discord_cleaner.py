@@ -42,3 +42,6 @@ class Cleaner(commands.Cog):
 
         if (self.whitelist[message.guild.id][1].match(message.content)) is None:
             await message.delete()
+
+def setup(bot):
+    bot.add_cog(Cleaner(bot))

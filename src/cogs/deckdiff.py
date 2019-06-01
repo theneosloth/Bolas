@@ -144,3 +144,6 @@ class Diff(commands.Cog):
             await ctx.send(embed=result)
         except Diff.MessageError as e:
             return await(ctx.send(e.message))
+
+def setup(bot):
+    bot.add_cog(Diff(bot))
