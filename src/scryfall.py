@@ -49,6 +49,12 @@ class ScryFall:
 
         return json.loads(url.read().decode("utf-8", "replace"))
 
+
+    def get_card_rulings(self, cardid):
+        url = f"{self.API_URL}/cards/{cardid}/rulings"
+        rulings = self._load_url_as_json(url)
+        return rulings["data"]
+
     def card_named(self, name, exact=False):
         """Get a card named NAME"""
 
@@ -65,9 +71,6 @@ class ScryFall:
 
 
         return Card(result)
-
-
-
 
 
     def search_card(self, query, max_cards = None):

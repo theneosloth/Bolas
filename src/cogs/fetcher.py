@@ -1,6 +1,7 @@
 import asyncio
 import re
 
+from discord import Embed
 from discord.ext import commands
 from urllib.parse import quote
 
@@ -39,13 +40,14 @@ class Fetcher(commands.Cog):
 
         msg = message.content
         channel = message.channel
-        cards = []
 
         if len(re.findall(self.pattern, msg)) > self.MAX_CARDS_BEFORE_LIST:
             await channel.send("Too many queries in one message.")
             return
 
         for match in re.findall(self.pattern, msg):
+
+            cards = []
 
             if (len(match) < 3):
                 await channel.send("Query too short")
@@ -64,7 +66,6 @@ class Fetcher(commands.Cog):
             # If a match was not made for some reason just try again
             except ScryFall.ScryfallException:
                 pass
-
             if not cards:
                 try:
                     cards = self.sc.search_card(match, self.MAX_CARDS)
@@ -110,8 +111,6 @@ class Fetcher(commands.Cog):
         else:
             await ctx.send("Not found.")
 
-
-
     @commands.command()
     async def art(self, ctx, *, arg=None):
         "Return the art of a given card."
@@ -135,7 +134,7 @@ class Fetcher(commands.Cog):
 
     @commands.command()
     async def price(self, ctx, *, arg=None):
-        "Return the price of a given card"
+        "Return the price of a given card."
         if not arg:
             await ctx.send("Please provide a card name after the command.")
             return
@@ -149,6 +148,32 @@ class Fetcher(commands.Cog):
             return
 
         await ctx.send(card.get_price_string())
+
+    @commands.command()
+    async def rulings(self, ctx, *, arg=None):
+        "Show all the rulings for a given card."
+        if not arg:
+            await ctx.send("Please provide a card name after the command.")
+            return
+
+        try:
+            card = self.sc.card_named(arg)
+            rulings = self.sc.get_card_rulings(card.id)
+        except ScryFall.ScryfallException as e:
+            await ctx.send(e.message)
+            return
+
+        if not rulings:
+            await ctx.send("No rulings found")
+            return
+
+        # String where every line is a bold publish date followed by
+        # the comment
+        description = "\n\n".join(
+            [f'**{r["published_at"]}** {r["comment"]}' for r in rulings])
+
+        # This embed could definitely be prettier
+        await ctx.send(embed=Embed(title=card.name, description=description))
 
 
 def setup(bot):
