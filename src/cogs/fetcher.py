@@ -100,12 +100,17 @@ class Fetcher(commands.Cog):
             await ctx.send("Please provide a card name after the command.")
             return
         try:
-            card = self.sc.card_named(cardname)
+            cardname = cardname.strip("[]")
+            cards = self.sc.search_card(cardname, 1)
             # Any generic exception provided by scryfall
         except ScryFall.ScryfallException as e:
             await ctx.send(e.message)
             return
+        except ScryFall.CardLimitException:
+            await ctx.send("Only one card per command please.")
+            return
 
+        card = cards[0]
         if card and attr in card:
             await ctx.send(card[attr])
         else:
