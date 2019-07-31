@@ -18,7 +18,7 @@ class Diff(commands.Cog):
                 "query":[("export_dec", "1")]
             },
             "tappedout.net": {
-                "query":[("fmt", "dec")]
+                "query":[("fmt", "txt")]
             }
         }
 
