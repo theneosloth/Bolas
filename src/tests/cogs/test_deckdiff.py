@@ -68,3 +68,35 @@ class TestDiff(unittest.TestCase):
 
         # Then
         self.assertEqual(result.message, expected_message)
+
+
+class TestGetDiff(unittest.TestCase):
+    """ Tests for src.cogs.deckdiff.Diff.get_diff. """
+
+    def test_no_diff(self):
+        """ Test when data provided has no difference. """
+        # Given
+        bot = "a bot"
+        left = {"key1": 1}
+        right = {"key1": 1}
+        expected_result = ([], [], [], [])
+
+        # When
+        result = Diff(bot).get_diff(left, right)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_all_diff(self):
+        """ Test a scenario with all cases. """
+        # Given
+        bot = "a bot"
+        left = {"key1": 1, "key2": 1, "key3": 3}
+        right = {"key1": 1, "key2": 4, "key3": 1}
+        expected_result = ([2], ["key3"], [3], ["key2"])
+
+        # When
+        result = Diff(bot).get_diff(left, right)
+
+        # Then
+        self.assertEqual(result, expected_result)
