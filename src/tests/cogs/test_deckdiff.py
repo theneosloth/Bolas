@@ -140,3 +140,37 @@ class TestFormatDiffEmbed(unittest.TestCase):
         self.assertEqual(fields[0]["value"], "2 key3")
         self.assertEqual(fields[1]["inline"], True)
         self.assertEqual(fields[1]["value"], "3 key2")
+
+
+class TestFilterName(unittest.TestCase):
+    """ Tests for src.cogs.deckdiff.Diff.filter_name. """
+
+    def test_no_replacement(self):
+        """ Test when name is not replaced. """
+        # Given
+        bot = "a bot"
+        name = "ccc"
+        expected_result = name
+
+        # When
+        diff_obj = Diff(bot)
+        diff_obj.name_replacements = {"aaa": "bbb"}
+        result = diff_obj.filter_name(name)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_replacement(self):
+        """ Test when name is replaced. """
+        # Given
+        bot = "a bot"
+        name = "aaa"
+        expected_result = "bbb"
+
+        # When
+        diff_obj = Diff(bot)
+        diff_obj.name_replacements = {"aaa": expected_result}
+        result = diff_obj.filter_name(name)
+
+        # Then
+        self.assertEqual(result, expected_result)
