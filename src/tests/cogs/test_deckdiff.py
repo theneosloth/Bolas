@@ -174,3 +174,82 @@ class TestFilterName(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected_result)
+
+
+class TestGetList(unittest.TestCase):
+    """ Tests for src.cogs.deckdiff.Diff.get_list. """
+
+    def test_empty(self):
+        """ Test when no data available. """
+        # Given
+        bot = "a bot"
+        data = ""
+        expected_result = (defaultdict(int), defaultdict(int))
+
+        # When
+        result = Diff(bot).get_list(data)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_skip_all(self):
+        """ Test when no data matches regexp. """
+        # Given
+        bot = "a bot"
+        data = "\n\n\n\n\n\n"
+        expected_result = (defaultdict(int), defaultdict(int))
+
+        # When
+        result = Diff(bot).get_list(data)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_parsing_error(self):
+        """ Test when data has bad info. """
+        # Given
+        bot = "a bot"
+        data = "\n\nbad_data\n\nn"
+
+        # When/Then
+        with self.assertRaises(Diff.MessageError):
+            Diff(bot).get_list(data)
+
+    def test_only_sideboard(self):
+        """ Test when data has only sideboard information. """
+        # Given
+        bot = "a bot"
+        data = "\n//Sideboard:\n\nSB: 1 key1\n\n"
+        expected_result = (defaultdict(int), {"key1": 1})
+
+        # When
+        result = Diff(bot).get_list(data)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_only_mainboard(self):
+        """ Test when data has only mainboard information. """
+        # Given
+        bot = "a bot"
+        data = "\n\n1 key1\n\n"
+        expected_result = ({"key1": 1}, defaultdict(int))
+
+        # When
+        result = Diff(bot).get_list(data)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_mainboard_sideboard(self):
+        """ Test when data has both mainboard and sideboard information. """
+        # Given
+        bot = "a bot"
+        data = "\n\n1 key1\n\n//Sideboard:\n\nSB: 2 key2"
+        expected_result = ({"key1": 1}, {"key2": 2})
+
+        # When
+        result = Diff(bot).get_list(data)
+
+        # Then
+        self.assertEqual(result, expected_result)
