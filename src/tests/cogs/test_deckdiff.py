@@ -100,3 +100,43 @@ class TestGetDiff(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected_result)
+
+
+class TestFormatDiffEmbed(unittest.TestCase):
+    """ Tests for src.cogs.deckdiff.Diff.format_diff_embed. """
+
+    def test_empty(self):
+        """ Test when diff provided is empty. """
+        # Given
+        bot = "a bot"
+        name = "title for comparison"
+        diff = ([], [], [], [])
+        result = Embed()  # TODO don't pass result as a variable
+        expected_result = result
+
+        # When
+        Diff(bot).format_diff_embed(diff, name, result)
+
+        # Then
+        self.assertTrue("fields" not in result.to_dict())
+
+    def test_format(self):
+        """ Test when diff provided has data. """
+        # Given
+        bot = "a bot"
+        name = "title for comparison"
+        diff = ([2], ["key3"], [3], ["key2"])
+        result = Embed()  # TODO don't pass result as a variable
+        expected_field1 = result
+        expected_field1 = result
+
+        # When
+        Diff(bot).format_diff_embed(diff, name, result)
+        fields = result.to_dict()["fields"]
+
+        # Then
+        self.assertEqual(len(fields), 2)
+        self.assertEqual(fields[0]["inline"], True)
+        self.assertEqual(fields[0]["value"], "2 key3")
+        self.assertEqual(fields[1]["inline"], True)
+        self.assertEqual(fields[1]["value"], "3 key2")
