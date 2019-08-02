@@ -23,12 +23,10 @@ class TestDiff(unittest.TestCase):
         bot = "a bot"
         expected_angle_exp = "angle regexp"
         expected_line_exp = "line regexp"
-        expected_skip_exp = "skip regexp"
 
         re_mock.side_effect = [
             expected_angle_exp,
             expected_line_exp,
-            expected_skip_exp,
             ]
 
         # When
@@ -47,7 +45,6 @@ class TestDiff(unittest.TestCase):
             )
         self.assertEqual(obj.re_stripangle, expected_angle_exp)
         self.assertEqual(obj.re_line, expected_line_exp)
-        self.assertEqual(obj.re_skip, expected_skip_exp)
         self.assertEqual(len(obj.name_replacements), 1)
         re_mock.assert_has_calls([
             call(r"^<(.*)>$"),
@@ -55,7 +52,6 @@ class TestDiff(unittest.TestCase):
                 r"^\s*(?:(?P<sb>SB:)\s)?\s*"
                 r"(?P<count>[0-9]+)x?\s+(?P<name>.*?)\s*"
                 r"(?:<[^>]*>\s*)*(?:#.*)?$"),
-            call(r"^\s*(?:$|//)"),
             ])
 
     def test_message_error(self):
@@ -68,6 +64,7 @@ class TestDiff(unittest.TestCase):
 
         # Then
         self.assertEqual(result.message, expected_message)
+        expected_skip_exp = "skip regexp"
 
 
 class TestGetDiff(unittest.TestCase):
@@ -204,16 +201,6 @@ class TestGetList(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected_result)
-
-    def test_parsing_error(self):
-        """ Test when data has bad info. """
-        # Given
-        bot = "a bot"
-        data = "\n\nbad_data\n\nn"
-
-        # When/Then
-        with self.assertRaises(Diff.MessageError):
-            Diff(bot).get_list(data)
 
     def test_only_sideboard(self):
         """ Test when data has only sideboard information. """
