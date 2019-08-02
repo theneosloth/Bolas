@@ -28,8 +28,6 @@ class Diff(commands.Cog):
                 r"^\s*(?:(?P<sb>SB:)\s)?\s*"
                 r"(?P<count>[0-9]+)x?\s+(?P<name>.*?)\s*"
                 r"(?:<[^>]*>\s*)*(?:#.*)?$")
-        # Lines to skip when reading decklists
-        self.re_skip = re.compile(r"^\s*(?:$|//)")
 
         # Dict of card names that should be replaced due to inconsistancy
         # AKA Wizards needs to errata Lim-Dûl's Vault already :(
@@ -76,17 +74,14 @@ class Diff(commands.Cog):
     def get_list(self, deck):
         mainboard = defaultdict(int)
         sideboard = defaultdict(int)
+
+        lst = mainboard
         for line in deck.split("\n"):
-            if self.re_skip.match(line):
-                continue
             match = self.re_line.match(line)
-            if not match:
-                raise Diff.MessageError("Error parsing file.")
-            if match["sb"]:
+            if match:
+                lst[self.filter_name(match["name"])] += int(match["count"])
+            elif "Sideboard" in line:
                 lst = sideboard
-            else:
-                lst = mainboard
-            lst[self.filter_name(match["name"])] += int(match["count"])
         return (mainboard, sideboard)
 
     # Diffs two decklist dicts
