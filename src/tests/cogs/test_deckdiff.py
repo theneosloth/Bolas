@@ -15,12 +15,14 @@ from src.cogs.deckdiff import Diff
 
 class TestDiff(unittest.TestCase):
     """ Non method specific tests for src.cogs.deckdiff.Diff. """
+    def setUp(self):
+        """ Generic variables. """
+        self.bot = "a bot"
 
     @patch("src.cogs.deckdiff.re.compile")
     def test_init(self, re_mock):
         """ Test initial attributes. """
         # Given
-        bot = "a bot"
         expected_angle_exp = "angle regexp"
         expected_line_exp = "line regexp"
 
@@ -30,10 +32,10 @@ class TestDiff(unittest.TestCase):
             ]
 
         # When
-        obj = Diff(bot)
+        obj = Diff(self.bot)
 
         # Then
-        self.assertEqual(obj.bot, bot)
+        self.assertEqual(obj.bot, self.bot)
         self.assertEqual(len(obj.valid_urls), 2)
         self.assertEqual(
             obj.valid_urls["deckstats.net"]["query"],
@@ -69,17 +71,19 @@ class TestDiff(unittest.TestCase):
 
 class TestGetDiff(unittest.TestCase):
     """ Tests for src.cogs.deckdiff.Diff.get_diff. """
+    def setUp(self):
+        """ Generic variables. """
+        self.bot = "a bot"
 
     def test_no_diff(self):
         """ Test when data provided has no difference. """
         # Given
-        bot = "a bot"
         left = {"key1": 1}
         right = {"key1": 1}
         expected_result = ([], [], [], [])
 
         # When
-        result = Diff(bot).get_diff(left, right)
+        result = Diff(self.bot).get_diff(left, right)
 
         # Then
         self.assertEqual(result, expected_result)
@@ -87,13 +91,12 @@ class TestGetDiff(unittest.TestCase):
     def test_all_diff(self):
         """ Test a scenario with all cases. """
         # Given
-        bot = "a bot"
         left = {"key1": 1, "key2": 1, "key3": 3}
         right = {"key1": 1, "key2": 4, "key3": 1}
         expected_result = ([2], ["key3"], [3], ["key2"])
 
         # When
-        result = Diff(bot).get_diff(left, right)
+        result = Diff(self.bot).get_diff(left, right)
 
         # Then
         self.assertEqual(result, expected_result)
@@ -102,17 +105,20 @@ class TestGetDiff(unittest.TestCase):
 class TestFormatDiffEmbed(unittest.TestCase):
     """ Tests for src.cogs.deckdiff.Diff.format_diff_embed. """
 
+    def setUp(self):
+        """ Generic variables. """
+        self.bot = "a bot"
+
     def test_empty(self):
         """ Test when diff provided is empty. """
         # Given
-        bot = "a bot"
         name = "title for comparison"
         diff = ([], [], [], [])
         result = Embed()  # TODO don't pass result as a variable
         expected_result = result
 
         # When
-        Diff(bot).format_diff_embed(diff, name, result)
+        Diff(self.bot).format_diff_embed(diff, name, result)
 
         # Then
         self.assertTrue("fields" not in result.to_dict())
@@ -120,7 +126,6 @@ class TestFormatDiffEmbed(unittest.TestCase):
     def test_format(self):
         """ Test when diff provided has data. """
         # Given
-        bot = "a bot"
         name = "title for comparison"
         diff = ([2], ["key3"], [3], ["key2"])
         result = Embed()  # TODO don't pass result as a variable
@@ -128,7 +133,7 @@ class TestFormatDiffEmbed(unittest.TestCase):
         expected_field1 = result
 
         # When
-        Diff(bot).format_diff_embed(diff, name, result)
+        Diff(self.bot).format_diff_embed(diff, name, result)
         fields = result.to_dict()["fields"]
 
         # Then
@@ -142,15 +147,18 @@ class TestFormatDiffEmbed(unittest.TestCase):
 class TestFilterName(unittest.TestCase):
     """ Tests for src.cogs.deckdiff.Diff.filter_name. """
 
+    def setUp(self):
+        """ Generic variables. """
+        self.bot = "a bot"
+
     def test_no_replacement(self):
         """ Test when name is not replaced. """
         # Given
-        bot = "a bot"
         name = "ccc"
         expected_result = name
 
         # When
-        diff_obj = Diff(bot)
+        diff_obj = Diff(self.bot)
         diff_obj.name_replacements = {"aaa": "bbb"}
         result = diff_obj.filter_name(name)
 
@@ -160,12 +168,11 @@ class TestFilterName(unittest.TestCase):
     def test_replacement(self):
         """ Test when name is replaced. """
         # Given
-        bot = "a bot"
         name = "aaa"
         expected_result = "bbb"
 
         # When
-        diff_obj = Diff(bot)
+        diff_obj = Diff(self.bot)
         diff_obj.name_replacements = {"aaa": expected_result}
         result = diff_obj.filter_name(name)
 
@@ -176,15 +183,18 @@ class TestFilterName(unittest.TestCase):
 class TestGetList(unittest.TestCase):
     """ Tests for src.cogs.deckdiff.Diff.get_list. """
 
+    def setUp(self):
+        """ Generic variables. """
+        self.bot = "a bot"
+
     def test_empty(self):
         """ Test when no data available. """
         # Given
-        bot = "a bot"
         data = ""
         expected_result = (defaultdict(int), defaultdict(int))
 
         # When
-        result = Diff(bot).get_list(data)
+        result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
@@ -192,12 +202,11 @@ class TestGetList(unittest.TestCase):
     def test_skip_all(self):
         """ Test when no data matches regexp. """
         # Given
-        bot = "a bot"
         data = "\n\n\n\n\n\n"
         expected_result = (defaultdict(int), defaultdict(int))
 
         # When
-        result = Diff(bot).get_list(data)
+        result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
@@ -205,12 +214,11 @@ class TestGetList(unittest.TestCase):
     def test_only_sideboard(self):
         """ Test when data has only sideboard information. """
         # Given
-        bot = "a bot"
         data = "\n//Sideboard:\n\nSB: 1 key1\n\n"
         expected_result = (defaultdict(int), {"key1": 1})
 
         # When
-        result = Diff(bot).get_list(data)
+        result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
@@ -218,12 +226,11 @@ class TestGetList(unittest.TestCase):
     def test_only_mainboard(self):
         """ Test when data has only mainboard information. """
         # Given
-        bot = "a bot"
         data = "\n\n1 key1\n\n"
         expected_result = ({"key1": 1}, defaultdict(int))
 
         # When
-        result = Diff(bot).get_list(data)
+        result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
@@ -231,12 +238,11 @@ class TestGetList(unittest.TestCase):
     def test_mainboard_sideboard(self):
         """ Test when data has both mainboard and sideboard information. """
         # Given
-        bot = "a bot"
         data = "\n\n1 key1\n\n//Sideboard:\n\nSB: 2 key2"
         expected_result = ({"key1": 1}, {"key2": 2})
 
         # When
-        result = Diff(bot).get_list(data)
+        result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
