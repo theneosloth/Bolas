@@ -37,7 +37,7 @@ class TestDiffClass(unittest.TestCase):
 
         # Then
         self.assertEqual(obj.bot, self.bot)
-        self.assertEqual(len(obj.valid_urls), 3)
+        self.assertEqual(len(obj.valid_urls), 4)
         self.assertEqual(
             obj.valid_urls["deckstats.net"]["query"],
             [("export_dec", "1")],
@@ -49,6 +49,14 @@ class TestDiffClass(unittest.TestCase):
         self.assertEqual(
             obj.valid_urls["www.mtggoldfish.com"]["paths"],
             [{"value": "download", "index": 2}],
+            )
+        self.assertEqual(
+            obj.valid_urls["www.hareruyamtg.com"]["paths"],
+            [{"value": "download", "index": 3}],
+            )
+        self.assertEqual(
+            obj.valid_urls["www.hareruyamtg.com"]["replace"],
+            [{"old": "/show/", "new": ""}],
             )
         self.assertEqual(obj.re_stripangle, expected_angle_exp)
         self.assertEqual(obj.re_line, expected_line_exp)
@@ -329,7 +337,7 @@ class TestGetValidUrl(unittest.TestCase):
         # Then
         self.assertEqual(result, expected_result)
 
-    def test_path_end(self):
+    def test_path(self):
         """ Test valid URL when adding path to end of URL. """
         # Given
         url = "http://valid.com/p1/p2"
@@ -348,6 +356,26 @@ class TestGetValidUrl(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected_result)
+
+    def test_replace(self):
+        """ Test valid URL when replacing parts of the URL. """
+        # Given
+        url = "http://valid.com/p1/p2"
+        old = "/p2"
+        new = ""
+        expected_result = "http://valid.com/p1"
+
+        # When/Then
+        obj = Diff(self.bot)
+        obj.valid_urls.update(
+            {"valid.com": {
+                'replace': [{"old": old, "new": new}]}
+                })
+        result = obj.get_valid_url(url)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
 
 
 class TestDiff(unittest.TestCase):
