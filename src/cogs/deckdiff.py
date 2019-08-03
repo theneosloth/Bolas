@@ -19,7 +19,10 @@ class Diff(commands.Cog):
             },
             "tappedout.net": {
                 "query":[("fmt", "dec")]
-            }
+            },
+            "www.mtggoldfish.com": {
+                'paths': [{"value": "download", "index": 2}]
+            },
         }
 
         self.re_stripangle = re.compile(r"^<(.*)>$")
@@ -59,11 +62,19 @@ class Diff(commands.Cog):
                 raise Diff.MessageError(
                         "Unknown url <{}>".format(s))
             url = list(url)
+
             query_n = valid_opts.get("query", None)
             if query_n:
                 query_l = parse_qsl(url[3])
                 query_l.extend(query_n)
                 url[3] = urlencode(query_l)
+
+            # Add each path to the position specified by the index value
+            for path in valid_opts.get("paths", []):
+                current_path = url[2].split("/")
+                current_path.insert(path["index"], path["value"])
+                url[2] = "/".join(current_path)
+
             return urlunsplit(url)
         else:
             return None
