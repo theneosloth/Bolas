@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from mock import (
     call,
+    MagicMock,
     patch,
     )
 
@@ -13,7 +14,7 @@ from discord import Embed
 from src.cogs.deckdiff import Diff
 
 
-class TestDiff(unittest.TestCase):
+class TestDiffClass(unittest.TestCase):
     """ Non method specific tests for src.cogs.deckdiff.Diff. """
     def setUp(self):
         """ Generic variables. """
@@ -323,3 +324,25 @@ class TestGetValidUrl(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected_result)
+
+
+class TestDiff(unittest.TestCase):
+    """ Tests for src.cogs.deckdiff.Diff.diff. """
+
+    def setUp(self):
+        """ Generic variables. """
+        self.bot = "a bot"
+        self.url1 = "url1.com"
+        self.url2 = "url2.com"
+        self.message = MagicMock(content=[self.url1, self.url2])
+        self.context = MagicMock(messsage=self.message)
+
+    @unittest.skip("Can't mock command enty point... yet.")
+    def test_not_two_urls(self):
+        """ Test when amount of URLs provided is not exactly two. """
+        # Given
+        self.context.message.content.pop()
+
+        # When/Then
+        with self.assertRaises(Diff.MessageError):
+            Diff(self.bot).diff(self.context)
