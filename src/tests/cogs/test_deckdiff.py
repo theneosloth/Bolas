@@ -246,3 +246,80 @@ class TestGetList(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected_result)
+
+
+class TestGetValidUrl(unittest.TestCase):
+    """ Tests for src.cogs.deckdiff.Diff.get_valid_url. """
+
+    def setUp(self):
+        """ Generic variables. """
+        self.bot = "a bot"
+
+    def test_empty(self):
+        """ Test when no data provided. """
+        # Given
+        url = ""
+        expected_result = None
+
+        # When
+        result = Diff(self.bot).get_valid_url(url)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_invalid_url(self):
+        """ Test error when invalid URL is provided. """
+        # Given
+        url = "http://invalid.com/"
+
+        # When/Then
+        with self.assertRaises(Diff.MessageError):
+            Diff(self.bot).get_valid_url(url)
+
+    def test_no_configuration(self):
+        """ Test valid URL but no configuration. """
+        # Given
+        url = "http://valid.com/"
+        expected_result = url
+
+        # When/Then
+        obj = Diff(self.bot)
+        obj.valid_urls.update({"valid.com": {'bad': 'config'}})
+        result = obj.get_valid_url(url)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_query(self):
+        """ Test valid URL with a query configuration. """
+        # Given
+        url = "http://valid.com/"
+        param = "param1"
+        value = "value1"
+
+        expected_result = "{url}?{param}={value}".format(
+            url=url, param=param, value=value)
+
+        # When/Then
+        obj = Diff(self.bot)
+        obj.valid_urls.update(
+            {"valid.com": {'query': [(param, value)]}})
+        result = obj.get_valid_url(url)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_strip_angles(self):
+        """ Test valid URL between angles (<>). """
+        # Given
+        url = "http://valid.com/"
+        url_angles = "<{url}>".format(url=url)
+        expected_result = url
+
+        # When/Then
+        obj = Diff(self.bot)
+        obj.valid_urls.update({"valid.com": {'bad': 'config'}})
+        result = obj.get_valid_url(url_angles)
+
+        # Then
+        self.assertEqual(result, expected_result)
