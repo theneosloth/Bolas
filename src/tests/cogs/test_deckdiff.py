@@ -37,7 +37,7 @@ class TestDiffClass(unittest.TestCase):
 
         # Then
         self.assertEqual(obj.bot, self.bot)
-        self.assertEqual(len(obj.valid_urls), 2)
+        self.assertEqual(len(obj.valid_urls), 3)
         self.assertEqual(
             obj.valid_urls["deckstats.net"]["query"],
             [("export_dec", "1")],
@@ -45,6 +45,10 @@ class TestDiffClass(unittest.TestCase):
         self.assertEqual(
             obj.valid_urls["tappedout.net"]["query"],
             [("fmt", "txt")],
+            )
+        self.assertEqual(
+            obj.valid_urls["www.mtggoldfish.com"]["paths"],
+            [{"value": "download", "index": 2}],
             )
         self.assertEqual(obj.re_stripangle, expected_angle_exp)
         self.assertEqual(obj.re_line, expected_line_exp)
@@ -277,6 +281,21 @@ class TestGetValidUrl(unittest.TestCase):
         with self.assertRaises(Diff.MessageError):
             Diff(self.bot).get_valid_url(url)
 
+    def test_strip_angles(self):
+        """ Test valid URL between angles (<>). """
+        # Given
+        url = "http://valid.com/"
+        url_angles = "<{url}>".format(url=url)
+        expected_result = url
+
+        # When/Then
+        obj = Diff(self.bot)
+        obj.valid_urls.update({"valid.com": {'bad': 'config'}})
+        result = obj.get_valid_url(url_angles)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
     def test_no_configuration(self):
         """ Test valid URL but no configuration. """
         # Given
@@ -310,17 +329,22 @@ class TestGetValidUrl(unittest.TestCase):
         # Then
         self.assertEqual(result, expected_result)
 
-    def test_strip_angles(self):
-        """ Test valid URL between angles (<>). """
+    def test_path_end(self):
+        """ Test valid URL when adding path to end of URL. """
         # Given
-        url = "http://valid.com/"
-        url_angles = "<{url}>".format(url=url)
-        expected_result = url
+        url = "http://valid.com/p1/p2"
+        path = "p3"
+        index = 3
+        expected_result = "{url}/{path}".format(
+            url=url, path=path)
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update({"valid.com": {'bad': 'config'}})
-        result = obj.get_valid_url(url_angles)
+        obj.valid_urls.update(
+            {"valid.com": {
+                'paths': [{"value": path, "index": index}]}
+                })
+        result = obj.get_valid_url(url)
 
         # Then
         self.assertEqual(result, expected_result)
