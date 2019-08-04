@@ -23,6 +23,10 @@ class Diff(commands.Cog):
             "www.mtggoldfish.com": {
                 'paths': [{"value": "download", "index": 2}]
             },
+            "www.hareruyamtg.com": {
+                'paths': [{"value": "download", "index": 3}],
+                'replace': [{"old": "/show/", "new": ""}],
+            },
         }
 
         self.re_stripangle = re.compile(r"^<(.*)>$")
@@ -73,7 +77,12 @@ class Diff(commands.Cog):
                 current_path.insert(path["index"], path["value"])
                 url[2] = "/".join(current_path)
 
-            return urlunsplit(url)
+            url_str = urlunsplit(url)
+            # Perform replacements after getting final URL
+            for replace in valid_opts.get("replace", []):
+                url_str = url_str.replace(replace["old"], replace["new"])
+
+            return url_str
         else:
             return None
 
