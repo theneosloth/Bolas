@@ -3,7 +3,6 @@ import unittest
 
 from collections import defaultdict
 
-import asyncio
 from mock import (
     call,
     MagicMock,
@@ -386,26 +385,10 @@ class TestDiff(unittest.TestCase):
         self.bot = "a bot"
         self.url1 = "url1.com"
         self.url2 = "url2.com"
-        self.message = MagicMock(
-            content=[self.url1, self.url2], return_value=asyncio.Future())
-        self.context = MagicMock(
-            messsage=self.message,
-            send=lambda param: asyncio.Future(),
-            return_value=asyncio.Future(),
-            )
-        self.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(None)
 
-    @unittest.skip("Can't figure out how to test async/await code")
-    def test_not_two_urls(self):
-        """ Test when amount of URLs provided is not exactly two. """
+    @unittest.skip("Refactor code so it's not tested inside command function")
+    def test_less_two_urls(self):
+        """ Test when amount of URLs provided is less than two. """
         # Given
-        self.context.message.content.pop()
-
-        # When/Then
-        @asyncio.coroutine
-        def execute(bot, context):
-            cls = Diff(bot)
-            yield from cls.diff.callback(cls, context)
-        retult = self.loop.run_until_complete(execute(self.bot, self.context))
-        self.assertEqual(result, "")
+        # When
+        # Then
