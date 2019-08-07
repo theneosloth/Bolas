@@ -1,3 +1,4 @@
+import json
 import re
 import urllib.request
 import urllib.error
@@ -26,6 +27,13 @@ class Diff(commands.Cog):
             "www.hareruyamtg.com": {
                 'paths': [{"value": "download", "index": 3}],
                 'replace': [{"old": "/show/", "new": ""}],
+            },
+            "archidekt.com": {
+                'paths':
+                    [
+                        {"value": "api", "index": 1},
+                        {"value": "small/", "index": 4},
+                    ],
             },
         }
 
@@ -90,13 +98,37 @@ class Diff(commands.Cog):
     def filter_name(self, name):
         return self.name_replacements.get(name, name)
 
+    # Format json deck info into txt list (for archidekt only)
+    def format_to_txt(self, deck):
+        try:
+            json_deck = json.loads(deck)  # Raise ValueError if not JSON
+            mainboard = []
+            sideboard = ["//Sideboard"]  # Separator line
+            for card in json_deck["cards"]:
+                if not card["category"]:  # No category means mainboard
+                    mainboard.append(
+                        "{0} {1}".format(
+                            card["quantity"],
+                            card["card"]["oracleCard"]["name"]
+                            ))
+                elif card["category"] == "Sideboard":
+                    sideboard.append(
+                        "{0} {1}".format(
+                            card["quantity"],
+                            card["card"]["oracleCard"]["name"]
+                            ))
+            return "\n".join(mainboard + sideboard)
+        except ValueError:
+            return deck  # If data is not JSON, assume it has proper format
+
+
     # Parses decklist string into a tuple of dicts for main and sideboards
     def get_list(self, deck):
         mainboard = defaultdict(int)
         sideboard = defaultdict(int)
 
         lst = mainboard
-        for line in deck.split("\n"):
+        for line in self.format_to_txt(deck).split("\n"):
             match = self.re_line.match(line)
             if match:
                 lst[self.filter_name(match["name"])] += int(match["count"])
