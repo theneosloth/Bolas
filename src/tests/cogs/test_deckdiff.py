@@ -37,7 +37,7 @@ class TestDiffClass(unittest.TestCase):
 
         # Then
         self.assertEqual(obj.bot, self.bot)
-        self.assertEqual(len(obj.valid_urls), 4)
+        self.assertEqual(len(obj.valid_urls), 5)
         self.assertEqual(
             obj.valid_urls["deckstats.net"]["query"],
             [("export_dec", "1")],
@@ -57,6 +57,13 @@ class TestDiffClass(unittest.TestCase):
         self.assertEqual(
             obj.valid_urls["www.hareruyamtg.com"]["replace"],
             [{"old": "/show/", "new": ""}],
+            )
+        self.assertEqual(
+            obj.valid_urls["archidekt.com"]["paths"],
+            [
+                {"value": "api", "index": 1},
+                {"value": "small/", "index": 4},
+            ],
             )
         self.assertEqual(obj.re_stripangle, expected_angle_exp)
         self.assertEqual(obj.re_line, expected_line_exp)
@@ -200,65 +207,85 @@ class TestGetList(unittest.TestCase):
         """ Generic variables. """
         self.bot = "a bot"
 
-    def test_empty(self):
+    @patch("src.cogs.deckdiff.Diff.format_to_txt")
+    def test_empty(self, format_mock):
         """ Test when no data available. """
         # Given
         data = ""
         expected_result = (defaultdict(int), defaultdict(int))
 
+        format_mock.return_value = data
+
         # When
         result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
+        format_mock.assert_called_once_with(data)
 
-    def test_skip_all(self):
+    @patch("src.cogs.deckdiff.Diff.format_to_txt")
+    def test_skip_all(self, format_mock):
         """ Test when no data matches regexp. """
         # Given
         data = "\n\n\n\n\n\n"
         expected_result = (defaultdict(int), defaultdict(int))
 
+        format_mock.return_value = data
+
         # When
         result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
+        format_mock.assert_called_once_with(data)
 
-    def test_only_sideboard(self):
+    @patch("src.cogs.deckdiff.Diff.format_to_txt")
+    def test_only_sideboard(self, format_mock):
         """ Test when data has only sideboard information. """
         # Given
         data = "\n//Sideboard:\n\nSB: 1 key1\n\n"
         expected_result = (defaultdict(int), {"key1": 1})
 
+        format_mock.return_value = data
+
         # When
         result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
+        format_mock.assert_called_once_with(data)
 
-    def test_only_mainboard(self):
+    @patch("src.cogs.deckdiff.Diff.format_to_txt")
+    def test_only_mainboard(self, format_mock):
         """ Test when data has only mainboard information. """
         # Given
         data = "\n\n1 key1\n\n"
         expected_result = ({"key1": 1}, defaultdict(int))
 
+        format_mock.return_value = data
+
         # When
         result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
+        format_mock.assert_called_once_with(data)
 
-    def test_mainboard_sideboard(self):
+    @patch("src.cogs.deckdiff.Diff.format_to_txt")
+    def test_mainboard_sideboard(self, format_mock):
         """ Test when data has both mainboard and sideboard information. """
         # Given
         data = "\n\n1 key1\n\n//Sideboard:\n\nSB: 2 key2"
         expected_result = ({"key1": 1}, {"key2": 2})
 
+        format_mock.return_value = data
+
         # When
         result = Diff(self.bot).get_list(data)
 
         # Then
         self.assertEqual(result, expected_result)
+        format_mock.assert_called_once_with(data)
 
 
 class TestGetValidUrl(unittest.TestCase):
@@ -372,6 +399,80 @@ class TestGetValidUrl(unittest.TestCase):
                 'replace': [{"old": old, "new": new}]}
                 })
         result = obj.get_valid_url(url)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+
+class TestFormatToTxt(unittest.TestCase):
+    """ Tests for src.cogs.deckdiff.Diff.format_to_txt. """
+
+    def setUp(self):
+        """ Generic variables. """
+        self.bot = "a bot"
+
+    def test_not_json(self):
+        """ Test when data provided is not valid JSON. """
+        # Given
+        data = "some text"
+        expected_result = data
+
+        # When
+        result = Diff(self.bot).format_to_txt(data)
+
+        # Then
+        self.assertEqual(result, expected_result)
+
+    def test_json_archidekt(self):
+        """ Test when data provided is valid JSON (for archidekt). """
+        # Given
+        name_main = "card1"
+        quantity_main = 2
+        name_side = "card2"
+        quantity_side = 1
+        category = "Sideboard"
+        data = '''
+            {{"cards":
+                [
+                    {{
+                        "card": {{
+                            "oracleCard": {{
+                                "name": "{name_main}"
+                                }}
+                            }},
+                        "quantity": "{quantity_main}",
+                        "category": ""
+                    }},
+                    {{
+                        "card": {{
+                            "oracleCard": {{
+                                "name": "{name_side}"
+                                }}
+                            }},
+                        "quantity": "{quantity_side}",
+                        "category": "{category}"
+                    }}
+                ]
+            }}'''.format(
+                name_main=name_main,
+                quantity_main=quantity_main,
+                name_side=name_side,
+                quantity_side=quantity_side,
+                category=category,
+                )
+        expected_result = (
+            "{quantity_main} {name_main}\n"
+            "//Sideboard\n"
+            "{quantity_side} {name_side}".format(
+                name_main=name_main,
+                quantity_main=quantity_main,
+                name_side=name_side,
+                quantity_side=quantity_side,
+                )
+            )
+
+        # When
+        result = Diff(self.bot).format_to_txt(data)
 
         # Then
         self.assertEqual(result, expected_result)
