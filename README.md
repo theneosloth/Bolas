@@ -7,15 +7,38 @@
 [https://theneosloth.github.io/Bolas/](https://theneosloth.github.io/Bolas)
 
 
-Bolas is a mtg card-fetcher discord bot that is heavily inspired by [yawgmoth](https://github.com/Lerker3/yawgmoth). I am using this project as a way to try out some new approaches to api wrappers and plugin systems, so the way some parts of the bot are implemented are a bit esoteric.
-
-## Structure
-
-The core of the bot is located in bot.py, all simple commands such as !pingme should go in commands.py. More advanced functionality such as the card fetcher should be developed in card_hooks.py. Those files contain the base class that the plugins should be derived from.
-
-The plugins are loaded through a metaclass called PluginMount. Every class derived from PluginMount will be automatically loaded and added to either the self.chat_hook or self.commands variables.
+Bolas is a mtg card-fetcher discord bot that is heavily inspired by [yawgmoth](https://github.com/Lerker3/yawgmoth).
 
 The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded “!help” command.
+
+## List of commands
+
+``` 
+A magic the gathering card fetcher bot
+
+Diff:
+  diff     List of differences between two decklists.
+Fetcher:
+  art      Return the art of a given card.
+  flavor   Return the flavor text of a given card.
+  image    Return the image of a given card.
+  price    Return the price of a given card.
+  reserved Return whether the given card is reserved.
+  rulings  Show all the rulings for a given card.
+Misc:
+  addme    The link to add Bolas to your Discord server.
+  git      Repo link and changelog.
+  obey     Only works if you are one of the chosen ones.
+  stats    Return the number of users and servers served.
+  video    Create a new jitsi videocall with everyone mentioned.
+Rule:
+  rule     !rule {rule number or set of keywords.}: Cite am mtg rule.
+​No Category:
+  help     Shows this message
+
+Type !help command for more info on a command.
+You can also type !help category for more info on a category
+```
 
 ## How to run
 

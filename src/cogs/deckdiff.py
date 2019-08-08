@@ -188,7 +188,13 @@ class Diff(commands.Cog):
             result = Embed()
             self.format_diff_embed(maindiff, "Mainboard", result)
             self.format_diff_embed(sidediff, "Sideboard", result)
-            await ctx.send(embed=result)
+
+            #Discord doesn't allow embeds to be more than 1024 in length
+            if len(result) < 1024:
+                await ctx.send(embed=result)
+            else:
+                await ctx.send("Diff too long.")
+
         except Diff.MessageError as e:
             return await(ctx.send(e.message))
 
