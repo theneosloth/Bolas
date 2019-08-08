@@ -1,3 +1,4 @@
+import json
 import re
 import urllib.request
 import urllib.error
@@ -22,6 +23,17 @@ class Diff(commands.Cog):
             },
             "www.mtggoldfish.com": {
                 'paths': [{"value": "download", "index": 2}]
+            },
+            "www.hareruyamtg.com": {
+                'paths': [{"value": "download", "index": 3}],
+                'replace': [{"old": "/show/", "new": ""}],
+            },
+            "archidekt.com": {
+                'paths':
+                    [
+                        {"value": "api", "index": 1},
+                        {"value": "small/", "index": 4},
+                    ],
             },
         }
 
@@ -73,7 +85,12 @@ class Diff(commands.Cog):
                 current_path.insert(path["index"], path["value"])
                 url[2] = "/".join(current_path)
 
-            return urlunsplit(url)
+            url_str = urlunsplit(url)
+            # Perform replacements after getting final URL
+            for replace in valid_opts.get("replace", []):
+                url_str = url_str.replace(replace["old"], replace["new"])
+
+            return url_str
         else:
             return None
 
@@ -81,13 +98,37 @@ class Diff(commands.Cog):
     def filter_name(self, name):
         return self.name_replacements.get(name, name)
 
+    # Format json deck info into txt list (for archidekt only)
+    def format_to_txt(self, deck):
+        try:
+            json_deck = json.loads(deck)  # Raise ValueError if not JSON
+            mainboard = []
+            sideboard = ["//Sideboard"]  # Separator line
+            for card in json_deck["cards"]:
+                if not card["category"]:  # No category means mainboard
+                    mainboard.append(
+                        "{0} {1}".format(
+                            card["quantity"],
+                            card["card"]["oracleCard"]["name"]
+                            ))
+                elif card["category"] == "Sideboard":
+                    sideboard.append(
+                        "{0} {1}".format(
+                            card["quantity"],
+                            card["card"]["oracleCard"]["name"]
+                            ))
+            return "\n".join(mainboard + sideboard)
+        except ValueError:
+            return deck  # If data is not JSON, assume it has proper format
+
+
     # Parses decklist string into a tuple of dicts for main and sideboards
     def get_list(self, deck):
         mainboard = defaultdict(int)
         sideboard = defaultdict(int)
 
         lst = mainboard
-        for line in deck.split("\n"):
+        for line in self.format_to_txt(deck).split("\n"):
             match = self.re_line.match(line)
             if match:
                 lst[self.filter_name(match["name"])] += int(match["count"])
@@ -147,7 +188,13 @@ class Diff(commands.Cog):
             result = Embed()
             self.format_diff_embed(maindiff, "Mainboard", result)
             self.format_diff_embed(sidediff, "Sideboard", result)
-            await ctx.send(embed=result)
+
+            #Discord doesn't allow embeds to be more than 1024 in length
+            if len(result) < 1024:
+                await ctx.send(embed=result)
+            else:
+                await ctx.send("Diff too long.")
+
         except Diff.MessageError as e:
             return await(ctx.send(e.message))
 
