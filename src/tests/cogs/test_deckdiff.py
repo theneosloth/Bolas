@@ -1,5 +1,6 @@
 """ Testing module for src.cogs.deckdiff. """
 import unittest
+import urllib.error
 
 from collections import defaultdict
 
@@ -478,8 +479,8 @@ class TestFormatToTxt(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
 
-class TestDiff(unittest.TestCase):
-    """ Tests for src.cogs.deckdiff.Diff.diff. """
+class TestDiffExecute(unittest.TestCase):
+    """ Tests for src.cogs.deckdiff.Diff.execute. """
 
     def setUp(self):
         """ Generic variables. """
@@ -487,9 +488,173 @@ class TestDiff(unittest.TestCase):
         self.url1 = "url1.com"
         self.url2 = "url2.com"
 
-    @unittest.skip("Refactor code so it's not tested inside command function")
-    def test_less_two_urls(self):
+    @patch("src.cogs.deckdiff.Diff.get_valid_url")
+    def test_less_two_urls(self, url_mock):
         """ Test when amount of URLs provided is less than two. """
         # Given
+        message = "!command {0}".format(self.url1)
+        expected_result = (False, "Exactly two urls are needed.")
+
+        url_mock.side_effect= [self.url1]
+
         # When
+        result = Diff(self.bot).execute(message)
+
         # Then
+        self.assertEqual(result, expected_result)
+        url_mock.assert_called_once_with(self.url1)
+
+    @patch("src.cogs.deckdiff.Diff.get_valid_url")
+    def test_more_two_urls(self, url_mock):
+        """ Test when amount of URLs provided is more than two. """
+        # Given
+        message = "!command {0} {0} {1}".format(self.url1, self.url2)
+        expected_result = (False, "Exactly two urls are needed.")
+
+        url_mock.side_effect= [self.url1, self.url1, self.url2]
+
+        # When
+        result = Diff(self.bot).execute(message)
+
+        # Then
+        self.assertEqual(result, expected_result)
+        url_mock.assert_has_calls([
+            call(self.url1),
+            call(self.url1),
+            call(self.url2),
+            ])
+
+    @patch("src.cogs.deckdiff.urllib.request.Request")
+    @patch("src.cogs.deckdiff.Diff.get_valid_url")
+    def test_fail_open_url(self, url_mock, request_mock):
+        """ Test error when URL can't be opened. """
+        # Given
+        message = "!command {0} {1}".format(self.url1, self.url2)
+        expected_result = (False, "Failed to open url.")
+
+        url_mock.side_effect = [self.url1, self.url2]
+        request_mock.side_effect = urllib.error.URLError("Error")
+
+        # When
+        result = Diff(self.bot).execute(message)
+
+        # Then
+        self.assertEqual(result, expected_result)
+        url_mock.assert_has_calls([
+            call(self.url1),
+            call(self.url2),
+            ])
+        request_mock.assert_called_once_with(
+            self.url1, headers={'User-Agent': 'Mozilla/5.0'})
+
+    @patch("src.cogs.deckdiff.Diff.get_diff")
+    @patch("src.cogs.deckdiff.Diff.get_list")
+    @patch("src.cogs.deckdiff.urllib.request.urlopen")
+    @patch("src.cogs.deckdiff.urllib.request.Request")
+    @patch("src.cogs.deckdiff.Diff.get_valid_url")
+    def test_over_length(
+            self, url_mock, request_mock, open_mock,
+            list_mock, diff_mock):
+        """ Test error when result is too long. """
+        # Given
+        message = "!command {0} {1}".format(self.url1, self.url2)
+        expected_request = MagicMock()
+        expected_data = "some data".encode()
+        expected_lists = [MagicMock(), MagicMock()]
+        over_size_diff = ([1], ["1 {0}".format("X" * 1024)], [], [])
+        expected_result = (False, "Diff too long.")
+
+        url_mock.side_effect = [self.url1, self.url2]
+        request_mock.side_effect = [expected_request, None]
+        open_mock.return_value.read.side_effect = [
+            expected_data, "".encode()]
+        list_mock.return_value = expected_lists
+        diff_mock.side_effect = [over_size_diff, ([], [], [], [])]
+
+        # When
+        result = Diff(self.bot).execute(message)
+
+        # Then
+        self.assertEqual(result, expected_result)
+        url_mock.assert_has_calls([
+            call(self.url1),
+            call(self.url2),
+            ])
+        request_mock.assert_has_calls([
+            call(self.url1, headers={'User-Agent': 'Mozilla/5.0'}),
+            call(self.url2, headers={'User-Agent': 'Mozilla/5.0'}),
+            ])
+        open_mock.assert_has_calls([
+            call(expected_request),
+            call().read(),
+            call(None),
+            call().read(),
+            ])
+        list_mock.assert_has_calls([
+            call(expected_data.decode("utf-8", "replace")),
+            call(""),
+            ])
+        diff_mock.assert_has_calls([
+            call(expected_lists[0], expected_lists[0]),
+            call(expected_lists[1], expected_lists[1]),
+            ])
+
+    @patch("src.cogs.deckdiff.Embed")
+    @patch("src.cogs.deckdiff.Diff.get_diff")
+    @patch("src.cogs.deckdiff.Diff.get_list")
+    @patch("src.cogs.deckdiff.urllib.request.urlopen")
+    @patch("src.cogs.deckdiff.urllib.request.Request")
+    @patch("src.cogs.deckdiff.Diff.get_valid_url")
+    def test_success(
+            self, url_mock, request_mock, open_mock,
+            list_mock, diff_mock, embed_mock):
+        """ Test error when result is too long. """
+        # Given
+        message = "!command {0} {1}".format(self.url1, self.url2)
+        expected_request = MagicMock()
+        expected_data = "some data".encode()
+        expected_lists = [MagicMock(), MagicMock()]
+        diff = (
+            [1], ["{0}".format("X" * 50)],
+            [3], ["{0}".format("X" * 50)],
+            )
+        expected_result = (True, embed_mock())
+
+        url_mock.side_effect = [self.url1, self.url2]
+        request_mock.side_effect = [expected_request, None]
+        open_mock.return_value.read.side_effect = [
+            expected_data, "".encode()]
+        list_mock.return_value = expected_lists
+        diff_mock.side_effect = [diff, ([], [], [], [])]
+
+        # When
+        result = Diff(self.bot).execute(message)
+
+        # Then
+        self.assertEqual(result, expected_result)
+        url_mock.assert_has_calls([
+            call(self.url1),
+            call(self.url2),
+            ])
+        request_mock.assert_has_calls([
+            call(self.url1, headers={'User-Agent': 'Mozilla/5.0'}),
+            call(self.url2, headers={'User-Agent': 'Mozilla/5.0'}),
+            ])
+        open_mock.assert_has_calls([
+            call(expected_request),
+            call().read(),
+            call(None),
+            call().read(),
+            ])
+        list_mock.assert_has_calls([
+            call(expected_data.decode("utf-8", "replace")),
+            call(""),
+            ])
+        diff_mock.assert_has_calls([
+            call(expected_lists[0], expected_lists[0]),
+            call(expected_lists[1], expected_lists[1]),
+            ])
+        embed_mock.assert_has_calls([
+            call(),
+            call(),
+            ])
