@@ -164,12 +164,11 @@ class Diff(commands.Cog):
                         inline=True)
         return embed
 
-    @commands.command()
-    async def diff(self, ctx):
-        "List of differences between two decklists."
+    def execute(self, message):
+        " Perform actual diff. "
         try:
             urls = [m for m in (self.get_valid_url(w)
-                for w in ctx.message.content.split()[1:]) if m]
+                for w in message.split()[1:]) if m]
             if len(urls) != 2:
                 raise Diff.MessageError("Exactly two urls are needed.")
 
@@ -189,14 +188,24 @@ class Diff(commands.Cog):
             self.format_diff_embed(maindiff, "Mainboard", result)
             self.format_diff_embed(sidediff, "Sideboard", result)
 
-            #Discord doesn't allow embeds to be more than 1024 in length
+            # Discord API has a 1024 length limit for embeds
             if len(result) < 1024:
-                await ctx.send(embed=result)
+                return True, result
             else:
-                await ctx.send("Diff too long.")
+                return False, "Diff too long."
 
         except Diff.MessageError as e:
-            return await(ctx.send(e.message))
+            return False, e.message
+
+    @commands.command()
+    async def diff(self, ctx):
+        "List of differences between two decklists."
+        is_valid, result = self.execute(ctx.message.content)
+
+        if not is_valid:
+            return await ctx.send(result)
+
+        return await ctx.send(embed=result)
 
 def setup(bot):
     bot.add_cog(Diff(bot))
