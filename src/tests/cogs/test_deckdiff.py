@@ -38,29 +38,29 @@ class TestDiffClass(unittest.TestCase):
 
         # Then
         self.assertEqual(obj.bot, self.bot)
-        self.assertEqual(len(obj.valid_urls), 5)
+        self.assertEqual(len(obj.urls_options), 5)
         self.assertEqual(
-            obj.valid_urls["deckstats.net"]["query"],
+            obj.urls_options["deckstats.net"]["query"],
             [("export_dec", "1")],
             )
         self.assertEqual(
-            obj.valid_urls["tappedout.net"]["query"],
+            obj.urls_options["tappedout.net"]["query"],
             [("fmt", "txt")],
             )
         self.assertEqual(
-            obj.valid_urls["www.mtggoldfish.com"]["paths"],
+            obj.urls_options["www.mtggoldfish.com"]["paths"],
             [{"value": "download", "index": 2}],
             )
         self.assertEqual(
-            obj.valid_urls["www.hareruyamtg.com"]["paths"],
+            obj.urls_options["www.hareruyamtg.com"]["paths"],
             [{"value": "download", "index": 3}],
             )
         self.assertEqual(
-            obj.valid_urls["www.hareruyamtg.com"]["replace"],
+            obj.urls_options["www.hareruyamtg.com"]["replace"],
             [{"old": "/show/", "new": ""}],
             )
         self.assertEqual(
-            obj.valid_urls["archidekt.com"]["paths"],
+            obj.urls_options["archidekt.com"]["paths"],
             [
                 {"value": "api", "index": 1},
                 {"value": "small/", "index": 4},
@@ -326,7 +326,7 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update({"valid.com": {'bad': 'config'}})
+        obj.urls_options.update({"valid.com": {'bad': 'config'}})
         result = obj.get_valid_url(url_angles)
 
         # Then
@@ -340,7 +340,7 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update({"valid.com": {'bad': 'config'}})
+        obj.urls_options.update({"valid.com": {'bad': 'config'}})
         result = obj.get_valid_url(url)
 
         # Then
@@ -358,7 +358,7 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update(
+        obj.urls_options.update(
             {"valid.com": {'query': [(param, value)]}})
         result = obj.get_valid_url(url)
 
@@ -376,7 +376,7 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update(
+        obj.urls_options.update(
             {"valid.com": {
                 'paths': [{"value": path, "index": index}]}
                 })
@@ -395,7 +395,7 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update(
+        obj.urls_options.update(
             {"valid.com": {
                 'replace': [{"old": old, "new": new}]}
                 })

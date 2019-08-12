@@ -12,9 +12,22 @@ from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 class Diff(commands.Cog):
 
     def __init__(self, bot):
+        """
+        Initializaton method.
+
+        Parameters:
+        -----------
+        bot : dicord.ext.commands.Bot
+            Discord Bot object.
+
+        Returns:
+        --------
+        None
+
+        """
         self.bot = bot
         # Dict of valid url domains, and options for those domains
-        self.valid_urls = {
+        self.urls_options = {
             "deckstats.net": {
                 "query":[("export_dec", "1")]
             },
@@ -67,7 +80,7 @@ class Diff(commands.Cog):
         url = urlsplit(s, scheme="https")
         if (url.netloc and url.path and
                 (url.scheme == "http" or url.scheme == "https")):
-            valid_opts = self.valid_urls.get(url.netloc, None)
+            valid_opts = self.urls_options.get(url.netloc, None)
             if not valid_opts:
                 raise Diff.MessageError(
                         "Unknown url <{}>".format(s))
