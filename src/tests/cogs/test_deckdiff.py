@@ -213,7 +213,10 @@ class TestGetList(unittest.TestCase):
         """ Test when no data available. """
         # Given
         data = ""
-        expected_result = (defaultdict(int), defaultdict(int))
+        expected_result = {
+            "mainboard": defaultdict(int),
+            "sideboard": defaultdict(int),
+            }
 
         format_mock.return_value = data
 
@@ -229,7 +232,10 @@ class TestGetList(unittest.TestCase):
         """ Test when no data matches regexp. """
         # Given
         data = "\n\n\n\n\n\n"
-        expected_result = (defaultdict(int), defaultdict(int))
+        expected_result = {
+            "mainboard": defaultdict(int),
+            "sideboard": defaultdict(int),
+            }
 
         format_mock.return_value = data
 
@@ -245,7 +251,10 @@ class TestGetList(unittest.TestCase):
         """ Test when data has only sideboard information. """
         # Given
         data = "\n//Sideboard:\n\nSB: 1 key1\n\n"
-        expected_result = (defaultdict(int), {"key1": 1})
+        expected_result = {
+            "mainboard": defaultdict(int),
+            "sideboard": {"key1": 1},
+            }
 
         format_mock.return_value = data
 
@@ -261,7 +270,10 @@ class TestGetList(unittest.TestCase):
         """ Test when data has only mainboard information. """
         # Given
         data = "\n\n1 key1\n\n"
-        expected_result = ({"key1": 1}, defaultdict(int))
+        expected_result = {
+            "mainboard": {"key1": 1},
+            "sideboard": defaultdict(int),
+            }
 
         format_mock.return_value = data
 
@@ -277,7 +289,10 @@ class TestGetList(unittest.TestCase):
         """ Test when data has both mainboard and sideboard information. """
         # Given
         data = "\n\n1 key1\n\n//Sideboard:\n\nSB: 2 key2"
-        expected_result = ({"key1": 1}, {"key2": 2})
+        expected_result = {
+            "mainboard": {"key1": 1},
+            "sideboard": {"key2": 2},
+            }
 
         format_mock.return_value = data
 
@@ -560,7 +575,10 @@ class TestDiffExecute(unittest.TestCase):
         message = "!command {0} {1}".format(self.url1, self.url2)
         expected_request = MagicMock()
         expected_data = "some data".encode()
-        expected_lists = [MagicMock(), MagicMock()]
+        expected_lists = {
+            "mainboard": MagicMock(),
+            "sideboard": MagicMock(),
+            }
         over_size_diff = ([1], ["1 {0}".format("X" * 1024)], [], [])
         expected_result = (False, "Diff too long.")
 
@@ -595,8 +613,8 @@ class TestDiffExecute(unittest.TestCase):
             call(""),
             ])
         diff_mock.assert_has_calls([
-            call(expected_lists[0], expected_lists[0]),
-            call(expected_lists[1], expected_lists[1]),
+            call(expected_lists["mainboard"], expected_lists["mainboard"]),
+            call(expected_lists["sideboard"], expected_lists["sideboard"]),
             ])
 
     @patch("src.cogs.deckdiff.Embed")
@@ -613,7 +631,10 @@ class TestDiffExecute(unittest.TestCase):
         message = "!command {0} {1}".format(self.url1, self.url2)
         expected_request = MagicMock()
         expected_data = "some data".encode()
-        expected_lists = [MagicMock(), MagicMock()]
+        expected_lists = {
+            "mainboard": MagicMock(),
+            "sideboard": MagicMock(),
+            }
         diff = (
             [1], ["{0}".format("X" * 50)],
             [3], ["{0}".format("X" * 50)],
@@ -651,8 +672,8 @@ class TestDiffExecute(unittest.TestCase):
             call(""),
             ])
         diff_mock.assert_has_calls([
-            call(expected_lists[0], expected_lists[0]),
-            call(expected_lists[1], expected_lists[1]),
+            call(expected_lists["mainboard"], expected_lists["mainboard"]),
+            call(expected_lists["sideboard"], expected_lists["sideboard"]),
             ])
         embed_mock.assert_has_calls([
             call(),

@@ -140,14 +140,15 @@ class Diff(commands.Cog):
         mainboard = defaultdict(int)
         sideboard = defaultdict(int)
 
-        lst = mainboard
+        deck_list = mainboard
         for line in self.format_to_txt(deck).split("\n"):
             match = self.re_line.match(line)
             if match:
-                lst[self.filter_name(match["name"])] += int(match["count"])
+                deck_list[self.filter_name(match["name"])] += int(match["count"])
             elif "Sideboard" in line:
-                lst = sideboard
-        return (mainboard, sideboard)
+                deck_list = sideboard
+
+        return {"mainboard": mainboard, "sideboard": sideboard}
 
     # Diffs two decklist dicts
     # Returns 4-tuple with count and card name columns for both lists
@@ -194,8 +195,14 @@ class Diff(commands.Cog):
             except urllib.error.URLError as e:
                 raise Diff.MessageError("Failed to open url.")
 
-            maindiff = self.get_diff(decklists[0][0], decklists[1][0])
-            sidediff = self.get_diff(decklists[0][1], decklists[1][1])
+            maindiff = self.get_diff(
+                decklists[0]["mainboard"],
+                decklists[1]["mainboard"],
+                )
+            sidediff = self.get_diff(
+                decklists[0]["sideboard"],
+                decklists[1]["sideboard"],
+                )
 
             result = Embed()
             self.format_diff_embed(maindiff, "Mainboard", result)
