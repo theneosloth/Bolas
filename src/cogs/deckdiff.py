@@ -71,26 +71,24 @@ class Diff(commands.Cog):
     # Parses a string to get a valid url
     # Returns None if not a good url
     # MessageError unknown url if url found and not in valid urls
-    def get_valid_url(self, s):
+    def get_valid_url(self, raw_url):
         #strip surrounding < >. This allows for non-embedding links
-        strip = self.re_stripangle.match(s)
+        strip = self.re_stripangle.match(raw_url)
         if strip:
-            s = strip[1]
+            raw_url = strip[1]
 
-        url = urlsplit(s, scheme="https")
+        url = urlsplit(raw_url, scheme="https")
         if (url.netloc and url.path and
                 (url.scheme == "http" or url.scheme == "https")):
             valid_opts = self.urls_options.get(url.netloc, None)
             if not valid_opts:
-                raise Diff.MessageError(
-                        "Unknown url <{}>".format(s))
+                raise Diff.MessageError("Unknown url <{}>".format(raw_url))
             url = list(url)
 
-            query_n = valid_opts.get("query", None)
-            if query_n:
-                query_l = parse_qsl(url[3])
-                query_l.extend(query_n)
-                url[3] = urlencode(query_l)
+            # Add query params, if the configuration exists
+            query = parse_qsl(url[3])
+            query.extend(valid_opts.get("query", []))
+            url[3] = urlencode(query)
 
             # Add each path to the position specified by the index value
             for path in valid_opts.get("paths", []):
@@ -104,8 +102,7 @@ class Diff(commands.Cog):
                 url_str = url_str.replace(replace["old"], replace["new"])
 
             return url_str
-        else:
-            return None
+        return None
 
     # Normalizes names.
     def filter_name(self, name):
