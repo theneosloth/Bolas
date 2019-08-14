@@ -149,16 +149,16 @@ class Diff(commands.Cog):
 
     # Diffs two decklist dicts
     # Returns 4-tuple with count and card name columns for both lists
-    def get_diff(self, list_l, list_r):
-        cards = frozenset(list_l.keys()) | frozenset(list_r.keys())
-        diff = ([],[],[],[])
-        for c in cards:
-            if list_l[c] > list_r[c]:
-                diff[1].append(c)
-                diff[0].append(list_l[c] - list_r[c])
-            elif list_r[c] > list_l[c]:
-                diff[3].append(c)
-                diff[2].append(list_r[c] - list_l[c])
+    def get_diff(self, list1, list2):
+        diff = {1: defaultdict(int), 2: defaultdict(int)}
+
+        for card in frozenset(list1.keys()) | frozenset(list2.keys()):
+            quantity_diff = list1.get(card, 0) - list2.get(card, 0)
+            if quantity_diff > 0:
+                diff[1][card] = quantity_diff
+            elif quantity_diff < 0:
+                diff[2][card] = abs(quantity_diff)
+
         return diff
 
     # Takes a diff 4-tuple and adds it as fields on given embed.

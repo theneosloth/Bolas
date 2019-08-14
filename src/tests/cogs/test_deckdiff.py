@@ -99,9 +99,9 @@ class TestGetDiff(unittest.TestCase):
     def test_no_diff(self):
         """ Test when data provided has no difference. """
         # Given
-        left = {"key1": 1}
-        right = {"key1": 1}
-        expected_result = ([], [], [], [])
+        left = {"key1": 1, "key2": 1, "key3": 1}
+        right = {"key1": 1, "key2": 1, "key3": 1}
+        expected_result = {1: defaultdict(int), 2: defaultdict(int)}
 
         # When
         result = Diff(self.bot).get_diff(left, right)
@@ -114,7 +114,7 @@ class TestGetDiff(unittest.TestCase):
         # Given
         left = {"key1": 1, "key2": 1, "key3": 3}
         right = {"key1": 1, "key2": 4, "key3": 1}
-        expected_result = ([2], ["key3"], [3], ["key2"])
+        expected_result = {1: {"key3": 2}, 2: {"key2": 3}}
 
         # When
         result = Diff(self.bot).get_diff(left, right)
