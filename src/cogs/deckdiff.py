@@ -150,30 +150,17 @@ class Diff(commands.Cog):
     # Diffs two decklist dicts
     # Returns 4-tuple with count and card name columns for both lists
     def get_diff(self, list1, list2):
-        diff = {1: defaultdict(int), 2: defaultdict(int)}
+        diff = defaultdict(str)
 
-        for card in frozenset(list1.keys()) | frozenset(list2.keys()):
+        cards = sorted(list(frozenset(list1.keys()) | frozenset(list2.keys())))
+        for card in cards:
             quantity_diff = list1.get(card, 0) - list2.get(card, 0)
             if quantity_diff > 0:
-                diff[1][card] = quantity_diff
+                diff[1] += "{quantity} {card}\n".format(quantity=quantity_diff, card=card)
             elif quantity_diff < 0:
-                diff[2][card] = abs(quantity_diff)
+                diff[2] += "{quantity} {card}\n".format(quantity=abs(quantity_diff), card=card)
 
         return diff
-
-    # Takes a diff 4-tuple and adds it as fields on given embed.
-    def format_diff_embed(self, diff, name, embed):
-        strdiff = (
-                ([str(i) for i in diff[0]], diff[1]),
-                ([str(i) for i in diff[2]], diff[3])
-        )
-        for num, lst in enumerate(strdiff, start=1):
-            output = "\n".join(map(lambda x: "{} {}".format(*x), zip(*lst)))
-            # Discord doesn't like empty fields
-            if output:
-                embed.add_field(name="{} {}".format(name, num), value=output,
-                        inline=True)
-        return embed
 
     def execute(self, message):
         " Perform actual diff. "
@@ -202,8 +189,14 @@ class Diff(commands.Cog):
                 )
 
             result = Embed()
-            self.format_diff_embed(maindiff, "Mainboard", result)
-            self.format_diff_embed(sidediff, "Sideboard", result)
+            diffs_by_type = [("Mainboard", maindiff), ("Sideboard", sidediff)]
+            for name, diff in diffs_by_type:
+                for num, content in diff.items():
+                    result.add_field(
+                        name="{} {}".format(name, num),
+                        value=content,
+                        inline=True,
+                        )
 
             # Discord API has a 1024 length limit for embeds
             if len(result) < 1024:

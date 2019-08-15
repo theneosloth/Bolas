@@ -101,7 +101,7 @@ class TestGetDiff(unittest.TestCase):
         # Given
         left = {"key1": 1, "key2": 1, "key3": 1}
         right = {"key1": 1, "key2": 1, "key3": 1}
-        expected_result = {1: defaultdict(int), 2: defaultdict(int)}
+        expected_result = defaultdict(str)
 
         # When
         result = Diff(self.bot).get_diff(left, right)
@@ -112,57 +112,19 @@ class TestGetDiff(unittest.TestCase):
     def test_all_diff(self):
         """ Test a scenario with all cases. """
         # Given
-        left = {"key1": 1, "key2": 1, "key3": 3}
-        right = {"key1": 1, "key2": 4, "key3": 1}
-        expected_result = {1: {"key3": 2}, 2: {"key2": 3}}
+        left = {"key1": 1, "key2": 1, "key3": 3, "key4": 1}
+        right = {"key1": 1, "key2": 4, "key3": 1, "key5": 1}
+        expected_result = {
+            1: "2 key3\n1 key4\n",
+            2: "3 key2\n1 key5\n",
+            }
 
         # When
         result = Diff(self.bot).get_diff(left, right)
 
         # Then
-        self.assertEqual(result, expected_result)
-
-
-class TestFormatDiffEmbed(unittest.TestCase):
-    """ Tests for src.cogs.deckdiff.Diff.format_diff_embed. """
-
-    def setUp(self):
-        """ Generic variables. """
-        self.bot = "a bot"
-
-    def test_empty(self):
-        """ Test when diff provided is empty. """
-        # Given
-        name = "title for comparison"
-        diff = ([], [], [], [])
-        result = Embed()  # TODO don't pass result as a variable
-        expected_result = result
-
-        # When
-        Diff(self.bot).format_diff_embed(diff, name, result)
-
-        # Then
-        self.assertTrue("fields" not in result.to_dict())
-
-    def test_format(self):
-        """ Test when diff provided has data. """
-        # Given
-        name = "title for comparison"
-        diff = ([2], ["key3"], [3], ["key2"])
-        result = Embed()  # TODO don't pass result as a variable
-        expected_field1 = result
-        expected_field1 = result
-
-        # When
-        Diff(self.bot).format_diff_embed(diff, name, result)
-        fields = result.to_dict()["fields"]
-
-        # Then
-        self.assertEqual(len(fields), 2)
-        self.assertEqual(fields[0]["inline"], True)
-        self.assertEqual(fields[0]["value"], "2 key3")
-        self.assertEqual(fields[1]["inline"], True)
-        self.assertEqual(fields[1]["value"], "3 key2")
+        self.assertEqual(result[1], expected_result[1])
+        self.assertEqual(result[2], expected_result[2])
 
 
 class TestFilterName(unittest.TestCase):
@@ -579,7 +541,7 @@ class TestDiffExecute(unittest.TestCase):
             "mainboard": MagicMock(),
             "sideboard": MagicMock(),
             }
-        over_size_diff = ([1], ["1 {0}".format("X" * 1024)], [], [])
+        over_size_diff = {1: "X" * 1024, 2: ""}
         expected_result = (False, "Diff too long.")
 
         url_mock.side_effect = [self.url1, self.url2]
@@ -587,7 +549,7 @@ class TestDiffExecute(unittest.TestCase):
         open_mock.return_value.read.side_effect = [
             expected_data, "".encode()]
         list_mock.return_value = expected_lists
-        diff_mock.side_effect = [over_size_diff, ([], [], [], [])]
+        diff_mock.side_effect = [over_size_diff, defaultdict(str)]
 
         # When
         result = Diff(self.bot).execute(message)
@@ -635,10 +597,7 @@ class TestDiffExecute(unittest.TestCase):
             "mainboard": MagicMock(),
             "sideboard": MagicMock(),
             }
-        diff = (
-            [1], ["{0}".format("X" * 50)],
-            [3], ["{0}".format("X" * 50)],
-            )
+        diff = {1: "X" * 50, 2: "X" * 50}
         expected_result = (True, embed_mock())
 
         url_mock.side_effect = [self.url1, self.url2]
@@ -646,7 +605,7 @@ class TestDiffExecute(unittest.TestCase):
         open_mock.return_value.read.side_effect = [
             expected_data, "".encode()]
         list_mock.return_value = expected_lists
-        diff_mock.side_effect = [diff, ([], [], [], [])]
+        diff_mock.side_effect = [diff, defaultdict(str)]
 
         # When
         result = Diff(self.bot).execute(message)
