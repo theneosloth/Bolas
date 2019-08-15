@@ -165,8 +165,12 @@ class Diff(commands.Cog):
     def execute(self, message):
         " Perform actual diff. "
         try:
-            urls = [m for m in (self.get_valid_url(w)
-                for w in message.split()[1:]) if m]
+            urls = [
+                url for url in (
+                    self.get_valid_url(message)
+                    for message in message.split()[1:])
+                if url
+                ]
             if len(urls) != 2:
                 raise Diff.MessageError("Exactly two urls are needed.")
 
@@ -175,8 +179,8 @@ class Diff(commands.Cog):
                 files = (urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent':'Mozilla/5.0'}))
                         .read().decode("utf-8", "replace")
                     for u in urls)
-                decklists = [self.get_list(f) for f in files]
-            except urllib.error.URLError as e:
+                decklists = [self.get_list(deck) for deck in files]
+            except urllib.error.URLError as exc:
                 raise Diff.MessageError("Failed to open url.")
 
             maindiff = self.get_diff(
@@ -204,8 +208,8 @@ class Diff(commands.Cog):
             else:
                 return False, "Diff too long."
 
-        except Diff.MessageError as e:
-            return False, e.message
+        except Diff.MessageError as exc:
+            return False, exc.message
 
     @commands.command()
     async def diff(self, ctx):
