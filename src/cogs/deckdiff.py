@@ -29,10 +29,10 @@ class Diff(commands.Cog):
         # Dict of valid url domains, and options for those domains
         self.urls_options = {
             "deckstats.net": {
-                "query":[("export_dec", "1")]
+                "query": [("export_dec", "1")]
             },
             "tappedout.net": {
-                "query":[("fmt", "txt")]
+                "query": [("fmt", "txt")]
             },
             "www.mtggoldfish.com": {
                 'paths': [{"value": "download", "index": 2}]
@@ -63,7 +63,7 @@ class Diff(commands.Cog):
             "Lim-Dul's Vault": "Lim-Dûl's Vault"
         }
 
-    #Error class for sending error messages
+    # Error class for sending error messages
     class MessageError(Exception):
         def __init__(self, message):
             self.message = message
@@ -72,7 +72,7 @@ class Diff(commands.Cog):
     # Returns None if not a good url
     # MessageError unknown url if url found and not in valid urls
     def get_valid_url(self, raw_url):
-        #strip surrounding < >. This allows for non-embedding links
+        # strip surrounding < >. This allows for non-embedding links
         strip = self.re_stripangle.match(raw_url)
         if strip:
             raw_url = strip[1]
@@ -126,8 +126,7 @@ class Diff(commands.Cog):
         except ValueError:
             return deck  # If data is not JSON, assume it has proper format
 
-
-    # Parses decklist string into a tuple of dicts for main and sideboards
+    # Parses decklist string into a tuple of dicts
     def get_list(self, deck):
         mainboard = defaultdict(int)
         sideboard = defaultdict(int)
@@ -136,7 +135,8 @@ class Diff(commands.Cog):
         for line in self.format_to_txt(deck).split("\n"):
             match = self.re_line.match(line)
             if match:
-                deck_list[self.filter_name(match["name"])] += int(match["count"])
+                deck_list[self.filter_name(
+                    match["name"])] += int(match["count"])
             elif "Sideboard" in line:
                 deck_list = sideboard
 
@@ -171,9 +171,12 @@ class Diff(commands.Cog):
 
             try:
                 # Should definitely split this into a few more lines
-                files = (urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent':'Mozilla/5.0'}))
-                        .read().decode("utf-8", "replace")
-                    for u in urls)
+                files = (
+                    urllib.request.urlopen(
+                        urllib.request.Request(
+                            url, headers={'User-Agent': 'Mozilla/5.0'})
+                        ).read().decode("utf-8", "replace")
+                    for url in urls)
                 decklists = [self.get_list(deck) for deck in files]
             except urllib.error.URLError as exc:
                 raise Diff.MessageError("Failed to open url.")
@@ -215,6 +218,7 @@ class Diff(commands.Cog):
             return await ctx.send(result)
 
         return await ctx.send(embed=result)
+
 
 def setup(bot):
     bot.add_cog(Diff(bot))
