@@ -190,7 +190,7 @@ class Diff(commands.Cog):
             result = Embed()
             diffs_by_type = [("Mainboard", maindiff), ("Sideboard", sidediff)]
             for name, diff in diffs_by_type:
-                for num, content in diff.items():
+                for num, content in sorted(diff.items()):
                     result.add_field(
                         name=f"{name} {num}",
                         value=content,
