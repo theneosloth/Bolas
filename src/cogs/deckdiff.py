@@ -82,7 +82,7 @@ class Diff(commands.Cog):
                 (url.scheme == "http" or url.scheme == "https")):
             valid_opts = self.urls_options.get(url.netloc, None)
             if not valid_opts:
-                raise Diff.MessageError("Unknown url <{}>".format(raw_url))
+                raise Diff.MessageError(f"Unknown url <{raw_url}>")
             url = list(url)
 
             # Add query params, if the configuration exists
@@ -115,18 +115,13 @@ class Diff(commands.Cog):
             mainboard = []
             sideboard = ["//Sideboard"]  # Separator line
             for card in json_deck["cards"]:
-                if not card["category"]:  # No category means mainboard
-                    mainboard.append(
-                        "{0} {1}".format(
-                            card["quantity"],
-                            card["card"]["oracleCard"]["name"]
-                            ))
+                quantity = card["quantity"]
+                name = card["card"]["oracleCard"]["name"]
+                # No category means mainboard
+                if not card["category"]:
+                    mainboard.append(f"{quantity} {name}")
                 elif card["category"] == "Sideboard":
-                    sideboard.append(
-                        "{0} {1}".format(
-                            card["quantity"],
-                            card["card"]["oracleCard"]["name"]
-                            ))
+                    sideboard.append(f"{quantity} {name}")
             return "\n".join(mainboard + sideboard)
         except ValueError:
             return deck  # If data is not JSON, assume it has proper format
@@ -156,9 +151,9 @@ class Diff(commands.Cog):
         for card in cards:
             quantity_diff = list1.get(card, 0) - list2.get(card, 0)
             if quantity_diff > 0:
-                diff[1] += "{quantity} {card}\n".format(quantity=quantity_diff, card=card)
+                diff[1] += f"{quantity_diff} {card}\n"
             elif quantity_diff < 0:
-                diff[2] += "{quantity} {card}\n".format(quantity=abs(quantity_diff), card=card)
+                diff[2] += f"{abs(quantity_diff)} {card}\n"
 
         return diff
 
@@ -197,7 +192,7 @@ class Diff(commands.Cog):
             for name, diff in diffs_by_type:
                 for num, content in diff.items():
                     result.add_field(
-                        name="{} {}".format(name, num),
+                        name=f"{name} {num}",
                         value=content,
                         inline=True,
                         )

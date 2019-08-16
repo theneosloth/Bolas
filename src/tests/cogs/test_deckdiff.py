@@ -298,7 +298,7 @@ class TestGetValidUrl(unittest.TestCase):
         """ Test valid URL between angles (<>). """
         # Given
         url = "http://valid.com/"
-        url_angles = "<{url}>".format(url=url)
+        url_angles = f"<{url}>"
         expected_result = url
 
         # When/Then
@@ -329,9 +329,7 @@ class TestGetValidUrl(unittest.TestCase):
         url = "http://valid.com/"
         param = "param1"
         value = "value1"
-
-        expected_result = "{url}?{param}={value}".format(
-            url=url, param=param, value=value)
+        expected_result = f"{url}?{param}={value}"
 
         # When/Then
         obj = Diff(self.bot)
@@ -348,8 +346,7 @@ class TestGetValidUrl(unittest.TestCase):
         url = "http://valid.com/p1/p2"
         path = "p3"
         index = 3
-        expected_result = "{url}/{path}".format(
-            url=url, path=path)
+        expected_result = f"{url}/{path}"
 
         # When/Then
         obj = Diff(self.bot)
@@ -409,7 +406,7 @@ class TestFormatToTxt(unittest.TestCase):
         name_side = "card2"
         quantity_side = 1
         category = "Sideboard"
-        data = '''
+        data = f'''
             {{"cards":
                 [
                     {{
@@ -431,22 +428,11 @@ class TestFormatToTxt(unittest.TestCase):
                         "category": "{category}"
                     }}
                 ]
-            }}'''.format(
-                name_main=name_main,
-                quantity_main=quantity_main,
-                name_side=name_side,
-                quantity_side=quantity_side,
-                category=category,
-                )
+            }}'''
         expected_result = (
-            "{quantity_main} {name_main}\n"
-            "//Sideboard\n"
-            "{quantity_side} {name_side}".format(
-                name_main=name_main,
-                quantity_main=quantity_main,
-                name_side=name_side,
-                quantity_side=quantity_side,
-                )
+            f"{quantity_main} {name_main}\n"
+            f"//Sideboard\n"
+            f"{quantity_side} {name_side}"
             )
 
         # When
@@ -469,7 +455,7 @@ class TestDiffExecute(unittest.TestCase):
     def test_less_two_urls(self, url_mock):
         """ Test when amount of URLs provided is less than two. """
         # Given
-        message = "!command {0}".format(self.url1)
+        message = f"!command {self.url1}"
         expected_result = (False, "Exactly two urls are needed.")
 
         url_mock.side_effect= [self.url1]
@@ -485,7 +471,7 @@ class TestDiffExecute(unittest.TestCase):
     def test_more_two_urls(self, url_mock):
         """ Test when amount of URLs provided is more than two. """
         # Given
-        message = "!command {0} {0} {1}".format(self.url1, self.url2)
+        message = f"!command {self.url1} {self.url1} {self.url2}"
         expected_result = (False, "Exactly two urls are needed.")
 
         url_mock.side_effect= [self.url1, self.url1, self.url2]
@@ -506,7 +492,7 @@ class TestDiffExecute(unittest.TestCase):
     def test_fail_open_url(self, url_mock, request_mock):
         """ Test error when URL can't be opened. """
         # Given
-        message = "!command {0} {1}".format(self.url1, self.url2)
+        message = f"!command {self.url1} {self.url2}"
         expected_result = (False, "Failed to open url.")
 
         url_mock.side_effect = [self.url1, self.url2]
@@ -534,7 +520,7 @@ class TestDiffExecute(unittest.TestCase):
             list_mock, diff_mock):
         """ Test error when result is too long. """
         # Given
-        message = "!command {0} {1}".format(self.url1, self.url2)
+        message = f"!command {self.url1} {self.url2}"
         expected_request = MagicMock()
         expected_data = "some data".encode()
         expected_lists = {
@@ -590,7 +576,7 @@ class TestDiffExecute(unittest.TestCase):
             list_mock, diff_mock, embed_mock):
         """ Test error when result is too long. """
         # Given
-        message = "!command {0} {1}".format(self.url1, self.url2)
+        message = f"!command {self.url1} {self.url2}"
         expected_request = MagicMock()
         expected_data = "some data".encode()
         expected_lists = {
