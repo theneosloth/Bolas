@@ -38,29 +38,29 @@ class TestDiffClass(unittest.TestCase):
 
         # Then
         self.assertEqual(obj.bot, self.bot)
-        self.assertEqual(len(obj.valid_urls), 5)
+        self.assertEqual(len(obj.urls_options), 5)
         self.assertEqual(
-            obj.valid_urls["deckstats.net"]["query"],
+            obj.urls_options["deckstats.net"]["query"],
             [("export_dec", "1")],
             )
         self.assertEqual(
-            obj.valid_urls["tappedout.net"]["query"],
+            obj.urls_options["tappedout.net"]["query"],
             [("fmt", "txt")],
             )
         self.assertEqual(
-            obj.valid_urls["www.mtggoldfish.com"]["paths"],
+            obj.urls_options["www.mtggoldfish.com"]["paths"],
             [{"value": "download", "index": 2}],
             )
         self.assertEqual(
-            obj.valid_urls["www.hareruyamtg.com"]["paths"],
+            obj.urls_options["www.hareruyamtg.com"]["paths"],
             [{"value": "download", "index": 3}],
             )
         self.assertEqual(
-            obj.valid_urls["www.hareruyamtg.com"]["replace"],
+            obj.urls_options["www.hareruyamtg.com"]["replace"],
             [{"old": "/show/", "new": ""}],
             )
         self.assertEqual(
-            obj.valid_urls["archidekt.com"]["paths"],
+            obj.urls_options["archidekt.com"]["paths"],
             [
                 {"value": "api", "index": 1},
                 {"value": "small/", "index": 4},
@@ -99,9 +99,9 @@ class TestGetDiff(unittest.TestCase):
     def test_no_diff(self):
         """ Test when data provided has no difference. """
         # Given
-        left = {"key1": 1}
-        right = {"key1": 1}
-        expected_result = ([], [], [], [])
+        left = {"key1": 1, "key2": 1, "key3": 1}
+        right = {"key1": 1, "key2": 1, "key3": 1}
+        expected_result = defaultdict(str)
 
         # When
         result = Diff(self.bot).get_diff(left, right)
@@ -112,57 +112,19 @@ class TestGetDiff(unittest.TestCase):
     def test_all_diff(self):
         """ Test a scenario with all cases. """
         # Given
-        left = {"key1": 1, "key2": 1, "key3": 3}
-        right = {"key1": 1, "key2": 4, "key3": 1}
-        expected_result = ([2], ["key3"], [3], ["key2"])
+        left = {"key1": 1, "key2": 1, "key3": 3, "key4": 1}
+        right = {"key1": 1, "key2": 4, "key3": 1, "key5": 1}
+        expected_result = {
+            1: "2 key3\n1 key4\n",
+            2: "3 key2\n1 key5\n",
+            }
 
         # When
         result = Diff(self.bot).get_diff(left, right)
 
         # Then
-        self.assertEqual(result, expected_result)
-
-
-class TestFormatDiffEmbed(unittest.TestCase):
-    """ Tests for src.cogs.deckdiff.Diff.format_diff_embed. """
-
-    def setUp(self):
-        """ Generic variables. """
-        self.bot = "a bot"
-
-    def test_empty(self):
-        """ Test when diff provided is empty. """
-        # Given
-        name = "title for comparison"
-        diff = ([], [], [], [])
-        result = Embed()  # TODO don't pass result as a variable
-        expected_result = result
-
-        # When
-        Diff(self.bot).format_diff_embed(diff, name, result)
-
-        # Then
-        self.assertTrue("fields" not in result.to_dict())
-
-    def test_format(self):
-        """ Test when diff provided has data. """
-        # Given
-        name = "title for comparison"
-        diff = ([2], ["key3"], [3], ["key2"])
-        result = Embed()  # TODO don't pass result as a variable
-        expected_field1 = result
-        expected_field1 = result
-
-        # When
-        Diff(self.bot).format_diff_embed(diff, name, result)
-        fields = result.to_dict()["fields"]
-
-        # Then
-        self.assertEqual(len(fields), 2)
-        self.assertEqual(fields[0]["inline"], True)
-        self.assertEqual(fields[0]["value"], "2 key3")
-        self.assertEqual(fields[1]["inline"], True)
-        self.assertEqual(fields[1]["value"], "3 key2")
+        self.assertEqual(result[1], expected_result[1])
+        self.assertEqual(result[2], expected_result[2])
 
 
 class TestFilterName(unittest.TestCase):
@@ -213,7 +175,10 @@ class TestGetList(unittest.TestCase):
         """ Test when no data available. """
         # Given
         data = ""
-        expected_result = (defaultdict(int), defaultdict(int))
+        expected_result = {
+            "mainboard": defaultdict(int),
+            "sideboard": defaultdict(int),
+            }
 
         format_mock.return_value = data
 
@@ -229,7 +194,10 @@ class TestGetList(unittest.TestCase):
         """ Test when no data matches regexp. """
         # Given
         data = "\n\n\n\n\n\n"
-        expected_result = (defaultdict(int), defaultdict(int))
+        expected_result = {
+            "mainboard": defaultdict(int),
+            "sideboard": defaultdict(int),
+            }
 
         format_mock.return_value = data
 
@@ -245,7 +213,10 @@ class TestGetList(unittest.TestCase):
         """ Test when data has only sideboard information. """
         # Given
         data = "\n//Sideboard:\n\nSB: 1 key1\n\n"
-        expected_result = (defaultdict(int), {"key1": 1})
+        expected_result = {
+            "mainboard": defaultdict(int),
+            "sideboard": {"key1": 1},
+            }
 
         format_mock.return_value = data
 
@@ -261,7 +232,10 @@ class TestGetList(unittest.TestCase):
         """ Test when data has only mainboard information. """
         # Given
         data = "\n\n1 key1\n\n"
-        expected_result = ({"key1": 1}, defaultdict(int))
+        expected_result = {
+            "mainboard": {"key1": 1},
+            "sideboard": defaultdict(int),
+            }
 
         format_mock.return_value = data
 
@@ -277,7 +251,10 @@ class TestGetList(unittest.TestCase):
         """ Test when data has both mainboard and sideboard information. """
         # Given
         data = "\n\n1 key1\n\n//Sideboard:\n\nSB: 2 key2"
-        expected_result = ({"key1": 1}, {"key2": 2})
+        expected_result = {
+            "mainboard": {"key1": 1},
+            "sideboard": {"key2": 2},
+            }
 
         format_mock.return_value = data
 
@@ -321,12 +298,12 @@ class TestGetValidUrl(unittest.TestCase):
         """ Test valid URL between angles (<>). """
         # Given
         url = "http://valid.com/"
-        url_angles = "<{url}>".format(url=url)
+        url_angles = f"<{url}>"
         expected_result = url
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update({"valid.com": {'bad': 'config'}})
+        obj.urls_options.update({"valid.com": {'bad': 'config'}})
         result = obj.get_valid_url(url_angles)
 
         # Then
@@ -340,7 +317,7 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update({"valid.com": {'bad': 'config'}})
+        obj.urls_options.update({"valid.com": {'bad': 'config'}})
         result = obj.get_valid_url(url)
 
         # Then
@@ -352,13 +329,11 @@ class TestGetValidUrl(unittest.TestCase):
         url = "http://valid.com/"
         param = "param1"
         value = "value1"
-
-        expected_result = "{url}?{param}={value}".format(
-            url=url, param=param, value=value)
+        expected_result = f"{url}?{param}={value}"
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update(
+        obj.urls_options.update(
             {"valid.com": {'query': [(param, value)]}})
         result = obj.get_valid_url(url)
 
@@ -371,12 +346,11 @@ class TestGetValidUrl(unittest.TestCase):
         url = "http://valid.com/p1/p2"
         path = "p3"
         index = 3
-        expected_result = "{url}/{path}".format(
-            url=url, path=path)
+        expected_result = f"{url}/{path}"
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update(
+        obj.urls_options.update(
             {"valid.com": {
                 'paths': [{"value": path, "index": index}]}
                 })
@@ -395,7 +369,7 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.valid_urls.update(
+        obj.urls_options.update(
             {"valid.com": {
                 'replace': [{"old": old, "new": new}]}
                 })
@@ -432,7 +406,7 @@ class TestFormatToTxt(unittest.TestCase):
         name_side = "card2"
         quantity_side = 1
         category = "Sideboard"
-        data = '''
+        data = f'''
             {{"cards":
                 [
                     {{
@@ -454,22 +428,11 @@ class TestFormatToTxt(unittest.TestCase):
                         "category": "{category}"
                     }}
                 ]
-            }}'''.format(
-                name_main=name_main,
-                quantity_main=quantity_main,
-                name_side=name_side,
-                quantity_side=quantity_side,
-                category=category,
-                )
+            }}'''
         expected_result = (
-            "{quantity_main} {name_main}\n"
-            "//Sideboard\n"
-            "{quantity_side} {name_side}".format(
-                name_main=name_main,
-                quantity_main=quantity_main,
-                name_side=name_side,
-                quantity_side=quantity_side,
-                )
+            f"{quantity_main} {name_main}\n"
+            f"//Sideboard\n"
+            f"{quantity_side} {name_side}"
             )
 
         # When
@@ -492,7 +455,7 @@ class TestDiffExecute(unittest.TestCase):
     def test_less_two_urls(self, url_mock):
         """ Test when amount of URLs provided is less than two. """
         # Given
-        message = "!command {0}".format(self.url1)
+        message = f"!command {self.url1}"
         expected_result = (False, "Exactly two urls are needed.")
 
         url_mock.side_effect= [self.url1]
@@ -508,7 +471,7 @@ class TestDiffExecute(unittest.TestCase):
     def test_more_two_urls(self, url_mock):
         """ Test when amount of URLs provided is more than two. """
         # Given
-        message = "!command {0} {0} {1}".format(self.url1, self.url2)
+        message = f"!command {self.url1} {self.url1} {self.url2}"
         expected_result = (False, "Exactly two urls are needed.")
 
         url_mock.side_effect= [self.url1, self.url1, self.url2]
@@ -529,7 +492,7 @@ class TestDiffExecute(unittest.TestCase):
     def test_fail_open_url(self, url_mock, request_mock):
         """ Test error when URL can't be opened. """
         # Given
-        message = "!command {0} {1}".format(self.url1, self.url2)
+        message = f"!command {self.url1} {self.url2}"
         expected_result = (False, "Failed to open url.")
 
         url_mock.side_effect = [self.url1, self.url2]
@@ -557,11 +520,14 @@ class TestDiffExecute(unittest.TestCase):
             list_mock, diff_mock):
         """ Test error when result is too long. """
         # Given
-        message = "!command {0} {1}".format(self.url1, self.url2)
+        message = f"!command {self.url1} {self.url2}"
         expected_request = MagicMock()
         expected_data = "some data".encode()
-        expected_lists = [MagicMock(), MagicMock()]
-        over_size_diff = ([1], ["1 {0}".format("X" * 1024)], [], [])
+        expected_lists = {
+            "mainboard": MagicMock(),
+            "sideboard": MagicMock(),
+            }
+        over_size_diff = {1: "X" * 1024, 2: ""}
         expected_result = (False, "Diff too long.")
 
         url_mock.side_effect = [self.url1, self.url2]
@@ -569,7 +535,7 @@ class TestDiffExecute(unittest.TestCase):
         open_mock.return_value.read.side_effect = [
             expected_data, "".encode()]
         list_mock.return_value = expected_lists
-        diff_mock.side_effect = [over_size_diff, ([], [], [], [])]
+        diff_mock.side_effect = [over_size_diff, defaultdict(str)]
 
         # When
         result = Diff(self.bot).execute(message)
@@ -595,8 +561,8 @@ class TestDiffExecute(unittest.TestCase):
             call(""),
             ])
         diff_mock.assert_has_calls([
-            call(expected_lists[0], expected_lists[0]),
-            call(expected_lists[1], expected_lists[1]),
+            call(expected_lists["mainboard"], expected_lists["mainboard"]),
+            call(expected_lists["sideboard"], expected_lists["sideboard"]),
             ])
 
     @patch("src.cogs.deckdiff.Embed")
@@ -610,14 +576,14 @@ class TestDiffExecute(unittest.TestCase):
             list_mock, diff_mock, embed_mock):
         """ Test error when result is too long. """
         # Given
-        message = "!command {0} {1}".format(self.url1, self.url2)
+        message = f"!command {self.url1} {self.url2}"
         expected_request = MagicMock()
         expected_data = "some data".encode()
-        expected_lists = [MagicMock(), MagicMock()]
-        diff = (
-            [1], ["{0}".format("X" * 50)],
-            [3], ["{0}".format("X" * 50)],
-            )
+        expected_lists = {
+            "mainboard": MagicMock(),
+            "sideboard": MagicMock(),
+            }
+        diff = {1: "X" * 50, 2: "X" * 50}
         expected_result = (True, embed_mock())
 
         url_mock.side_effect = [self.url1, self.url2]
@@ -625,7 +591,7 @@ class TestDiffExecute(unittest.TestCase):
         open_mock.return_value.read.side_effect = [
             expected_data, "".encode()]
         list_mock.return_value = expected_lists
-        diff_mock.side_effect = [diff, ([], [], [], [])]
+        diff_mock.side_effect = [diff, defaultdict(str)]
 
         # When
         result = Diff(self.bot).execute(message)
@@ -651,8 +617,8 @@ class TestDiffExecute(unittest.TestCase):
             call(""),
             ])
         diff_mock.assert_has_calls([
-            call(expected_lists[0], expected_lists[0]),
-            call(expected_lists[1], expected_lists[1]),
+            call(expected_lists["mainboard"], expected_lists["mainboard"]),
+            call(expected_lists["sideboard"], expected_lists["sideboard"]),
             ])
         embed_mock.assert_has_calls([
             call(),
