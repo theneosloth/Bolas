@@ -277,7 +277,7 @@ class TestGetValidUrl(unittest.TestCase):
         """ Test when no data provided. """
         # Given
         url = ""
-        expected_result = None
+        expected_result = ""
 
         # When
         result = Diff(self.bot).get_valid_url(url)
