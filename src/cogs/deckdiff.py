@@ -10,6 +10,11 @@ from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 
 
 class Diff(commands.Cog):
+    """
+    Class to handle all operations related to getting
+    differences between deck lists.
+
+    """
 
     def __init__(self, bot):
         """
@@ -26,31 +31,33 @@ class Diff(commands.Cog):
 
         """
         self.bot = bot
-        # Dict of valid url domains, and options for those domains
+
+        # url domains and their options.
         self.urls_options = {
             "deckstats.net": {
-                "query":[("export_dec", "1")]
-            },
+                "query": [("export_dec", "1")]
+                },
             "tappedout.net": {
-                "query":[("fmt", "txt")]
-            },
+                "query": [("fmt", "txt")]
+                },
             "www.mtggoldfish.com": {
                 'paths': [{"value": "download", "index": 2}]
-            },
+                },
             "www.hareruyamtg.com": {
                 'paths': [{"value": "download", "index": 3}],
                 'replace': [{"old": "/show/", "new": ""}],
-            },
+                },
             "archidekt.com": {
                 'paths':
                     [
                         {"value": "api", "index": 1},
                         {"value": "small/", "index": 4},
                     ],
-            },
-        }
+                },
+            }
 
         self.re_stripangle = re.compile(r"^<(.*)>$")
+
         # Gets count and card name from decklist line
         self.re_line = re.compile(
                 r"^\s*(?:(?P<sb>SB:)\s)?\s*"
@@ -60,19 +67,39 @@ class Diff(commands.Cog):
         # Dict of card names that should be replaced due to inconsistancy
         # AKA Wizards needs to errata Lim-Dûl's Vault already :(
         self.name_replacements = {
-            "Lim-Dul's Vault": "Lim-Dûl's Vault"
-        }
+            "Lim-Dul's Vault": "Lim-Dûl's Vault",
+            }
 
-    #Error class for sending error messages
     class MessageError(Exception):
+        """ Error class for sending error messages. """
         def __init__(self, message):
+            """ Initializaton method. """
             self.message = message
 
-    # Parses a string to get a valid url
-    # Returns None if not a good url
-    # MessageError unknown url if url found and not in valid urls
     def get_valid_url(self, raw_url):
-        #strip surrounding < >. This allows for non-embedding links
+        """
+        Parses a string into a valid url.
+
+        Query and/or params are added or modified per
+        configuration in self.urls_options.
+
+        Parameters:
+        -----------
+        raw_url : str
+            String to be parsed/transformed.
+
+        Returns:
+        --------
+        str
+            Empty URL or new URL with added params/queries.
+
+        Raises:
+        -------
+        Diff.ErrorMessage
+            When the URL doesn't have any options configured (Diff.url_options)
+
+        """
+        # strip surrounding < >. This allows for non-embedding links
         strip = self.re_stripangle.match(raw_url)
         if strip:
             raw_url = strip[1]
@@ -85,7 +112,7 @@ class Diff(commands.Cog):
                 raise Diff.MessageError(f"Unknown url <{raw_url}>")
             url = list(url)
 
-            # Add query params, if the configuration exists
+            # Add query params
             query = parse_qsl(url[3])
             query.extend(valid_opts.get("query", []))
             url[3] = urlencode(query)
@@ -102,14 +129,82 @@ class Diff(commands.Cog):
                 url_str = url_str.replace(replace["old"], replace["new"])
 
             return url_str
-        return None
+        return ""
 
-    # Normalizes names.
     def filter_name(self, name):
+        """
+        Normalizes names.
+
+        Parameters:
+        -----------
+        name : str
+            String to be normalized.
+
+        Returns:
+        --------
+        str
+            Normalized name/string.
+
+        """
         return self.name_replacements.get(name, name)
 
-    # Format json deck info into txt list (for archidekt only)
     def format_to_txt(self, deck):
+        """
+        Format json deck info into txt list.
+
+        As of writting, this is only required for archidekt.com.
+        Parameters:
+        -----------
+        deck : str
+            Deck data in string format (txt or json).
+
+        Returns:
+        --------
+        str
+            Deck data in txt format.
+
+        Samples
+        -------
+        input : json
+
+            {
+                cards:
+                    [
+                        {
+                            card:
+                                {
+                                    oracleCard:
+                                        {
+                                            name: AAAAAA
+                                        }
+                                },
+                            quantity: 1,
+                            category: Sideboard
+                        },
+                        ...
+                    ]
+
+            }
+
+        input : str
+
+            1 AAAAAA\n
+            ...
+            \n
+            separator
+            2 BBBBBB\n
+            ...
+
+        output : str
+
+            1 AAAAAA\n
+            ...
+            \n
+            separator
+            2 BBBBBB\n
+            ...
+
+        """
         try:
             json_deck = json.loads(deck)  # Raise ValueError if not JSON
             mainboard = []
@@ -126,9 +221,48 @@ class Diff(commands.Cog):
         except ValueError:
             return deck  # If data is not JSON, assume it has proper format
 
-
-    # Parses decklist string into a tuple of dicts for main and sideboards
     def get_list(self, deck):
+        """
+        Parses decklist string into a dict.
+
+        Parameters:
+        -----------
+        deck : str
+            Deck data in txt.
+
+        Returns:
+        --------
+        dict
+            Deck data in dict format.
+            Guaranteed to have two keys: mainboard and sideboard.
+
+        Samples
+        -------
+        input : str
+
+            1 AAAAAA\n
+            ...
+            \n
+            separator
+            2 BBBBBB\n
+            ...
+
+        output : dict
+
+            {
+                "mainboard":
+                    {
+                        "AAAAAA": 1,
+                        ...
+                    },
+                "siteboard":
+                    {
+                        "BBBBBB": 2,
+                        ...
+                    },
+            }
+
+        """
         mainboard = defaultdict(int)
         sideboard = defaultdict(int)
 
@@ -136,20 +270,58 @@ class Diff(commands.Cog):
         for line in self.format_to_txt(deck).split("\n"):
             match = self.re_line.match(line)
             if match:
-                deck_list[self.filter_name(match["name"])] += int(match["count"])
+                deck_list[self.filter_name(
+                    match["name"])] += int(match["count"])
             elif "Sideboard" in line:
                 deck_list = sideboard
 
         return {"mainboard": mainboard, "sideboard": sideboard}
 
-    # Diffs two decklist dicts
-    # Returns 4-tuple with count and card name columns for both lists
-    def get_diff(self, list1, list2):
+    def get_diff(self, set1, set2):
+        """
+        Get differences between two dicts.
+
+        Parameters:
+        -----------
+        set1 : dict
+            First set of data to compare.
+        set2 : dict
+            Second set of data to compare.
+
+        Returns:
+        --------
+        dict
+            Resulting differences in dict format.
+
+        Samples
+        -------
+        input : dict
+
+            set1:
+                {
+                    "AAAAAA": 1,
+                    ...
+                }
+            set2:
+                {
+                    "AAAAAA": 2,
+                    ...
+                }
+
+        output : dict(str)
+
+            {
+                2:
+                    1 AAAAAA\n
+                    ...
+            }
+
+        """
         diff = defaultdict(str)
 
-        cards = sorted(list(frozenset(list1.keys()) | frozenset(list2.keys())))
+        cards = sorted(list(frozenset(set1.keys()) | frozenset(set2.keys())))
         for card in cards:
-            quantity_diff = list1.get(card, 0) - list2.get(card, 0)
+            quantity_diff = set1.get(card, 0) - set2.get(card, 0)
             if quantity_diff > 0:
                 diff[1] += f"{quantity_diff} {card}\n"
             elif quantity_diff < 0:
@@ -158,8 +330,33 @@ class Diff(commands.Cog):
         return diff
 
     def execute(self, message):
-        " Perform actual diff. "
+        """
+        Perform a diff based on URLs provided in param.
+
+        Parameters:
+        -----------
+        message: str
+            Message for Discord bot.
+
+        Returns:
+        --------
+        tuple
+            (bool, str)
+
+        Samples
+        -------
+        input : str
+            !command http://url1 http://url2.com
+
+        output : tuple(bool, str)
+
+            (False, "Error message")
+
+            (True, "1 AAAAAA\n")
+
+        """
         try:
+            # Get URLs
             urls = [
                 url for url in (
                     self.get_valid_url(message)
@@ -169,15 +366,19 @@ class Diff(commands.Cog):
             if len(urls) != 2:
                 raise Diff.MessageError("Exactly two urls are needed.")
 
+            # Get deck lists
             try:
-                # Should definitely split this into a few more lines
-                files = (urllib.request.urlopen(urllib.request.Request(u, headers={'User-Agent':'Mozilla/5.0'}))
-                        .read().decode("utf-8", "replace")
-                    for u in urls)
+                files = (
+                    urllib.request.urlopen(
+                        urllib.request.Request(
+                            url, headers={'User-Agent': 'Mozilla/5.0'})
+                        ).read().decode("utf-8", "replace")
+                    for url in urls)
                 decklists = [self.get_list(deck) for deck in files]
             except urllib.error.URLError as exc:
                 raise Diff.MessageError("Failed to open url.")
 
+            # Get diffs
             maindiff = self.get_diff(
                 decklists[0]["mainboard"],
                 decklists[1]["mainboard"],
@@ -187,6 +388,7 @@ class Diff(commands.Cog):
                 decklists[1]["sideboard"],
                 )
 
+            # Format diffs for embed
             result = Embed()
             diffs_by_type = [("Mainboard", maindiff), ("Sideboard", sidediff)]
             for name, diff in diffs_by_type:
@@ -208,7 +410,19 @@ class Diff(commands.Cog):
 
     @commands.command()
     async def diff(self, ctx):
-        "List of differences between two decklists."
+        """
+        Entry point for bot command.
+
+        Parameters:
+        -----------
+        ctx : discord.bot.commands.Context
+            Context instance of bot message.
+
+        Returns:
+        --------
+        None
+
+        """
         is_valid, result = self.execute(ctx.message.content)
 
         if not is_valid:
@@ -216,5 +430,7 @@ class Diff(commands.Cog):
 
         return await ctx.send(embed=result)
 
+
 def setup(bot):
+    """ Setup command for Discord bot. """
     bot.add_cog(Diff(bot))

@@ -277,7 +277,7 @@ class TestGetValidUrl(unittest.TestCase):
         """ Test when no data provided. """
         # Given
         url = ""
-        expected_result = None
+        expected_result = ""
 
         # When
         result = Diff(self.bot).get_valid_url(url)
@@ -350,8 +350,8 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.urls_options.update(
-            {"valid.com": {
+        obj.urls_options.update({
+            "valid.com": {
                 'paths': [{"value": path, "index": index}]}
                 })
         result = obj.get_valid_url(url)
@@ -369,8 +369,8 @@ class TestGetValidUrl(unittest.TestCase):
 
         # When/Then
         obj = Diff(self.bot)
-        obj.urls_options.update(
-            {"valid.com": {
+        obj.urls_options.update({
+            "valid.com": {
                 'replace': [{"old": old, "new": new}]}
                 })
         result = obj.get_valid_url(url)
@@ -458,7 +458,7 @@ class TestDiffExecute(unittest.TestCase):
         message = f"!command {self.url1}"
         expected_result = (False, "Exactly two urls are needed.")
 
-        url_mock.side_effect= [self.url1]
+        url_mock.side_effect = [self.url1]
 
         # When
         result = Diff(self.bot).execute(message)
@@ -474,7 +474,7 @@ class TestDiffExecute(unittest.TestCase):
         message = f"!command {self.url1} {self.url1} {self.url2}"
         expected_result = (False, "Exactly two urls are needed.")
 
-        url_mock.side_effect= [self.url1, self.url1, self.url2]
+        url_mock.side_effect = [self.url1, self.url1, self.url2]
 
         # When
         result = Diff(self.bot).execute(message)
