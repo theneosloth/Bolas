@@ -1,7 +1,6 @@
 import json
 import re
-import urllib.request
-import urllib.error
+import requests
 
 from discord.ext import commands
 from discord import Embed
@@ -368,14 +367,9 @@ class Diff(commands.Cog):
 
             # Get deck lists
             try:
-                files = (
-                    urllib.request.urlopen(
-                        urllib.request.Request(
-                            url, headers={'User-Agent': 'Mozilla/5.0'})
-                        ).read().decode("utf-8", "replace")
-                    for url in urls)
+                files = (requests.get(url).text for url in urls)
                 decklists = [self.get_list(deck) for deck in files]
-            except urllib.error.URLError as exc:
+            except requests.exceptions.RequestException as exc:
                 raise Diff.MessageError("Failed to open url.")
 
             # Get diffs
