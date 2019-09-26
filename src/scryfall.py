@@ -95,10 +95,10 @@ class ScryFall:
         Return all cards from a given url.
         """
         cards = []
+        layout_blacklist = ["art_series"]
         try:
             while True:
                 j = self._load_url_as_json(url)
-
 
                 if (j["object"] == "error"):
                     raise self.ScryfallException(j)
@@ -109,17 +109,22 @@ class ScryFall:
                     raise self.CardLimitException()
 
                 data = j["data"]
-                for x in data:
-                    if "all_parts" in x:
+                for obj in data:
+
+                    # Ignore the art series cards
+                    if obj["layout"] in layout_blacklist:
+                        continue
+
+                    if "all_parts" in obj:
                         # If the card has additional parts add them to the
                         # response
                         cards += [Card(self._load_url_as_json(part["uri"]))
-                                  for part in x["all_parts"]]
-                    elif "card_faces" in x:
+                                  for part in obj["all_parts"]]
+                    elif "card_faces" in obj:
                         cards += [Card(face)
-                                  for face in x["card_faces"]]
+                                  for face in obj["card_faces"]]
                     else:
-                        cards.append(Card(x))
+                        cards.append(Card(obj))
 
                 if self.LOAD_ALL_MATCHES and j["has_more"]:
                     url = j["next_page"]
