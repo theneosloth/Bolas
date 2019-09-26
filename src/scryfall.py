@@ -95,7 +95,7 @@ class ScryFall:
         Return all cards from a given url.
         """
         cards = []
-        layout_blacklist = ["art_series"]
+        layout_blacklist = ["art_series", "token", "double_faced_token"]
         try:
             while True:
                 j = self._load_url_as_json(url)
