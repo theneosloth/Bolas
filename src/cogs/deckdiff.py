@@ -42,7 +42,7 @@ class Diff(commands.Cog):
                         {"value": "export", "index": 4},
                         {"value": "text", "index": 5},
                     ],
-                'replace': [{"old": r"@\w+\/", "new": ""}],
+                'replace': [{"old": r"\.com/@\w+/", "new": ".com/"}],
             },
         }
 
@@ -90,7 +90,7 @@ class Diff(commands.Cog):
 
             # Add subdomains to the domain, in order
             for subdomain in valid_opts.get("subdomains", []):
-                url[1] = subdomain + "." + url[1]
+                url[1] = ".".join([subdomain, url[1]])
 
             # Add each path to the position specified by the index value
             for path in valid_opts.get("paths", []):
@@ -146,7 +146,7 @@ class Diff(commands.Cog):
                 lst[self.filter_name(match["name"])] += int(match["count"])
             elif "Sideboard" in line:
                 lst = sideboard
-        return (mainboard, sideboard)
+        return mainboard, sideboard
 
     # Diffs two decklist dicts
     # Returns 4-tuple with count and card name columns for both lists
@@ -178,7 +178,7 @@ class Diff(commands.Cog):
 
     @commands.command()
     async def diff(self, ctx):
-        "List of differences between two decklists."
+        """List of differences between two decklists."""
         try:
             urls = [m for m in (self.get_valid_url(w)
                                 for w in ctx.message.content.split()[1:]) if m]
