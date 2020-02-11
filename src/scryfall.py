@@ -115,12 +115,7 @@ class ScryFall:
                     if obj["layout"] in layout_blacklist:
                         continue
 
-                    if "all_parts" in obj:
-                        # If the card has additional parts add them to the
-                        # response
-                        cards += [Card(self._load_url_as_json(part["uri"]))
-                                  for part in obj["all_parts"]]
-                    elif "card_faces" in obj:
+                    if "card_faces" in obj:
                         cards += [Card(face)
                                   for face in obj["card_faces"]]
                     else:
