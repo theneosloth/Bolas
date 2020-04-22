@@ -44,6 +44,16 @@ class Diff(commands.Cog):
                     ],
                 'replace': [{"old": r"\.com/@\w+/", "new": ".com/"}],
             },
+            "www.moxfield.com": {
+                'subdomains': ["api"],
+                'paths':
+                    [
+                        {"value": "v1", "index": 1},
+                        {"value": "all", "index": 3},
+                        {"value": "download", "index": 5},
+                    ],
+                'replace': [{"old": "www.", "new": ""}],
+            },
         }
 
         self.re_stripangle = re.compile(r"^<(.*)>$")
