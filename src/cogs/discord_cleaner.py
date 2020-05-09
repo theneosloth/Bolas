@@ -12,7 +12,7 @@ class Cleaner(commands.Cog):
             # EDH Discord server. Remove all non link posts from #decklists
             144547963484635137: (["decklists"], re.compile(".*http(s)*:\/\/.*")),
             # PlayEDH
-            304276578005942272: (["decklists"], re.compile(".*http(s)*:\/\/.*")),
+            304276578005942272: (["competitive_decklists", "high_decklists", "mid_decklists", "battlecruiser_decklists"], re.compile(".*http(s)*:\/\/.*")),
             # Dragon's server
             334571063197302784: (["decklists"], re.compile(".*http(s)*:\/\/.*")),
             # Teferi server
