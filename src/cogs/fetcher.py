@@ -143,11 +143,16 @@ class Fetcher(commands.Cog):
 
         # Send a card attribute or the associated exception message
         try:
-            card = self.sc.search_card("order:usd "+ arg, 1)[0]
+            card = self.sc.search_card(arg, "usd", 1)[0]
             # Any generic exception provided by scryfall
         except ScryFall.ScryfallException as e:
             await ctx.send(e.message)
             return
+        except ScryFall.CardLimitException as e:
+            await ctx.send(e.message)
+            return
+
+
 
         await ctx.send(card.get_price_string())
 
