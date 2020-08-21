@@ -35,14 +35,18 @@ class Card(dict):
         else:
             raise AttributeError("No such attribute: " + name)
 
+    @staticmethod
+    def _dict_to_string(dic):
+        "Returns a colon and newline separated string representation of a dictionary."
+        return "\n".join(["{}: {}".format(x, str(y or "n/a"))
+                          for x, y in dic.items()])
 
     def get_price_string(self):
         "Return a formatted string of a card's price"
         if "prices" in self:
-            return "{} usd \n{} tix".format(self["prices"]["usd"],
-                                      self["prices"]["tix"])
-        else:
-            return "Price not found."
+            return self._dict_to_string(self["prices"])
+
+        return "Price not found."
 
     def get_hex_color(self):
         "Returns the hex code of the color of the card"
@@ -66,6 +70,7 @@ class Card(dict):
             return 0xEDDC8A
 
     def format_embed(self):
+        "Returns a discord Embed object representing the card"
         name, oracle = str(self).split("\n", 1)
 
         embed = Embed(title=name.replace("*", ""),

@@ -19,9 +19,9 @@ class Fetcher(commands.Cog):
         self.pattern = re.compile("\[\[((?:[^\]]|\][^\]])+)\]\]")
         self.sc = ScryFall()
         self.MAX_CARDS = 8
-        self.MAX_CARDS_BEFORE_LIST= 4
+        self.MAX_CARDS_BEFORE_LIST = 4
         # Need to be all lowercase
-        self.CARD_NICKNAMES ={"sad robot" : "Solemn Simulacrum",
+        self.CARD_NICKNAMES = {"sad robot" : "Solemn Simulacrum",
                               "bob": "Dark Confidant",
                               "steve": "Sakura-Tribe Elder",
                               "scooze": "Scavenging Ooze",
@@ -31,7 +31,6 @@ class Fetcher(commands.Cog):
                               "skittles": "Skithiryx, the Blight Dragon",
                               "gaaiv": "Grand Arbiter Augustin IV"
         }
-
 
     @commands.Cog.listener("on_message")
     async def card_fetch(self, message):
@@ -93,7 +92,6 @@ class Fetcher(commands.Cog):
                     for card in cards)
                 await channel.send(cardlist)
 
-
     async def _post_card_attribute(self, ctx, cardname, attr):
         # Send a card attribute or the associated exception message
         if not cardname:
@@ -121,7 +119,6 @@ class Fetcher(commands.Cog):
         "Return the art of a given card."
         await self._post_card_attribute(ctx, arg, "image_art_crop")
 
-
     @commands.command()
     async def image(self, ctx, *, arg=None):
         "Return the image of a given card."
@@ -146,11 +143,16 @@ class Fetcher(commands.Cog):
 
         # Send a card attribute or the associated exception message
         try:
-            card = self.sc.card_named(arg)
+            card = self.sc.search_card(arg, "usd", 1)[0]
             # Any generic exception provided by scryfall
         except ScryFall.ScryfallException as e:
             await ctx.send(e.message)
             return
+        except ScryFall.CardLimitException as e:
+            await ctx.send(e.message)
+            return
+
+
 
         await ctx.send(card.get_price_string())
 

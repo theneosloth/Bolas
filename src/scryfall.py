@@ -69,15 +69,15 @@ class ScryFall:
         if result["object"] == "error":
             raise self.ScryfallException(result)
 
-
         return Card(result)
 
-
-    def search_card(self, query, max_cards = None):
+    def search_card(self, query, order="name", max_cards = None):
         """
         Search for a card by name.
         """
-        url = self.API_URL + "/cards/search?q=" + parse.quote(query)
+        url = "{}/cards/search?order={}&q={}".format(self.API_URL,
+                                                     order,
+                                                     parse.quote(query))
         result = self.get_cards_from_url(url, max_cards)
         # Strip custom scryfall arguments from the cardname
         name = re.sub("[a-z]+:[a-z]+", "", query).strip().lower()
