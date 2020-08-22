@@ -61,13 +61,15 @@ class Fetcher(commands.Cog):
             try:
                 # ! is the scryfall syntax for exact matches. The card
                 # name has to be quoted
-                cards = self.sc.search_card(f"!'{match}'", self.MAX_CARDS)
+                cards = self.sc.search_card(f"!'{match}'",
+                                            max_cards=self.MAX_CARDS)
             # If a match was not made for some reason just try again
             except ScryFall.ScryfallException:
                 pass
             if not cards:
                 try:
-                    cards = self.sc.search_card(match, self.MAX_CARDS)
+                    cards = self.sc.search_card(match,
+                                                max_cards=self.MAX_CARDS)
                     # In hindsight giving this an exception is dumb
                 except ScryFall.CardLimitException as e:
                     url = "https://scryfall.com/search?q={}".format(quote(match))
@@ -99,7 +101,7 @@ class Fetcher(commands.Cog):
             return
         try:
             cardname = cardname.strip("[]")
-            cards = self.sc.search_card(cardname, 1)
+            cards = self.sc.search_card(cardname, max_cards=1)
             # Any generic exception provided by scryfall
         except ScryFall.ScryfallException as e:
             await ctx.send(e.message)
@@ -143,7 +145,7 @@ class Fetcher(commands.Cog):
 
         # Send a card attribute or the associated exception message
         try:
-            card = self.sc.search_card(arg, "usd", 1)[0]
+            card = self.sc.search_card(arg, order="usd", max_cards=1)[0]
             # Any generic exception provided by scryfall
         except ScryFall.ScryfallException as e:
             await ctx.send(e.message)
@@ -151,8 +153,6 @@ class Fetcher(commands.Cog):
         except ScryFall.CardLimitException as e:
             await ctx.send(e.message)
             return
-
-
 
         await ctx.send(card.get_price_string())
 

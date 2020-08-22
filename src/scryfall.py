@@ -21,7 +21,6 @@ class ScryFall:
         # the first page of responses
         self.LOAD_ALL_MATCHES = False
 
-
     class CardLimitException(Exception):
         def __init__(self):
             self.message = "Too many cards returned by the query."
@@ -49,7 +48,6 @@ class ScryFall:
 
         return json.loads(url.read().decode("utf-8", "replace"))
 
-
     def get_card_rulings(self, cardid):
         url = f"{self.API_URL}/cards/{cardid}/rulings"
         rulings = self._load_url_as_json(url)
@@ -71,7 +69,7 @@ class ScryFall:
 
         return Card(result)
 
-    def search_card(self, query, order="name", max_cards = None):
+    def search_card(self, query, max_cards=None, order="name"):
         """
         Search for a card by name.
         """
