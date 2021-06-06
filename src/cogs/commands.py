@@ -17,17 +17,17 @@ class Misc(commands.Cog):
             # neosloth
             120767447681728512: "Hi dad.",
             # Average Dragon
-            182268688559374336: "Eat a dick, dragon.",
+            182268688559374336: "neosloth: Eat a dick, dragon.",
             # Garta
-            217005730149040128: "Welcome, Srammiest Man",
+            217005730149040128: "neosloth: Welcome, Srammiest Man",
             # spitefiremase
-            165971889351688192: "Mase, you're cooler and smarter and stronger and funnier in real life",
+            165971889351688192: "neosloth: Mase, you're cooler and smarter and stronger and funnier in real life",
             # Shaper
-            115501385679634439: "Shaped shape shaping shapes~",
+            115501385679634439: "neosloth: Shaped shape shaping shapes~",
             # Braden
-            279686121149956096: "Braden is definitely lame.",
+            279686121149956096: "neosloth: Braden is definitely lame.",
             # Sickrobot
-            98525939910078464: "*sniffle* yea, sure",
+            98525939910078464: "neosloth: *sniffle* yea, sure",
             # Melffy Bunilla
             141131991218126848: "Hi mum."
         }
@@ -43,10 +43,8 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def git(self, ctx):
-        """Repo link and changelog."""
-        await ctx.send("{}\n```{}```".format(
-            "https://theneosloth.github.io/Bolas/",
-            check_output("git log --oneline -3", shell=True).decode("utf-8")))
+        """Repo link."""
+        await ctx.send("https://github.com/MelffyBunilla/Emrakul")
 
     @commands.command()
     async def stats(self, ctx):
