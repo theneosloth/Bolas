@@ -6,6 +6,16 @@ Emrakul is a mtg card-fetcher discord bot based on [Bolas](https://github.com/th
 
 The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded “!help” command.
 
+## Changes compared to Bolas
+```
+The price command now also works for DFC cards
+You can use regex like on Scryfall now
+You can search for DFC cards also with the full name using the two slashes like some websites do
+The messages that pop up when you search something embarrassingly wrong destroy themselves in 5..., 4..., 3..., 2..., 1...
+"sad robot", "bob" and "tim" now show the proper versions they reference
+When the Bolas bot owner types in !obey, it says "Hi dad." and when I type it says "Hi mum."
+```
+
 ## List of commands
 
 ``` 
