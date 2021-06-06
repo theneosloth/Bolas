@@ -2,6 +2,7 @@ secret_token.txt
 secret_token
 discord.log
 entries_dump.txt
+secret.py
 
 # Entries
 misc/entries.db
