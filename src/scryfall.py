@@ -75,7 +75,8 @@ class ScryFall:
         """
         url = "{}/cards/search?order={}&q={}".format(self.API_URL,
                                                      order,
-                                                     parse.quote(query))
+                                                     parse.quote_plus(query))
+
         result = self.get_cards_from_url(url, max_cards)
         # Strip custom scryfall arguments from the cardname
         name = re.sub("[a-z]+:[a-z]+", "", query).strip().lower()
@@ -114,7 +115,7 @@ class ScryFall:
                         continue
 
                     if "card_faces" in obj:
-                        cards += [Card(face)
+                        cards += [Card(face, prices=obj["prices"])
                                   for face in obj["card_faces"]]
                     else:
                         cards.append(Card(obj))
