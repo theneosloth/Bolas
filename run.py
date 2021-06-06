@@ -3,6 +3,7 @@ import logging
 
 from discord import Game, ActivityType
 from discord.ext import commands
+from secret import BOLAS_SECRET_TOKEN
 
 logging.basicConfig(level=logging.INFO)
 token = os.environ['BOLAS_SECRET_TOKEN']

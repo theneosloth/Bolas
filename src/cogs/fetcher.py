@@ -3,7 +3,7 @@ import re
 
 from discord import Embed
 from discord.ext import commands
-from urllib.parse import quote
+from urllib.parse import quote, quote_plus
 
 from ..scryfall import ScryFall
 
@@ -21,12 +21,12 @@ class Fetcher(commands.Cog):
         self.MAX_CARDS = 8
         self.MAX_CARDS_BEFORE_LIST = 4
         # Need to be all lowercase
-        self.CARD_NICKNAMES = {"sad robot" : "Solemn Simulacrum",
-                              "bob": "Dark Confidant",
+        self.CARD_NICKNAMES = {"sad robot" : "Solemn Simulacrum set:mrd",
+                              "bob": "Dark Confidant set:rav",
                               "steve": "Sakura-Tribe Elder",
                               "scooze": "Scavenging Ooze",
                               "gary": "Gray Merchant of Asphodel",
-                              "tim": "Prodigal Sorcerer",
+                              "tim": "Prodigal Sorcerer set:lea",
                               "prime time": "Primeval Titan",
                               "skittles": "Skithiryx, the Blight Dragon",
                               "gaaiv": "Grand Arbiter Augustin IV"
@@ -72,12 +72,12 @@ class Fetcher(commands.Cog):
                                                 max_cards=self.MAX_CARDS)
                     # In hindsight giving this an exception is dumb
                 except ScryFall.CardLimitException as e:
-                    url = "https://scryfall.com/search?q={}".format(quote(match))
+                    url = "https://scryfall.com/search?q={}".format(quote_plus(match))
                     await channel.send(f"Too many matches. You can see the full list of matched cards here: {url}")
                     continue
                 # Any generic exception provided by scryfall
                 except ScryFall.ScryfallException as e:
-                     await channel.send(e.message)
+                     await channel.send(e.message,delete_after=5)
                      continue
 
             card_count = len(cards)
@@ -104,7 +104,7 @@ class Fetcher(commands.Cog):
             cards = self.sc.search_card(cardname, max_cards=1)
             # Any generic exception provided by scryfall
         except ScryFall.ScryfallException as e:
-            await ctx.send(e.message)
+            await ctx.send(e.message,delete_after=5)
             return
         except ScryFall.CardLimitException:
             await ctx.send("Only one card per command please.")
@@ -146,12 +146,13 @@ class Fetcher(commands.Cog):
         # Send a card attribute or the associated exception message
         try:
             card = self.sc.search_card(arg, order="usd", max_cards=1)[0]
+
             # Any generic exception provided by scryfall
         except ScryFall.ScryfallException as e:
-            await ctx.send(e.message)
+            await ctx.send(e.message, delete_after=5)
             return
         except ScryFall.CardLimitException as e:
-            await ctx.send(e.message)
+            await ctx.send(e.message, delete_after=5)
             return
 
         await ctx.send(card.get_price_string())
