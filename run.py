@@ -6,7 +6,7 @@ from discord.ext import commands
 from secret import BOLAS_SECRET_TOKEN
 
 logging.basicConfig(level=logging.INFO)
-token = os.environ['BOLAS_SECRET_TOKEN']
+token = BOLAS_SECRET_TOKEN
 
 bot = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
