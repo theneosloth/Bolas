@@ -15,7 +15,7 @@ class Misc(commands.Cog):
 
         obey_dict = {
             # neosloth
-            120767447681728512: "I obey.",
+            120767447681728512: "Hi dad.",
             # Average Dragon
             182268688559374336: "Eat a dick, dragon.",
             # Garta
@@ -27,7 +27,9 @@ class Misc(commands.Cog):
             # Braden
             279686121149956096: "Braden is definitely lame.",
             # Sickrobot
-            98525939910078464: "*sniffle* yea, sure"
+            98525939910078464: "*sniffle* yea, sure",
+            # Melffy Bunilla
+            141131991218126848: "Hi mum."
         }
 
         if ctx.message.author.id in obey_dict.keys():
@@ -37,7 +39,7 @@ class Misc(commands.Cog):
     async def addme(self, ctx):
         """The link to add Bolas to your Discord server."""
         await ctx.send("https://discordapp.com/oauth2/authorize?"
-                       "client_id=245372541915365377&scope=bot&permissions=0")
+                       "client_id=850633920012877874&scope=bot&permissions=0")
 
     @commands.command()
     async def git(self, ctx):
