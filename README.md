@@ -1,8 +1,8 @@
-[Stats](https://discord.com/api/oauth2/authorize?client_id=850633920012877874&permissions=0&scope=bot)
+<a href="https://discord.com/api/oauth2/authorize?client_id=850633920012877874&permissions=0&scope=bot" target="_blank">Stats</a>
 
 # Emrakul
 
-Emrakul is a mtg card-fetcher discord bot based on [Bolas](https://github.com/theneosloth/Bolas), which itself is heavily inspired by [yawgmoth](https://github.com/Lerker3/yawgmoth).
+Emrakul is a mtg card-fetcher discord bot based on <a href="https://github.com/theneosloth/Bolas" target="_blank">Bolas</a>, which itself is heavily inspired by <a href="https://github.com/Lerker3/yawgmoth" target="_blank">yawgmoth</a>.
 
 The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded “!help” command.
 
@@ -57,4 +57,4 @@ python ./run.py
 
 ## Add Emrakul to your Discord server
 
-[Click here](https://discord.com/api/oauth2/authorize?client_id=850633920012877874&permissions=0&scope=bot)
+<a href="https://discord.com/api/oauth2/authorize?client_id=850633920012877874&permissions=0&scope=bot" target="_blank">Click here</a>
