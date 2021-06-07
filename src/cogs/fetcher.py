@@ -1,5 +1,7 @@
 import asyncio
 import re
+import requests
+import random
 
 from discord import Embed
 from discord.ext import commands
@@ -107,14 +109,14 @@ class Fetcher(commands.Cog):
             await ctx.send(e.message,delete_after=5)
             return
         except ScryFall.CardLimitException:
-            await ctx.send("Only one card per command please.")
+            await ctx.send("Only one card per command please.",delete_after=5)
             return
 
         card = cards[0]
         if card and attr in card:
             await ctx.send(card[attr])
         else:
-            await ctx.send("Not found.")
+            await ctx.send("Not found.",delete_after=5)
 
     @commands.command()
     async def art(self, ctx, *, arg=None):
@@ -182,7 +184,18 @@ class Fetcher(commands.Cog):
 
         # This embed could definitely be prettier
         await ctx.send(embed=Embed(title=card.name, description=description))
-
+        
+    @commands.command()
+    async def cute(self, ctx):
+        "Return the art of a cute card."
+        cute_choice = random.choices(
+            population=["art:cute or scute", "art:emrakul", "art:kozilek", "art:ulamog"],
+            weights=[0.97, 0.01, 0.01, 0.01],
+            k=1
+        )
+        card = self.sc.card_random(cute_choice[0])
+        print(card['name'])
+        await self._post_card_attribute(ctx, '!"{}" include:extras'.format(card['name']), "image_art_crop")
 
 def setup(bot):
     bot.add_cog(Fetcher(bot))
