@@ -35,6 +35,13 @@ class Diff(commands.Cog):
                         {"value": "small/", "index": 4},
                     ],
             },
+            "www.archidekt.com": {
+                'paths':
+                    [
+                        {"value": "api", "index": 1},
+                        {"value": "small/", "index": 4},
+                    ],
+            },
             "scryfall.com": {
                 'subdomains': ["api"],
                 'paths':
@@ -126,9 +133,9 @@ class Diff(commands.Cog):
 
             # Make any required api calls required to build URL
             # This is my shitty attempt to do so in a way that's reasonably dynamic
-            # Blame Moxfield
+            # Blame Moxfield (<3 you Harry)
             # -Sick
-            for pre_request_path in valid_opts.get("pre_request_paths"):
+            for pre_request_path in valid_opts.get("pre_request_paths", []):
                 path = pre_request_path["path"]
                 baseurl = list(urlsplit(url_str, scheme="https"))
                 for replacement in pre_request_path["replace_map"]:
