@@ -53,6 +53,19 @@ class ScryFall:
         rulings = self._load_url_as_json(url)
         return rulings["data"]
 
+    def card_random(self, query):
+        """Get a random card by QUERY"""
+
+        url = self.API_URL + "/cards/random?q={}".format(parse.quote_plus(query)) + "&-t:token&-layout:art_series"
+
+        result = self._load_url_as_json(url)
+
+        # If we haven't found a card abort the seach
+        if result["object"] == "error":
+            raise self.ScryfallException(result)
+
+        return Card(result)
+    
     def card_named(self, name, exact=False):
         """Get a card named NAME"""
 
