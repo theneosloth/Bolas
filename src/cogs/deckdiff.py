@@ -241,14 +241,29 @@ class Diff(commands.Cog):
                                 inline=True)
         return embed
 
+    # Takes two moxfield urls and builds a compare url to return
+    def build_moxfield_compare(self, url1, url2):
+        parts = [urlunsplit(url1).strip('/'), '/compare/', url2[2].split('/')[2]]
+        result = ''.join(parts)
+
+        return result
+
     @commands.command()
     async def diff(self, ctx):
         """List of differences between two decklists."""
         try:
+            url_input = ctx.message.content.split()[1:]
+
             urls = [m for m in (self.get_valid_url(w)
-                                for w in ctx.message.content.split()[1:]) if m]
+                                for w in url_input) if m]
             if len(urls) != 2:
                 raise Diff.MessageError("Exactly two urls are needed.")
+
+            raw_urls = [urlsplit(raw_url, scheme="https") for raw_url in url_input]
+
+            both_urls_moxfield = False
+            if (raw_urls[0].netloc == raw_urls[1].netloc) and (raw_urls[0].netloc == 'www.moxfield.com'):
+                both_urls_moxfield = True
 
             try:
                 # Should definitely split this into a few more lines
@@ -266,8 +281,14 @@ class Diff(commands.Cog):
             self.format_diff_embed(main_diff, "Mainboard", result)
             self.format_diff_embed(side_diff, "Sideboard", result)
 
+            both_urls_moxfield = True
+
             # Discord doesn't allow embeds to be more than 1024 in length
             if len(result) < 1024:
+                if both_urls_moxfield:
+                    moxfield_compare_url = self.build_moxfield_compare(raw_urls[0], raw_urls[1])
+                    await ctx.send(moxfield_compare_url)
+
                 await ctx.send(embed=result)
             else:
                 await ctx.send("Diff too long.")
