@@ -1,6 +1,9 @@
 import os.path
+import discord
 
 from discord.ext import commands
+from discord_slash import cog_ext, SlashContext
+from discord_slash.utils.manage_commands import create_option
 
 class Rule(commands.Cog):
     def __init__(self, bot):
@@ -15,9 +18,9 @@ class Rule(commands.Cog):
 
     def get_rule(self, args):
          # First argument (presumably the rule number)
-        num = args[1]
+        num = args[0]
         # All the words after the command
-        tokens = args[1:]
+        tokens = args[0:]
         result = ""
         rule_count = 0
 
@@ -59,6 +62,26 @@ class Rule(commands.Cog):
             await ctx.send("Please provide a rule number or a set of keywords." \
                 "See the full list of rules here: http://magic.wizards.com" \
                 "/en/game-info/gameplay/rules-and-formats/rules")
+        
+    @cog_ext.cog_slash(name="rule",
+                      description="Cite am mtg rule.",
+                      options=[
+                          create_option(
+                              name="arg",
+                              description="Rule number or set of keywords.",
+                              option_type=3,
+                              required=True
+                          )
+                      ])
+    async def _rule(self, ctx, arg):
+        arg = arg.split()
+        if len(arg) > 0:
+            # Surround the result with markdown code tags (for nice bullets)
+            await ctx.send("```markdown\n{}```".format(self.get_rule(arg)))
+        else:
+            await ctx.send("Please provide a rule number or a set of keywords." \
+                "See the full list of rules here: http://magic.wizards.com" \
+                "/en/game-info/gameplay/rules-and-formats/rules", delete_after=5)
 
 
 def setup(bot):
