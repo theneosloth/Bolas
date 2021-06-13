@@ -56,8 +56,7 @@ class ScryFall:
     def card_random(self, query):
         """Get a random card by QUERY"""
 
-        url = self.API_URL + "/cards/random?q={}".format(parse.quote_plus(query)) + \
-        	"&-t:token&-layout:art_series&-t:card&\(-banned:vintage&or&t:conspiracy&or&o:ante&or&o:'one&foot'&or&Shahrazad\)"
+        url = self.API_URL + "/cards/random?q={}".format(parse.quote_plus(query)) + "&-t:token&-layout:art_series"
 
         result = self._load_url_as_json(url)
 
