@@ -35,6 +35,13 @@ class Diff(commands.Cog):
                         {"value": "small/", "index": 4},
                     ],
             },
+            "www.archidekt.com": {
+                'paths':
+                    [
+                        {"value": "api", "index": 1},
+                        {"value": "small/", "index": 4},
+                    ],
+            },
             "scryfall.com": {
                 'subdomains': ["api"],
                 'paths':
@@ -53,6 +60,17 @@ class Diff(commands.Cog):
                         {"value": "download", "index": 5},
                     ],
                 'replace': [{"old": "www.", "new": ""}],
+                'query': [("exportId", "{{exportId}}")],
+                'pre_request_paths':
+                    [
+                        {
+                            "target": "exportId",
+                            "path": "/v2/decks/all/",
+                            "replace_map": [
+                                {"origin_index": 4, "replace_index": 4},
+                            ]
+                        },
+                    ]
             },
         }
 
@@ -63,7 +81,7 @@ class Diff(commands.Cog):
             r"(?P<count>[0-9]+)x?\s+(?P<name>.*?)\s*"
             r"(?:<[^>]*>\s*)*(?:#.*)?$")
 
-        # Dict of card names that should be replaced due to inconsistancy
+        # Dict of card names that should be replaced due to inconsistency
         # AKA Wizards needs to errata Lim-Dûl's Vault already :(
         self.name_replacements = {
             "Lim-Dul's Vault": "Lim-Dûl's Vault"
@@ -113,9 +131,46 @@ class Diff(commands.Cog):
             for replace in valid_opts.get("replace", []):
                 url_str = re.sub(replace["old"], replace["new"], url_str)
 
+            # Make any required api calls required to build URL
+            # This is my shitty attempt to do so in a way that's reasonably dynamic
+            # Blame Moxfield (<3 you Harry)
+            # -Sick
+            for pre_request_path in valid_opts.get("pre_request_paths", []):
+                path = pre_request_path["path"]
+                baseurl = list(urlsplit(url_str, scheme="https"))
+                for replacement in pre_request_path["replace_map"]:
+                    existing_path = baseurl[2].split("/")
+                    new_path = path.split("/")
+                    new_path.insert(replacement["replace_index"], existing_path[replacement["origin_index"]])
+                    path = "/".join(new_path)
+
+                baseurl = baseurl[0:2]
+                baseurl.extend([path, '', ''])
+                baseurl = urlunsplit(baseurl)
+
+                target_result = self.get_special_query_arguments(baseurl, pre_request_path["target"])
+                replace_target = '%7B%7B' + pre_request_path["target"] + '%7D%7D'
+                url_str = url_str.replace(replace_target, target_result)
+
             return url_str
         else:
             return None
+
+    # Handle pre-decklist url calls
+    # Only used for Moxfield atm
+    def get_special_query_arguments(self, url, targetKey):
+        try:
+            # Should definitely split this into a few more lines
+            files = (urllib.request.urlopen(
+                urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            ).read().decode("utf-8", "replace"))
+
+            data = json.loads(files)
+
+            return data[targetKey]
+
+        except urllib.error.URLError as e:
+            raise Diff.MessageError("Failed to open url.")
 
     # Normalizes names.
     def filter_name(self, name):
@@ -174,11 +229,11 @@ class Diff(commands.Cog):
 
     # Takes a diff 4-tuple and adds it as fields on given embed.
     def format_diff_embed(self, diff, name, embed):
-        strdiff = (
+        str_diff = (
             ([str(i) for i in diff[0]], diff[1]),
             ([str(i) for i in diff[2]], diff[3])
         )
-        for num, lst in enumerate(strdiff, start=1):
+        for num, lst in enumerate(str_diff, start=1):
             output = "\n".join(map(lambda x: "{} {}".format(*x), zip(*lst)))
             # Discord doesn't like empty fields
             if output:
@@ -186,14 +241,29 @@ class Diff(commands.Cog):
                                 inline=True)
         return embed
 
+    # Takes two moxfield urls and builds a compare url to return
+    def build_moxfield_compare(self, url1, url2):
+        parts = [urlunsplit(url1).strip('/'), '/compare/', url2[2].split('/')[2]]
+        result = ''.join(parts)
+
+        return result
+
     @commands.command()
     async def diff(self, ctx):
         """List of differences between two decklists."""
         try:
+            url_input = ctx.message.content.split()[1:]
+
             urls = [m for m in (self.get_valid_url(w)
-                                for w in ctx.message.content.split()[1:]) if m]
+                                for w in url_input) if m]
             if len(urls) != 2:
                 raise Diff.MessageError("Exactly two urls are needed.")
+
+            raw_urls = [urlsplit(raw_url, scheme="https") for raw_url in url_input]
+
+            both_urls_moxfield = False
+            if (raw_urls[0].netloc == raw_urls[1].netloc) and (raw_urls[0].netloc == 'www.moxfield.com'):
+                both_urls_moxfield = True
 
             try:
                 # Should definitely split this into a few more lines
@@ -204,15 +274,21 @@ class Diff(commands.Cog):
             except urllib.error.URLError as e:
                 raise Diff.MessageError("Failed to open url.")
 
-            maindiff = self.get_diff(decklists[0][0], decklists[1][0])
-            sidediff = self.get_diff(decklists[0][1], decklists[1][1])
+            main_diff = self.get_diff(decklists[0][0], decklists[1][0])
+            side_diff = self.get_diff(decklists[0][1], decklists[1][1])
 
             result = Embed()
-            self.format_diff_embed(maindiff, "Mainboard", result)
-            self.format_diff_embed(sidediff, "Sideboard", result)
+            self.format_diff_embed(main_diff, "Mainboard", result)
+            self.format_diff_embed(side_diff, "Sideboard", result)
+
+            both_urls_moxfield = True
 
             # Discord doesn't allow embeds to be more than 1024 in length
             if len(result) < 1024:
+                if both_urls_moxfield:
+                    moxfield_compare_url = self.build_moxfield_compare(raw_urls[0], raw_urls[1])
+                    await ctx.send(moxfield_compare_url)
+
                 await ctx.send(embed=result)
             else:
                 await ctx.send("Diff too long.")
