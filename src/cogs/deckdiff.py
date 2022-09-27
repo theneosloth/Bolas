@@ -8,11 +8,14 @@ from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 from discord import Embed
 from discord.ext import commands
 
+from .commands import Misc
+
 
 class Diff(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.ctx = Misc(bot)
         # Dict of valid url domains, and options for those domains
         self.valid_urls = {
             "deckstats.net": {
@@ -287,15 +290,15 @@ class Diff(commands.Cog):
             if len(result) < 1024:
                 if both_urls_moxfield:
                     moxfield_compare_url = self.build_moxfield_compare(raw_urls[0], raw_urls[1])
-                    await ctx.send(moxfield_compare_url)
+                    await self.ctx.send(ctx,moxfield_compare_url)
 
-                await ctx.send(embed=result)
+                await self.ctx.send(ctx,embed=result)
             else:
-                await ctx.send("Diff too long.")
+                await self.ctx.send(ctx,"Diff too long.")
 
         except Diff.MessageError as e:
-            return await(ctx.send(e.message))
+            return await(self.ctx.send(ctx,e.message))
 
 
-def setup(bot):
-    bot.add_cog(Diff(bot))
+async def setup(bot):
+    await bot.add_cog(Diff(bot))

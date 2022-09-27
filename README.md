@@ -1,20 +1,15 @@
-[Stats](https://discord.com/api/oauth2/authorize?client_id=850633920012877874&permissions=0&scope=bot)
+[![Stats](https://img.shields.io/badge/discord-207%20servers%2015420%20unique%20users-blue.svg)](https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)
+[![Docker Pulls](https://img.shields.io/docker/pulls/neosloth/bolasbot.svg)](https://hub.docker.com/r/neosloth/bolasbot)
 
-# Emrakul
 
-Emrakul is a mtg card-fetcher discord bot based on [Bolas](https://github.com/theneosloth/Bolas), which itself is heavily inspired by [yawgmoth](https://github.com/Lerker3/yawgmoth).
+# Bolas
+
+[https://theneosloth.github.io/Bolas/](https://theneosloth.github.io/Bolas)
+
+
+Bolas is a mtg card-fetcher discord bot that is heavily inspired by [yawgmoth](https://github.com/Lerker3/yawgmoth).
 
 The docstring for each one of the plugins are all concatenated together and can be displayed with the hardcoded “!help” command.
-
-## Changes compared to Bolas
-```
-The price command now also works for DFC cards
-You can use regex like on Scryfall now
-You can search for DFC cards also with the full name using the two slashes like some websites do
-The messages that pop up when you search something embarrassingly wrong destroy themselves in 5..., 4..., 3..., 2..., 1...
-"sad robot", "bob" and "tim" now show the proper versions they reference
-When the Bolas bot owner types in !obey, it says "Hi dad." and when I type it says "Hi mum."
-```
 
 ## List of commands
 
@@ -55,6 +50,23 @@ python ./run.py
 
 ```
 
-## Add Emrakul to your Discord server
+## Using docker
 
-[Click here](https://discord.com/api/oauth2/authorize?client_id=850633920012877874&permissions=0&scope=bot)
+The arm64v8 and amd64 images are available at [neosloth/bolasbot](https://hub.docker.com/r/neosloth/bolasbot). For other architectures the image can be built using the included Dockerfile
+
+### Building the image
+
+``` sh
+docker build --tag=bolasbot .
+```
+
+### Running Bolas
+
+``` sh
+docker run -e BOLAS_SECRET_TOKEN=THIS_IS_A_SECRET --name bolas --restart unless-stopped bolasbot
+
+```
+
+## Add Bolas to your Discord server
+
+[Click here](https://discordapp.com/oauth2/authorize?client_id=245372541915365377&scope=bot&permissions=0)

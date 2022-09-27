@@ -1,0 +1,128 @@
+A few updates for the **Emrakul** bot over the past year. Sometimes Emrakul is sassy or just doesn't feel like things, so please don't take it personally.
+
+Fixes compared to the Bolas bot:
+>> Regex works like on Scryfall
+>> DFC cards now work for both the price command and by searching via [name] // [name]
+>> If you search something incorrectly, Emrakul only embarrasses you for 5...4...3...2...1 [poof]
+>> "sad robot", "bob" and "tim" now show the proper versions they reference
+
+BIG UPDATE: Emrakul now works with threads!
+
+New functions:
+1. Get the current updates on Emrakul bot
+Example: !updates
+>> Returns this text file
+
+2. Get tokens of a public decklist on archidekt
+Example: !tokens https://archidekt.com/decks/1875179#[EDH/B] Adeline, ♡ GRL PWR ♡
+>> This lists all tokens in your archidekt list. It shows even those that don't have a printed token, as it checks the text instead of just Scryfall data
+>> It only works with archidekt, mostly because other webpages show tokens so have less need
+
+3. Get tokens of the top [10] public decklists of a user on archidekt with [filter]
+Example 1: !all_tokens https://archidekt.com/user/2874
+Example 2: !all_tokens https://archidekt.com/user/2874 [EDH/B]
+Example 3: !all_tokens https://archidekt.com/user/2874 5
+>> This sends you a private message with the tokens in the top [10] public decklists of your user account
+>> By providing a link to your user account, you get the tokens of the top 10 last edited public decklists
+>> You can provide a filter for the titles of your decklist, like in the example above, I put [EDH/B] for all my built decklists, so I filter those. Also here, you will get a >> You can provide a number lower than 10 if you want less, but 10 will always be the maximum of 10 lists, due to performance issues (...it's 11 webcalls + checking through ~65-80 different cards per deck for tokens)
+
+4. Get a random card image [by a Scryfall Query]
+Example 1: !random
+Example 2: !random is:commander
+>> Returns a random card image within the query
+>> If no query is provided, it returns a random card
+
+5. Get a cute image
+Example: !cute
+>> Returns a cute card.
+>> It used to search for art:cute, but for some reason people didn't think they're cute, so I changed it to art:tentacles.
+>> That means it always returns an extra cute card
+
+6. Check legality of a card
+Example: !legality Black Lotus
+>> Returns the legality in formats
+
+7. Flirt with Emrakul
+Example: !flirt
+>> Emrakul notices you...from the moon
+
+8. Roll a dice
+Example 1: !roll
+Example 2: !roll d69
+>> Returns a random roll of the provided dice
+>> If no dice is provided, it chooses a random dice from among d4, d6, d8, d10, d12 and d20
+>> Sometimes things go wrong :(
+
+9. Flip a coin
+Example: !flip
+>> Returns heads or tails
+>> It takes a 50/50 split on heads or tails as the starting position, then returns the coin flip 51/49 in favor of that side, to emulate a physical coin flip
+>> Absolutely no reason why to implement this
+>> Due to this being a complicated physics experiment, you have a 1:6000 chance for the coin to land on its side, as Emrakul is flipping a US nickel
+>> I do assume earth gravity, even if Emrakul is somehow hidden in the moon of a plane
+>> Do we even know if the gravity on Magic's planes are all the same, or is this our biased view from earth
+
+10. Asmoranomardicadaistinaculdacar
+Example: !asmor
+>> Return Asmoranomardicadaistinaculdacar
+
+11. Download a simple Chrome extension that restores the Magiccards.info function to auto-focus the search bar.
+Example: !scryfall_extension
+>> Returns install instructions + a zip file with the appropriate files
+>> You can open those files and see what they do before installing, so you can be ensured I don't try to steal your personal info
+
+12. Get color pie information
+Example 1: !colorpie
+Example 2: !colorpie w
+Example 3: !colorpie u secondary
+Example 4: !colorpie black 1
+Example 5: !colorpie red tertiary
+>> Searches the latest color pie article, then returns the text as markdown in a message if it's short enough, and as a text file if not
+>> As you can see from above, you can shorten colors by their mana symbol (u = blue), and primary etc. as a number (secondary = 2)
+>> Any other queries will result in Emrakul asking you to provide any of the above possibilities
+>> Future updates will allow you to query and get definitions, but with different functions
+
+13. Get the color pie link
+Example: !colorpie_link
+>> Returns the current color pie article links by searching for them on the Magic Articles website
+
+14. Ask Emmy for advice
+Example: !advice [any text]
+>> Returns an Magic 8 Ball answer.
+>> Sometimes it returns just general advice.
+>> Sometimes it thinks you're valid.
+
+15. Calculate the power level of your deck
+Example: !powerlevel
+>> Returns 7.
+
+16. Ask Emmy for a cut in your deck
+Example: !cut
+>> Returns a typical card you would cut.
+
+Other updates:
+1. !rule has been upgraded in two ways:
+>> When calling the function, the bot checks if Wizards has added a new ruling document to their ruling page
+>> If yes, it replaces the current document
+>> Then it returns the ruling, and includes a link to the rule on Yawgatog (Hyperlinked Magic Comprehensive Rules)
+>> When a ruling is longer than the max amount of text that Discord allows, it cuts it off accordingly, which fixes !rule 205.3m
+
+2. When searching a card name via brackets [[Gishath]], I check first if a card that is a commander would be returned, and the name includes the exact text you provide.
+>> I noticed a lot of people search for a commander with the name, which often returns an entire list of cards
+>> This basically fixes this for useability, without disturbing too many searches, as it does not change searches that uses Scryfall syntax
+
+3. Added the functionalities that the Scryfall bot provides when searching:
+>> Basically you can now user either !price Gishath or [[$Gishath]]
+>> !price Gishath == [[$Gishath]]
+>> !rulings Gishath == [[?Gishath]]
+>> !legality Gishath == [[#Gishath]]
+
+4. The list of nicknames has been extended:
+>> Magus of the Cradle: Circle of Dreams Druid
+>> TWD: Walking Dead
+>> Streve: Strefan, Maurer Progenitor
+>> Ayaya: Ayara, First of Locthwain
+
+5. Due to high demand, you can [[Pot of Greed]]
+>> A lot of people are confused by this elusive card, so I provide help with this
+>> Returns the card text of Pot of Greed
